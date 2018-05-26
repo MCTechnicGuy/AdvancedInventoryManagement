@@ -1,0 +1,6 @@
+{
+    "variants": {
+        "isactive=true": {"model":"aim:armorrelay_online" },
+        "isactive=false": {"model":"aim:armorrelay_offline"}
+    }
+}

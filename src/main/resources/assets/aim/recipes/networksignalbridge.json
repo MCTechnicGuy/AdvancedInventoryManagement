@@ -1,0 +1,27 @@
+{
+  "result": {
+    "item": "aim:networksignalbridge"
+  },
+  "pattern": [
+    "pdp",
+    "ete",
+    "pdp"
+  ],
+  "type": "minecraft:crafting_shaped",
+  "key": {
+    "p": {
+      "item": "aim:craftingcomponent",
+      "data": 2
+    },
+    "t": {
+      "item": "aim:togglecable"
+    },
+    "d": {
+      "item": "aim:craftingcomponent",
+      "data": 0
+    },
+    "e": {
+      "item": "#ENDERPEARL"
+    }
+  }
+}

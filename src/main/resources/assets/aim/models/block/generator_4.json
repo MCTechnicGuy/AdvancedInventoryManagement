@@ -1,0 +1,7 @@
+{
+    "parent": "aim:block/generator_1",
+    "textures": {
+        "particle": "aim:blocks/generator_side_4",
+        "side": "aim:blocks/generator_side_4"
+    }
+}

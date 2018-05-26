@@ -1,0 +1,30 @@
+{
+  "result": {
+    "item": "aim:inventoryrelay"
+  },
+  "pattern": [
+    "php",
+    "dxd",
+    "pcp"
+  ],
+  "type": "minecraft:crafting_shaped",
+  "key": {
+    "p": {
+      "item": "aim:craftingcomponent",
+      "data": 2
+    },
+    "c": {
+      "item": "aim:networkcable"
+    },
+    "d": {
+      "item": "aim:craftingcomponent",
+      "data": 0
+    },
+    "x": {
+      "item": "minecraft:chest"
+    },
+    "h": {
+      "item": "minecraft:hopper"
+    }
+  }
+}

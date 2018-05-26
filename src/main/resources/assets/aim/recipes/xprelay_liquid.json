@@ -1,0 +1,27 @@
+{
+  "result": {
+    "item": "aim:xprelay_liquid"
+  },
+  "pattern": [
+    "pep",
+    "dcd",
+    "pep"
+  ],
+  "type": "minecraft:crafting_shaped",
+  "key": {
+    "p": {
+      "item": "aim:craftingcomponent",
+      "data": 2
+    },
+    "c": {
+      "item": "aim:xprelay"
+    },
+    "d": {
+      "item": "aim:craftingcomponent",
+      "data": 0
+    },
+    "e": {
+      "item": "minecraft:bucket"
+    }
+  }
+}

@@ -1,0 +1,30 @@
+{
+  "result": {
+    "item": "aim:xprelay"
+  },
+  "pattern": [
+    "pbp",
+    "ded",
+    "pcp"
+  ],
+  "type": "minecraft:crafting_shaped",
+  "key": {
+    "p": {
+      "item": "aim:craftingcomponent",
+      "data": 2
+    },
+    "b": {
+      "item": "minecraft:glass_bottle"
+    },
+    "c": {
+      "item": "aim:networkcable"
+    },
+    "d": {
+      "item": "aim:craftingcomponent",
+      "data": 0
+    },
+    "e": {
+      "item": "minecraft:ender_pearl"
+    }
+  }
+}

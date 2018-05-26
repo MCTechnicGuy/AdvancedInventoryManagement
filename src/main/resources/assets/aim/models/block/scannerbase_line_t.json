@@ -1,0 +1,7 @@
+{  
+    "parent": "aim:block/scannerbase",
+    "textures": {
+        "particle": "aim:blocks/scannerbase_line_t",
+        "all": "aim:blocks/scannerbase_line_t"
+    }
+}

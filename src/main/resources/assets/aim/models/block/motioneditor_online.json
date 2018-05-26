@@ -1,0 +1,20 @@
+{
+    "parent": "block/block",
+    "elements": [
+        {   "from": [ 0, 0, 0 ],
+            "to": [ 16, 16, 16 ],
+            "faces": {
+                "down":  { "texture": "#side", "cullface": "down", "rotation": 270},
+                "up":    { "texture": "#side", "cullface": "up", "rotation": 90},
+                "north": { "texture": "#top", "cullface": "north" },
+                "south": { "texture": "#top", "cullface": "south" },
+                "west":  { "texture": "#side", "cullface": "west" },
+                "east":  { "texture": "#side", "cullface": "east", "rotation": 180}
+            }
+        }
+    ],
+    "textures": {
+        "side": "aim:blocks/motioneditor_online_side",
+        "top": "aim:blocks/motioneditor_online_top"
+    }
+}

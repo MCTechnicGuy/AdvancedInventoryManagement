@@ -1,0 +1,30 @@
+{
+  "result": {
+    "item": "aim:craftingcomponent",
+    "data": 0,
+    "count": 12
+  },
+  "pattern": [
+    "lrg",
+    "qdq",
+    "grl"
+  ],
+  "type": "forge:ore_shaped",
+  "key": {
+    "q": {
+      "item": "#GEMQUARTZ"
+    },
+    "r": {
+      "item": "#DUSTREDSTONE"
+    },
+    "d": {
+      "item": "#GEMDIAMOND"
+    },
+    "g": {
+      "item": "#DUSTGLOWSTONE"
+    },
+    "l": {
+      "item": "#GEMLAPIS"
+    }
+  }
+}

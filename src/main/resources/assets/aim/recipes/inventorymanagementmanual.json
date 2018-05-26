@@ -1,0 +1,22 @@
+{
+  "result": {
+    "item": "aim:inventorymanagementmanual"
+  },
+  "pattern": [
+    " r ",
+    "ibi",
+    " i "
+  ],
+  "type": "forge:ore_shaped",
+  "key": {
+    "r": {
+      "item": "#DUSTREDSTONE"
+    },
+    "b": {
+      "item": "minecraft:book"
+    },
+    "i": {
+      "item": "#INGOTIRON"
+    }
+  }
+}

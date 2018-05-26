@@ -1,0 +1,12 @@
+{
+    "variants": {
+        "isactive=true,mode=all": { "model":"aim:energyrelay_all" },
+        "isactive=false,mode=all": {"model":"aim:energyrelay_offline"},
+        "isactive=true,mode=hotbar": { "model":"aim:energyrelay_hotbar" },
+        "isactive=false,mode=hotbar": {"model":"aim:energyrelay_offline"},
+        "isactive=true,mode=mainhand": { "model":"aim:energyrelay_mainhand" },
+        "isactive=false,mode=mainhand": {"model":"aim:energyrelay_offline"},
+        "isactive=true,mode=offhand": { "model":"aim:energyrelay_offhand" },
+        "isactive=false,mode=offhand": {"model":"aim:energyrelay_offline"}
+    }
+}

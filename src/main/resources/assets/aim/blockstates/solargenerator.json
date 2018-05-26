@@ -1,0 +1,6 @@
+{
+    "variants": {
+        "producing=false": {"model":"aim:solargenerator_offline"},
+        "producing=true": {"model":"aim:solargenerator_online"}
+    }
+}

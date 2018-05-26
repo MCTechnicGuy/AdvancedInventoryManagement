@@ -1,0 +1,21 @@
+{
+  "result": {
+    "item": "aim:scannerbase"
+  },
+  "pattern": [
+    "   ",
+    "   ",
+    "sps"
+  ],
+  "type": "minecraft:crafting_shaped",
+  "key": {
+    "p": {
+      "item": "aim:craftingcomponent",
+      "data": 2
+    },
+    "s": {
+      "item": "minecraft:stone_slab",
+      "data": 0
+    }
+  }
+}

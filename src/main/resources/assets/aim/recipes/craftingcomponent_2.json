@@ -1,0 +1,27 @@
+{
+  "result": {
+    "item": "aim:craftingcomponent",
+    "data": 2,
+    "count": 2
+  },
+  "pattern": [
+    "igi",
+    "sos",
+    "igi"
+  ],
+  "type": "forge:ore_shaped",
+  "key": {
+    "s": {
+      "item": "#STONE"
+    },
+    "g": {
+      "item": "#INGOTGOLD"
+    },
+    "i": {
+      "item": "#INGOTIRON"
+    },
+    "o": {
+      "item": "#OBSIDIAN"
+    }
+  }
+}

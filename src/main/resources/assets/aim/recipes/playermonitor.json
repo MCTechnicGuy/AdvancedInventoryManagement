@@ -1,0 +1,31 @@
+{
+  "result": {
+    "item": "aim:playermonitor"
+  },
+  "pattern": [
+    "prp",
+    "gcg",
+    "pdp"
+  ],
+  "type": "forge:ore_shaped",
+  "key": {
+    "p": {
+      "item": "aim:craftingcomponent",
+      "data": 2
+    },
+    "r": {
+      "item": "#BLOCKREDSTONE"
+    },
+    "c": {
+      "item": "aim:craftingcomponent",
+      "data": 1
+    },
+    "d": {
+      "item": "aim:craftingcomponent",
+      "data": 0
+    },
+    "g": {
+      "item": "#BLOCKGOLD"
+    }
+  }
+}

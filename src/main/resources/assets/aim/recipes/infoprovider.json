@@ -1,0 +1,24 @@
+{
+  "result": {
+    "item": "aim:infoprovider"
+  },
+  "pattern": [
+    "  s",
+    "dp ",
+    "pd "
+  ],
+  "type": "minecraft:crafting_shaped",
+  "key": {
+    "p": {
+      "item": "aim:craftingcomponent",
+      "data": 2
+    },
+    "s": {
+      "item": "minecraft:sign"
+    },
+    "d": {
+      "item": "aim:craftingcomponent",
+      "data": 0
+    }
+  }
+}

@@ -1,0 +1,11 @@
+{
+  "result": {
+    "item": "aim:aimpositioncard"
+  },
+  "ingredients": [
+    {
+      "item": "aim:aimpositioncard"
+    }
+  ],
+  "type": "minecraft:crafting_shapeless"
+}

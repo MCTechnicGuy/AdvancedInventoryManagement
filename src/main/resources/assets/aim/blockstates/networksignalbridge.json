@@ -1,0 +1,28 @@
+{
+    "multipart": [
+        {   "when": { "isactive": "true" },
+            "apply": { "model": "aim:networksignalbridge_core_online"}
+        },
+        {   "when": { "isactive": "false" },
+            "apply": { "model": "aim:networksignalbridge_core_offline"}
+        },
+        {   "when": { "south": "true" },
+            "apply": { "model": "aim:networkcable_connector"}
+        },
+        {   "when": { "west": "true" },
+            "apply": { "model": "aim:networkcable_connector", "y": 90}
+        },
+        {   "when": { "north": "true" },
+            "apply": { "model": "aim:networkcable_connector", "y": 180}
+        },
+        {   "when": { "east": "true" },
+            "apply": { "model": "aim:networkcable_connector", "y": 270}
+        },
+        {   "when": { "up": "true" },
+            "apply": { "model": "aim:networkcable_connector", "x": 90}
+        },
+        {   "when": { "down": "true" },
+            "apply": { "model": "aim:networkcable_connector", "x": 270}
+        }
+    ]
+}

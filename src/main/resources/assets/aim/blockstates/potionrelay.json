@@ -1,0 +1,8 @@
+{
+    "variants": {
+        "isactive=true,mode=inlet": { "model":"aim:potionrelay_inlet" },
+        "isactive=false,mode=inlet": { "model":"aim:potionrelay_offline" },
+        "isactive=true,mode=outlet": { "model":"aim:potionrelay_outlet" },
+        "isactive=false,mode=outlet": { "model":"aim:potionrelay_offline" }
+    }
+}

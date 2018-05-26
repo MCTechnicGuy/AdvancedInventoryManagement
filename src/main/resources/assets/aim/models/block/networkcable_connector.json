@@ -1,0 +1,14 @@
+{   "parent": "aim:block/networkcable_core",
+    "elements": [
+        {   "from": [ 5, 5, 11 ],
+            "to": [ 11, 11, 16 ],
+            "shade": false,
+            "faces": {
+                "down":  { "uv": [ 8, 8, 16, 16 ], "texture": "#all", "rotation": 270},
+                "up":    { "uv": [ 8, 8, 16, 16 ], "texture": "#all", "rotation": 270},
+                "west":  { "uv": [ 8, 8, 16, 16 ], "texture": "#all"},
+                "east":  { "uv": [ 8, 8, 16, 16 ], "texture": "#all"}
+            }
+        }
+    ]
+}

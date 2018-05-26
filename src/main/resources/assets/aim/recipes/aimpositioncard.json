@@ -1,0 +1,24 @@
+{
+  "result": {
+    "item": "aim:aimpositioncard"
+  },
+  "pattern": [
+    " e ",
+    "dld",
+    "   "
+  ],
+  "type": "minecraft:crafting_shaped",
+  "key": {
+    "d": {
+      "item": "aim:craftingcomponent",
+      "data": 0
+    },
+    "e": {
+      "item": "minecraft:ender_eye"
+    },
+    "l": {
+      "item": "aim:craftingcomponent",
+      "data": 2
+    }
+  }
+}

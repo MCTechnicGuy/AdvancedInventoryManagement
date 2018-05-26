@@ -1,0 +1,91 @@
+{
+    "multipart": [
+        {   "apply": { "model": "aim:togglecable_core" }},
+        {   "when": { "south": "true" },
+            "apply": { "model": "aim:togglecable_connector"}
+        },
+        {   "when": { "west": "true" },
+            "apply": { "model": "aim:togglecable_connector", "y": 90}
+        },
+        {   "when": { "north": "true" },
+            "apply": { "model": "aim:togglecable_connector", "y": 180}
+        },
+        {   "when": { "east": "true" },
+            "apply": { "model": "aim:togglecable_connector", "y": 270}
+        },
+        {   "when": { "up": "true" },
+            "apply": { "model": "aim:togglecable_connector", "x": 90}
+        },
+        {   "when": { "down": "true" },
+            "apply": { "model": "aim:togglecable_connector", "x": 270}
+        },
+        {
+            "when": {"isrsblocked": "true"},
+            "apply": { "model": "aim:togglecable_core_blocker"}
+        },
+        {
+            "when": {"isrsblocked": "false"},
+            "apply": { "model": "aim:togglecable_core_outline"}
+        },
+        {   "when": { "AND": [
+            {"south": "true"}, {"isrsblocked": "false"}
+        ]},
+            "apply": { "model": "aim:togglecable_connector_outline"}
+        },
+        {   "when": { "AND": [
+            {"north": "true"}, {"isrsblocked": "false"}
+        ]},
+            "apply": { "model": "aim:togglecable_connector_outline", "y": 180}
+        },
+        {   "when": { "AND": [
+            {"east": "true"}, {"isrsblocked": "false"}
+        ]},
+            "apply": { "model": "aim:togglecable_connector_outline", "y": 270}
+        },
+        {   "when": { "AND": [
+            {"west": "true"}, {"isrsblocked": "false"}
+        ]},
+            "apply": { "model": "aim:togglecable_connector_outline", "y": 90}
+        },
+        {   "when": { "AND": [
+            {"up": "true"}, {"isrsblocked": "false"}
+        ]},
+            "apply": { "model": "aim:togglecable_connector_outline", "x": 90}
+        },
+        {   "when": { "AND": [
+            {"down": "true"}, {"isrsblocked": "false"}
+        ]},
+            "apply": { "model": "aim:togglecable_connector_outline", "x": 270}
+        },
+        {   "when": { "AND": [
+            {"south": "true"}, {"isrsblocked": "true"}
+        ]},
+            "apply": { "model": "aim:togglecable_connector_blocker"}
+        },
+        {   "when": { "AND": [
+            {"north": "true"}, {"isrsblocked": "true"}
+        ]},
+            "apply": { "model": "aim:togglecable_connector_blocker", "y": 180}
+        },
+        {   "when": { "AND": [
+            {"east": "true"}, {"isrsblocked": "true"}
+        ]},
+            "apply": { "model": "aim:togglecable_connector_blocker", "y": 270}
+        },
+        {   "when": { "AND": [
+            {"west": "true"}, {"isrsblocked": "true"}
+        ]},
+            "apply": { "model": "aim:togglecable_connector_blocker", "y": 90}
+        },
+        {   "when": { "AND": [
+            {"up": "true"}, {"isrsblocked": "true"}
+        ]},
+            "apply": { "model": "aim:togglecable_connector_blocker", "x": 90}
+        },
+        {   "when": { "AND": [
+            {"down": "true"}, {"isrsblocked": "true"}
+        ]},
+            "apply": { "model": "aim:togglecable_connector_blocker", "x": 270}
+        }
+    ]
+}

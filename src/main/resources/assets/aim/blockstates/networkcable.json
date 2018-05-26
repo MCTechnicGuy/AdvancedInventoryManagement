@@ -1,0 +1,56 @@
+{
+    "multipart": [
+        {   "apply": { "model": "aim:networkcable_core" }},
+        {   "when": { "south": "true" },
+            "apply": { "model": "aim:networkcable_connector"}
+        },
+        {   "when": { "west": "true" },
+            "apply": { "model": "aim:networkcable_connector", "y": 90}
+        },
+        {   "when": { "north": "true" },
+            "apply": { "model": "aim:networkcable_connector", "y": 180}
+        },
+        {   "when": { "east": "true" },
+            "apply": { "model": "aim:networkcable_connector", "y": 270}
+        },
+        {   "when": { "up": "true" },
+            "apply": { "model": "aim:networkcable_connector", "x": 90}
+        },
+        {   "when": { "down": "true" },
+            "apply": { "model": "aim:networkcable_connector", "x": 270}
+        },
+        {   "when": { "iscoreactive": "true" },
+            "apply": { "model": "aim:networkcable_data"}
+        },
+        {   "when": { "AND": [
+                {"iscoreactive": "true"}, {"south": "true"}
+            ]},
+            "apply": { "model": "aim:networkcable_connector_data"}
+        },
+        {   "when": { "AND": [
+                {"iscoreactive": "true"}, {"north": "true"}
+            ]},
+            "apply": { "model": "aim:networkcable_connector_data", "y": 180}
+        },
+        {   "when": { "AND": [
+                {"iscoreactive": "true"}, {"east": "true"}
+            ]},
+            "apply": { "model": "aim:networkcable_connector_data", "y": 270}
+        },
+        {   "when": { "AND": [
+                {"iscoreactive": "true"}, {"west": "true"}
+            ]},
+            "apply": { "model": "aim:networkcable_connector_data", "y": 90}
+        },
+        {   "when": { "AND": [
+                {"iscoreactive": "true"}, {"up": "true"}
+            ]},
+            "apply": { "model": "aim:networkcable_connector_data", "x": 90}
+        },
+        {   "when": { "AND": [
+                {"iscoreactive": "true"}, {"down": "true"}
+            ]},
+            "apply": { "model": "aim:networkcable_connector_data", "x": 270}
+        }
+    ]
+}

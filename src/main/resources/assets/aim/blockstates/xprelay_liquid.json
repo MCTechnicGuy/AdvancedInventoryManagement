@@ -1,0 +1,8 @@
+{
+    "variants": {
+        "isactive=true,mode=moltenxp": {"model":"aim:xprelay_liquid_online" },
+        "isactive=false,mode=moltenxp": {"model":"aim:xprelay_liquid_offline"},
+        "isactive=true,mode=xpjuice": {"model":"aim:xprelay_liquid_online" },
+        "isactive=false,mode=xpjuice": {"model":"aim:xprelay_liquid_offline"}
+    }
+}

@@ -1,0 +1,24 @@
+{
+  "result": {
+    "item": "aim:networkcable",
+    "count": 6
+  },
+  "pattern": [
+    "gig",
+    "ddd",
+    "gig"
+  ],
+  "type": "forge:ore_shaped",
+  "key": {
+    "d": {
+      "item": "aim:craftingcomponent",
+      "data": 0
+    },
+    "g": {
+      "item": "#BLOCKGLASS"
+    },
+    "i": {
+      "item": "#INGOTIRON"
+    }
+  }
+}

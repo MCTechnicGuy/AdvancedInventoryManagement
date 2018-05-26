@@ -1,0 +1,15 @@
+{   "parent": "aim:block/togglecable_core",
+    "elements": [
+        {   "from": [ 6, 6, 6 ],
+            "to": [ 10, 10, 10 ],
+            "faces": {
+                "down":  { "uv": [ 10, 0, 16, 6 ], "texture": "#all", "cullface": "down" },
+                "up":    { "uv": [ 10, 0, 16, 6 ], "texture": "#all", "cullface": "up"},
+                "north": { "uv": [ 10, 0, 16, 6 ], "texture": "#all", "cullface": "north" },
+                "south": { "uv": [ 10, 0, 16, 6 ], "texture": "#all", "cullface": "south" },
+                "west":  { "uv": [ 10, 0, 16, 6 ], "texture": "#all", "cullface": "west" },
+                "east":  { "uv": [ 10, 0, 16, 6 ], "texture": "#all", "cullface": "east" }
+            }
+        }
+    ]
+}

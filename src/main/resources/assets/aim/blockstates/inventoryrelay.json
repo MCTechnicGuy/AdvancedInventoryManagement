@@ -1,0 +1,10 @@
+{
+    "variants": {
+        "isactive=true,mode=all": { "model":"aim:inventoryrelay_all" },
+        "isactive=false,mode=all": { "model":"aim:inventoryrelay_offline" },
+        "isactive=true,mode=hotbar": { "model":"aim:inventoryrelay_hotbar" },
+        "isactive=false,mode=hotbar": { "model":"aim:inventoryrelay_offline" },
+        "isactive=true,mode=maininv": { "model":"aim:inventoryrelay_maininv" },
+        "isactive=false,mode=maininv": { "model":"aim:inventoryrelay_offline" }
+    }
+}

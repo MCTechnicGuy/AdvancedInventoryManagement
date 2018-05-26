@@ -1,0 +1,6 @@
+{
+    "parent":"aim:block/networksignalbridge_core_offline",
+    "textures": {
+        "all": "aim:blocks/networksignalbridge_online"
+    }
+}

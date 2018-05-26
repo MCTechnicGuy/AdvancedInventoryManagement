@@ -1,0 +1,8 @@
+{
+    "variants": {
+        "isactive=true,mode=inlet": { "model":"aim:xprelay_inlet" },
+        "isactive=false,mode=inlet": { "model":"aim:xprelay_offline" },
+        "isactive=true,mode=outlet": { "model":"aim:xprelay_outlet" },
+        "isactive=false,mode=outlet": { "model":"aim:xprelay_offline" }
+    }
+}

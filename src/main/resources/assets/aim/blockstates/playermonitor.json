@@ -1,0 +1,6 @@
+{
+    "variants": {
+        "isactive=true": {"model":"aim:playermonitor_online" },
+        "isactive=false": {"model":"aim:playermonitor_offline"}
+    }
+}

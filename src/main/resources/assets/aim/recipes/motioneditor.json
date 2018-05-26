@@ -1,0 +1,30 @@
+{
+  "result": {
+    "item": "aim:motioneditor"
+  },
+  "pattern": [
+    "psp",
+    "dwd",
+    "prp"
+  ],
+  "type": "forge:ore_shaped",
+  "key": {
+    "p": {
+      "item": "aim:craftingcomponent",
+      "data": 2
+    },
+    "r": {
+      "item": "#BLOCKREDSTONE"
+    },
+    "s": {
+      "item": "minecraft:sugar"
+    },
+    "d": {
+      "item": "aim:craftingcomponent",
+      "data": 0
+    },
+    "w": {
+      "item": "#BLOCKSLIME"
+    }
+  }
+}

@@ -1,0 +1,26 @@
+{
+  "result": {
+    "item": "aim:shulkerboxrelay"
+  },
+  "pattern": [
+    "pSp",
+    "scs",
+    "pSp"
+  ],
+  "type": "minecraft:crafting_shaped",
+  "key": {
+    "p": {
+      "item": "aim:craftingcomponent",
+      "data": 2
+    },
+    "c": {
+      "item": "aim:slotselectionrelay"
+    },
+    "s": {
+      "item": "minecraft:shulker_shell"
+    },
+    "S": {
+      "item": "minecraft:purple_shulker_box"
+    }
+  }
+}

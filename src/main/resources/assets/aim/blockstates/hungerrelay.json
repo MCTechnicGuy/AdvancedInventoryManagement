@@ -1,0 +1,10 @@
+{
+    "variants": {
+        "isactive=true,mode=hunger": { "model":"aim:hungerrelay_hunger" },
+        "isactive=false,mode=hunger": { "model":"aim:hungerrelay_offline" },
+        "isactive=true,mode=efficiency": { "model":"aim:hungerrelay_efficiency" },
+        "isactive=false,mode=efficiency": { "model":"aim:hungerrelay_offline" },
+        "isactive=true,mode=always": { "model":"aim:hungerrelay_always" },
+        "isactive=false,mode=always": { "model":"aim:hungerrelay_offline" }
+    }
+}

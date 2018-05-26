@@ -1,0 +1,12 @@
+{
+    "variants": {
+        "isactive=true,mode=mainhand": { "model":"aim:shulkerboxrelay_mainhand" },
+        "isactive=false,mode=mainhand": { "model":"aim:shulkerboxrelay_offline" },
+        "isactive=true,mode=offhand": { "model":"aim:shulkerboxrelay_offhand" },
+        "isactive=false,mode=offhand": { "model":"aim:shulkerboxrelay_offline" },
+        "isactive=true,mode=slotbyid": { "model":"aim:shulkerboxrelay_slotbyid" },
+        "isactive=false,mode=slotbyid": { "model":"aim:shulkerboxrelay_offline" },
+        "isactive=true,mode=all": { "model":"aim:shulkerboxrelay_all" },
+        "isactive=false,mode=all": { "model":"aim:shulkerboxrelay_offline" }
+    }
+}

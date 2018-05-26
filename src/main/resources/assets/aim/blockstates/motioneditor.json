@@ -1,0 +1,16 @@
+{
+    "variants": {
+        "isactive=true,mode=down": { "model":"aim:motioneditor_online", "x": 90},
+        "isactive=false,mode=down": { "model":"aim:motioneditor_offline" },
+        "isactive=true,mode=up": { "model":"aim:motioneditor_online", "x": 270},
+        "isactive=false,mode=up": { "model":"aim:motioneditor_offline" },
+        "isactive=true,mode=north": { "model":"aim:motioneditor_online" },
+        "isactive=false,mode=north": { "model":"aim:motioneditor_offline" },
+        "isactive=true,mode=south": { "model":"aim:motioneditor_online", "y": 180},
+        "isactive=false,mode=south": { "model":"aim:motioneditor_offline" },
+        "isactive=true,mode=east": { "model":"aim:motioneditor_online", "y": 90},
+        "isactive=false,mode=east": { "model":"aim:motioneditor_offline" },
+        "isactive=true,mode=west": { "model":"aim:motioneditor_online", "y": 270},
+        "isactive=false,mode=west": { "model":"aim:motioneditor_offline" }
+    }
+}

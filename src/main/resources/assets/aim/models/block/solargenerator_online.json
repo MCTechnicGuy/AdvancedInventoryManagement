@@ -1,0 +1,9 @@
+{
+    "parent":"block/cube_bottom_top",
+    "textures": {
+        "side": "aim:blocks/solargenerator_online_side",
+        "top": "aim:blocks/solargenerator_online_top",
+        "bottom": "aim:blocks/solargenerator_online_bottom",
+        "all": "aim:blocks/solargenerator_online_side"
+    }
+}

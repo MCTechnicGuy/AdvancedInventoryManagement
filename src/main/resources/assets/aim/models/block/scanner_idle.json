@@ -1,0 +1,10 @@
+{
+    "parent": "aim:block/scanner_offline",
+    "textures": {
+        "particle": "aim:blocks/scanner_side",
+        "all": "aim:blocks/scanner_side",
+        "up": "aim:blocks/scanner_top_idle",
+        "door": "aim:blocks/scanner_side_door"
+    }
+    
+}

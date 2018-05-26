@@ -1,0 +1,21 @@
+{
+  "result": {
+    "item": "aim:aimupgrade",
+    "data": 0
+  },
+  "pattern": [
+    " r ",
+    "ppp",
+    " r "
+  ],
+  "type": "forge:ore_shaped",
+  "key": {
+    "p": {
+      "item": "aim:craftingcomponent",
+      "data": 2
+    },
+    "r": {
+      "item": "#DUSTREDSTONE"
+    }
+  }
+}

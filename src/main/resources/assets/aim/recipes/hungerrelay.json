@@ -1,0 +1,30 @@
+{
+  "result": {
+    "item": "aim:hungerrelay"
+  },
+  "pattern": [
+    "php",
+    "dcd",
+    "pnp"
+  ],
+  "type": "minecraft:crafting_shaped",
+  "key": {
+    "p": {
+      "item": "aim:craftingcomponent",
+      "data": 2
+    },
+    "c": {
+      "item": "minecraft:cake"
+    },
+    "d": {
+      "item": "aim:craftingcomponent",
+      "data": 0
+    },
+    "h": {
+      "item": "minecraft:hopper"
+    },
+    "n": {
+      "item": "aim:networkcable"
+    }
+  }
+}

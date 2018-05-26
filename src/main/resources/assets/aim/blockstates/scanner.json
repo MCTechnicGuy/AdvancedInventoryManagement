@@ -1,0 +1,7 @@
+{
+    "variants": {
+        "isactive=online": {"model":"aim:scanner_online" },
+        "isactive=offline": {"model":"aim:scanner_offline"},
+        "isactive=idle": {"model":"aim:scanner_idle"}
+    }
+}

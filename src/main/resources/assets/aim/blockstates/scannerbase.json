@@ -1,0 +1,13 @@
+{
+    "variants": {
+        "pos=undefined": { "model":"aim:scannerbase" },
+        "pos=straight_top": { "model":"aim:scannerbase_line_t" },
+        "pos=straight_bottom": { "model":"aim:scannerbase_line_t", "y": 180 },
+        "pos=straight_left": { "model":"aim:scannerbase_line", "y": 270},
+        "pos=straight_right": { "model":"aim:scannerbase_line", "y": 90 },
+        "pos=curve_1": { "model":"aim:scannerbase_curve" },
+        "pos=curve_2": { "model":"aim:scannerbase_curve", "y": 90},
+        "pos=curve_3": { "model":"aim:scannerbase_curve", "y": 180 },
+        "pos=curve_4": { "model":"aim:scannerbase_curve", "y": 270 }
+    }
+}

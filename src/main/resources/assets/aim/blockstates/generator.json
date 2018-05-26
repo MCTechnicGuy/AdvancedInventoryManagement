@@ -1,0 +1,10 @@
+{
+    "variants": {
+        "burning_stage=0": {"model":"aim:generator_0"},
+        "burning_stage=1": {"model":"aim:generator_1"},
+        "burning_stage=2": {"model":"aim:generator_2"},
+        "burning_stage=3": {"model":"aim:generator_3"},
+        "burning_stage=4": {"model":"aim:generator_4"},
+        "burning_stage=5": {"model":"aim:generator_5"}
+    }
+}

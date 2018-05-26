@@ -1,0 +1,327 @@
+
+# Chinese language file provided by CurseForge User  skyinr (https://minecraft.curseforge.com/members/skyinr)
+
+itemGroup.AIMTab=先进的背包管理
+
+tile.aimcore.name=数据核心
+tile.networkcable.name=网络电缆
+tile.inventoryrelay.name=数据中续器
+tile.armorrelay.name=装甲填装机
+tile.enderchestrelay.name=末影箱管理器
+tile.slotselectionrelay.name=插槽管理器
+tile.slotselectionrelay.name.short=背包中续器
+tile.hungerrelay.name=食物填装机
+tile.potionrelay.name=药水填装机
+tile.xprelay.name=经验填装机
+tile.xprelay.name.short=XP填装机
+tile.xprelay_liquid.name=经验填装机(液体)
+tile.xprelay_liquid.name.short=XP填装机(液体)
+tile.energyrelay.name=能量接收器
+tile.scanner.name=玩家扫描仪
+tile.scannerbase.name=扫描仪核心
+tile.playermonitor.name=玩家数据显示机
+tile.generator.name=固体燃料发电机
+tile.togglecable.name=电缆开关
+tile.motioneditor.name=运动管理器
+tile.hotbarselectioneditor.name=快捷栏管理器
+tile.positioneditor.name=位置编辑器
+
+tile.fluid_moltenxp.name=液体XP
+
+item.aimupgrade_security.name=安全升级
+item.aimupgrade_redstone.name=红石控制升级
+item.aimupgrade_energy.name=能源升级
+item.aimwrench.name=网络扳手
+item.infoprovider.name=网络信息提供者
+item.inventorymanagementmanual.name=说明书
+item.craftingcomponent_conductordust.name=导体尘埃
+item.craftingcomponent_playercrystal.name=玩家水晶
+item.craftingcomponent_reinforcedmetal.name=强化金属板
+item.aimpositioncard.name=位置卡
+
+key.changeAccess=改变AIM-可访问性
+key.categories.aim=先进的背包管理
+
+#Chat messages
+message.changedAccessibility.true=你现在可以访问任何AIM-机器。
+message.changedAccessibility.false=你的数据不能再被任何机器访问。
+message.coreaccess.false=这个网络属于 %1$s 您不允许修改网络!
+message.modechange=设备 %1$s 模式改变了。
+message.rsmodechange=红石行为更改为 %1$s 。
+message.noCore=这个设备没有连接到一个核心。
+message.playerCoreLocation.tag=发现核心(%1$s | %2$s | %3$s)在维度 %4$s (ID %5$s).
+message.playerCoreLocation.start=-----------AIM-该网络为玩家 %1$s-----------
+message.playerCoreLocation.end=----------------------------------------------------
+message.playerCoreLocation.noneFound=网络核心没有发现玩家。
+message.playerAccessibility.true=目前，您可以访问任何AIM设备。
+message.playerAccessibility.false=目前，任何设备都无法访问您的数据。
+
+message.scannererr.toomanyplayers=有太多的玩家在扫描仪上。
+message.scannererr.wrongsetup=扫描仪基块的摆放错误。
+message.scannererr.noPower=网络还没有足够的能量开始扫描。
+message.scannererr.needsRedstone=没有发现错误。使用红石信号开启扫描。
+message.scannererr.playerMissing=扫描的玩家不再在扫描仪平台上。
+message.scannererr.dataSendingFailed=玩家数据不能被发送到网络核心。
+message.scannererr.playerEqual=已扫描的玩家已链接到该网络。
+message.scannererr.playerNotIdentified=无法完成扫描,因为扫描被其他玩家所阻断。
+message.scannererr.accessdenied=数据不能被发送,因为你不允许modifiy网络。
+message.scannerfinish=扫描完成。玩家 %1$s 已连接到网络。
+
+message.slotidchanged.slotDesc.hotbar=插槽ID设置为 %1$s (快捷栏槽)
+message.slotidchanged.slotDesc.maininv=插槽ID设置为 %1$s (主要背包插槽)
+message.slotidchanged.slotDesc.armor=插槽ID设置为 %1$s (装甲槽)
+message.slotidchanged.slotDesc.offhand=插槽ID设置为 %1$s (随机的槽)
+message.slotidchanged.nocore=当没有核心连接时，不能更改插槽ID。
+
+message.true=是
+message.false=否
+
+message.noteleportallowed=不允许传送。请更改配置文件中的相关设置。
+message.teleportblocked=传送取消。目标位置有障碍。
+message.teleportnopower=传送取消。你的网络没有足够的能量。
+
+message.cardsaved=位置卡数据：目标设定%1$d, %2$d, %3$d (维度 %4$d).
+
+#Gui-Elements
+gui.AIMInfo.coreHeader=核心数据
+gui.AIMInfo.networkHeader=网络统计信息
+gui.AIMInfo.Power=核心能量:
+gui.AIMInfo.PowerDrain=用电:
+gui.AIMInfo.isActive=启动:
+gui.AIMInfo.boolTrue=是
+gui.AIMInfo.boolFalse=否
+gui.AIMInfo.connectedPlayer=连接玩家:
+gui.AIMInfo.noPlayer=没有
+gui.AIMInfo.isPlayerAccessible=玩家可访问:
+gui.AIMInfo.isSecured=保护：
+gui.AIMInfo.corePosition=核心位置:
+gui.AIMInfo.elementsConnected=元件连接：
+gui.AIMInfo.elementList=连接元件：
+gui.AIMInfo.Amount=数量:
+gui.AIMCore.Upgrades=升级:
+gui.AIMCore.Problems=问题:
+gui.AIMCore.Problems.none=没有问题。
+gui.AIMCore.Problems.noPlayer=消失的玩家
+gui.AIMCore.Problems.noPower=没有足够的能量
+gui.AIMCore.Problems.wrongSetup=无效的设置
+gui.AIMCore.Problems.noPlayer.desc=没有连接到这个网络的玩家。
+gui.AIMCore.Problems.noPower.desc=这个核心没有足够的能量提供
+gui.AIMCore.Problems.noPower.desc.2=这个网络所需的能量。
+gui.AIMCore.Problems.wrongSetup.desc=网络的物理设置是错误的。
+gui.AIMCore.Problems.wrongSetup.desc.2=也许是网络太大
+gui.AIMCore.Problems.wrongSetup.desc.3=有两个核心。
+
+fluid.fluid_moltenxp=液体XP
+
+#Container-Names
+container.aimcore=核心
+
+#Modes for the Inventory Relay
+mode.all=全部
+mode.maininv=主要的背包
+mode.hotbar=快捷栏
+
+#Modes for the Hunger Relay
+mode.always=总食物
+mode.hunger=如果玩家饿了 便喂食
+mode.efficiency=最快效率
+
+#Modes for the Potion Relay
+mode.inlet=药水- 输入, 瓶子 - 输出
+mode.outlet=药水 - 输出, 瓶子 - 输入
+
+#Modes for the Experience Bottle Relay
+mode.xp.inlet=XP - 输入, 瓶子 - 输出
+mode.xp.outlet=XP - 输出, 瓶子 - 输入
+
+#Modes for the Experience Liquid Relay
+mode.xp.liquid.moltenxp=液体XP (先进的背包管理)
+mode.xp.liquid.xpjuice=液体XP (OpenBlocks | EnderIO)
+
+#Modes for the Slot Selection Relay
+mode.mainhand=使用当前选定的快捷栏槽
+mode.offhand=用随机的槽
+mode.slotbyid=通过它的ID选择插槽（用空手右击来更改ID）
+
+#Modes for the Player Monitor
+mode.monitor.health=显示生命值
+mode.monitor.xp=显示XP-Level
+mode.monitor.hunger=显示饥饿
+mode.monitor.saturation=显示饱和
+mode.monitor.air=显示空中
+mode.monitor.motionx=显示X轴运动方向
+mode.monitor.motiony=显示Y轴运动方向
+mode.monitor.motionz=显示Z轴运动方向
+mode.monitor.armor=显示装甲值
+mode.monitor.posx=显示位置X
+mode.monitor.posy=显示位置Y
+mode.monitor.posz=显示位置Z
+mode.monitor.isburning=显示玩家是否在燃烧
+mode.monitor.isinwater=显示玩家是否在水中
+mode.monitor.isinlava=显示玩家是否在岩浆中
+mode.monitor.isairborne=显示玩家是否在空中
+mode.monitor.issneaking=显示玩家是否潜行
+mode.monitor.issprinting=显示玩家是否冲刺
+mode.monitor.isfalling=显示玩家是否掉落
+mode.monitor.selectedslot=显示当前选定的槽
+mode.monitor.dimension=显示玩家所在的维度
+
+mode.monitordisplay.health=健康:
+mode.monitordisplay.xp=等级：
+mode.monitordisplay.hunger=饥饿:
+mode.monitordisplay.saturation=饱和度:
+mode.monitordisplay.air=空气：
+mode.monitordisplay.motionx=坐标X：
+mode.monitordisplay.motiony=坐标Y:
+mode.monitordisplay.motionz=坐标Z:
+mode.monitordisplay.armor=装甲值：
+mode.monitordisplay.posx=位置X：
+mode.monitordisplay.posy=位置Y：
+mode.monitordisplay.posz=位置Z:
+mode.monitordisplay.isburning=燃烧：
+mode.monitordisplay.isinwater=在水里：
+mode.monitordisplay.isinlava=在岩浆中：
+mode.monitordisplay.isairborne=在空中：
+mode.monitordisplay.issneaking=潜行：
+mode.monitordisplay.issprinting=冲刺：
+mode.monitordisplay.isfalling=掉落：
+mode.monitordisplay.selectedslot=所选槽：
+mode.monitordisplay.dimension=维度：
+
+rsmode.monitor.0=停用
+rsmode.monitor.1=在变化中发出脉冲
+rsmode.monitor.2=在变化中发射脉冲（倒）
+rsmode.monitor.3=释放当前值（百分比）
+rsmode.monitor.4=发出当前值（倒）
+rsmode.monitor.5=以脉冲方式发出最后一次更改
+
+#Modes for the Motion Editor
+mode.down=减少Y轴方向运动
+mode.up=增加Y轴方向运动
+mode.north=减少Z轴方向运动
+mode.south=增加Z轴方向运动
+mode.east=增加X轴方向运动
+mode.west=减少X轴方向运动
+
+#Modes for the Energy Relay
+mode.charge.all=负责所有插槽
+mode.charge.hotbar=只收取物品栏上方
+mode.charge.mainhand=负责当前选中的插槽
+mode.charge.offhand=负责的插槽
+
+#Scanner Damage
+death.attack.scannerDamage=%1$s 被分析成能量。
+death.attack.scannerDamage.player=%1$s 分解并产生 %2$s.
+
+guide.header.welcome=欢迎来到
+guide.header.tableofcontents=内容
+guide.header.gettingstarted=开始
+guide.header.power=能量
+guide.header.networking=网络
+guide.header.playeraccess=玩家数据显示机
+guide.header.aimcore=数据核心
+guide.header.networkcable=网络电缆
+guide.header.inventoryrelay=数据中续器
+guide.header.armorrelay=装甲填装机
+guide.header.enderchestrelay=末影箱管理器
+guide.header.slotselectionrelay=插槽管理器
+guide.header.hungerrelay=饥饿填装机
+guide.header.potionrelay=药水填装机
+guide.header.xprelay=经验填装机
+guide.header.xprelay_liquid=经验填装机(液体)
+guide.header.energyrelay=能量接收器
+guide.header.scanner=玩家扫描仪
+guide.header.scannerbase=扫描仪核心
+guide.header.playermonitor=玩家数据显示机
+guide.header.generator=固体燃料发电机
+guide.header.aimupgrade=升级
+guide.header.aimupgrade.0=安全升级
+guide.header.aimupgrade.1=红石升级
+guide.header.aimupgrade.2=能源升级
+guide.header.aimwrench=网络扳手
+guide.header.infoprovider=网络信息提供者
+guide.header.inventorymanagementmanual=说明书
+guide.header.craftingcomponent=导体尘埃
+guide.header.moltenxp=熔融XP
+guide.header.togglecable=电缆开关
+guide.header.motioneditor=运动管理器
+guide.header.hotbarselectioneditor=快捷栏管理器
+guide.header.positioneditor=位置编辑器
+guide.header.aimpositioncard=位置卡
+
+guide.picture.playeraccess=当单击“网络信息提供者”时显示的聊天消息。
+guide.picture.gettingstarted=基本网络设置
+guide.picture.power=一个运行的发电机通过网线连接到一个核心
+guide.picture.networking=一个小型网络,所有设备连接网络电缆
+guide.picture.scanner=扫描仪工作设置:扫描仪块8包围扫描仪核心和连接到网络电缆底部
+
+guide.content.introduction=先进的背包管理是一个玩家设计自动化填充的mod。通过连接不同的设备到静态块网络，你可以操纵和修改玩家清单以及其他属性，如XP、饥饿或药剂效果。在本书中，右键单击或按ESC键可以随时返回此页来搜索内容。
+
+guide.content.gettingstarted=要开始目标，你需要建立一个简单的网络，至少有一个数据核心，一个电源和一个玩家扫描器连接网络电缆。一旦核心有足够的能量（你可以看到核心GUI的当前功率水平），设置并激活玩家扫描仪连接到网络（详情见Scanner Page）。一旦扫描过程完成，网络上线，您就可以将更多的设备连接到您的网络。如果您的网络在扫描后没有上线，那么您的核心GUI可能会帮助您找到问题所在。当问题出现在GUI中时，在它们上面悬停以获得对问题的更详细的描述。请注意，只要没有其他玩家被扫描，所有设备将只访问第一次扫描成功时连接的玩家。
+
+guide.content.power=网络中的每一块方块都需要一定数量的电力。整个网络需要的电源必须通过外部源或连接的发电机提供给您的数据核心，使您的网络保持在线状态。当电源不够网络运行时，设备将脱机。所需的功率量是这样计算的：%1$d RF/t基础电量+ %2$d RF/t每个网络电缆+ %3$d RF/t每个设备。您可以在核心或网络信息提供者的GUI中看到功耗和存储的电源。虽然使用的是RF,但数据核心也接受 TESLA, J (Mekanism) 和 Forge Power Units。在你的网络中的一些行为，像在药水装填机中装填药剂，也会从核心吸取能量，但功率只消耗一次。
+
+guide.content.playeraccess=当一个网络被绑定到一个特定的玩家时，网络就可以访问玩家的库存和他的大部分属性，比如XP或饥饿。虽然网络只能绑定到一个玩家，但玩家可以有多个网络连接到他。如果你不希望你的数据被修改，在键盘上按 %1$s ，可以切换玩家的可访问性。如果拒绝网络访问，连接到您的所有网络都将处于脱机状态，直到再次允许连接为止。如果您的网络离线，但没有显示任何问题，请确保玩家可以通过AIM网络访问。如果要检查当前的可访问性状态，请在玩家数据显示机中右键单击。
+
+guide.content.networking=当构建一个网络时，关于网络的结构和大小需要考虑不同的事情。您的网络没有物理最大大小，但您的设备只能放置在离数据核心很近的网络电缆。另外，你只能在网络中建立一个核心。虽然设备可以跨维度运行，但是设备所在的区块必须保持加载。为了使您的网络尽可能紧凑，AIM设备可以直接连接在一起，从而消除了它们之间的网络电缆的需要。它也可以阻止和畅通网络电缆上的每一个方面，用扳手右键单击即可。
+
+guide.content.aimcore=数据核心是你的网络中心，通过网络电缆或直接联系来控制所有其他连接到它的设备。它必须提供电才能工作，无论是从外部来源或是通过网络电缆连接。当你的网络核心是离线的，除发电机和扫描仪以外的所有其他网络设备也将离线。每个网络只能有一个核心。通过右键单击内核，您可以打开GUI，它提供了关于当前状态和问题的更多信息，这可能会导致您的网络脱机。数据核心可以使用红石、能源和安全升级。
+
+guide.content.networkcable=网络电缆可用于连接网络中的设备。在你的网络中使用的每一根电缆都会使功率消耗增加1。通过右键单击一个网络电缆的外层部分，你可以阻止或允许某一方的连接，使得它可以2种不同的电缆的线下互不连接。每个合成过程，你将得到8个电缆。
+
+guide.content.generator=固体燃料发电器是一种用来向电网供电的机器。右键单击发电机，你可以用任何可燃的固体燃料发电。当增加更多的燃料时，发电机会发热，产生更多的能量，每一级的热量提升一个RF。一旦达到5级热，添加更多的燃料将使燃烧时间增加到总共50000个刻度，但不会进一步加热发电机。为了给您的网络提供电力，发电机必须通过网络电缆连接到数据核心或直接连接到它。在一个网络中可以有多个燃料发电器。
+
+guide.content.inventoryrelay=数据中续器使您直接访问连接玩家的库存。当物品被输入到数据中续器中时，它们将直接被排序到玩家的背包中。当物品从库存继电器中抽出时，它们将从连接的玩家背包中移除。这与任何一种自动化、管道或存储系统兼容。库存继电器有三种不同的模式，你可以用扳手右键单击它选择：1：访问玩家的完整背包（不包括装备槽！）。2：只访问玩家的主要背包（快捷栏不包括）。3：只能访问玩家的物品栏上方
+
+guide.content.hungerrelay=食物填装机提供了玩家饥饿属性的访问。当任何可食用的物品输送到填装机，食品的饱和值添加到玩家的饥饿度里。这与玩家直接吃掉所增加的饱和度是相同的。饥饿继电器有三种模式，你可以用扳手右键单击它选择：1：总是接受食品（用于BUFF食物像金苹果）。只有饥饿时接受食物：只有饥饿时接受物品。3：只接受一个食物,如果食物饱食度较小，将需要玩家自己填满他的饥饿度。
+
+guide.content.aimupgrade=有三种不同的升级可以放进数据核心中。安全升级只能应用一次。当您的网络上安装了安全升级时，除您之外，没有任何玩家可以中断、扩展或访问网络的任何部分。使用管道等不同设备的自动化仍然是可以的。这些规则适用于整个网络。要让他人再次访问您的网络，只需从核心取出安全升级。
+
+guide.content.aimupgrade1=红石升级也只能安装一次在数据核心。当这个升级安装，你可以把红石信号应用到你的网络中。网络将不能在没有红石信号和离线的情况下在线。
+
+guide.content.aimupgrade2=能量升级最多可以安装15个升级。每个升级增加了你的网络总功率存储250000RF。和你数据核心的最大输入12500RF/T。当安装了15个能量升级时，这个数值达到顶值。
+
+guide.content.craftingcomponent=导体尘埃是所有机械的一个基本组成部分，因为它可以传递信号并帮助建立与玩家的连接。你可以从一个合成中得到12个导体灰尘。
+guide.content.craftingcomponent1=玩家水晶是数据核心和玩家扫描器的一部分，可以将网络绑定到玩家身上。
+guide.content.craftingcomponent2=加强金属板用于支撑所有目标机械的外壳，保护内部的电路。你可以从一个合成中得到2个板块。
+
+guide.content.scanner=玩家扫描仪用于连接玩家到目标网络。要建立这种连接，需要一个适当的扫描仪设置。如果要扫描玩家，扫描仪必须通过网络电缆连接到数据核心。电缆应该连接到扫描仪的底部。此外，扫描仪要被8个扫描仪基础块包围（看下页图示）。当安装完成后，扫描仪连接到数据核心，玩家将可以踏上扫描仪扫描块。如果没有错误，将在聊天框出现一条消息，说扫描可以开始。只要一个扫描仪基座块接收到红石信号，扫描过程将会开始。
+guide.content.scanner1=扫描一个玩家总共需要10秒才能完成。在此期间，玩家必须停留在扫描块的顶部，否则扫描将被取消。当扫描仪处于活动状态时，将从网络电源存储器中取出10rf/T，总共使用2000rf进行扫描。当一个玩家在扫描激光激活时试着离开扫描块，玩家会受到激光的伤害。扫描过程完成后，聊天中就会出现一条消息，说明扫描已经完成。当一切正常时，扫描的玩家将连接到网络，所有连接的设备都可以访问玩家的数据。
+
+guide.content.scannerbase=扫描仪基座是激活玩家扫描仪所需的方块。为了正常工作，扫描仪核心必须被8个扫描仪基块包围。
+
+guide.content.playermonitor=玩家数据显示器可以显示各种状态信息和发出红石信号。通过用扳手右键单击，可以改变显示模式，通过右键单击顶部的块，你可以改变红石模式。你可以用不同的方式来激活或停用某些红石自动化任务（如给食物给玩家，自动装备等）。所有模式列在下页。右键单击可以刷新数据。
+guide.content.playermonitor_modes=Display Modes:健康：显示玩家的健康状态 饥饿：显示玩家的饥饿值 饱和度：显示玩家的饱和值。玩家的护甲：显示玩家的护甲值 坐标：显示玩家的当前坐标 手持：显示玩家当前选择的快捷栏槽  维度：显示玩家当前的维度ID
+guide.content.playermonitor1=红石模式：关闭：不发出脉冲。变化：发出5-tick全功率红石脉冲时，电流值的变化会让发射的脉冲也变化。变化（倒）：与变化模式相反。发射电流值：发射电流百分比值为0（0%）和15（100%）之间的红石信号。 发射电流值（倒）：发射电流百分比值为15（0%）和0（100%）之间的红石信号。脉冲：属性变化时，发射变化之间的0（0%）和15（100%）的红石信号。
+
+guide.content.armorrelay=装甲装填器允许你进入玩家的装甲槽。通过在装填器中输入装备，你可以移除、添加或修改玩家当前的装甲配置。装甲继电器没有任何配置选项，这些物品会自动排序到适当的装甲槽中。
+
+guide.content.enderchestrelay=末影箱管理器可以连接玩家的末影箱。它的工作原理类似于背包中续器，但没有额外的配置选项。任何物品注入末影箱管理器都将转入玩家的背包。从末影箱管理器抽出物品将会把末影箱的对应物品立即删除。
+
+guide.content.slotselectionrelay=插槽管理器工作类似于背包中续器，但它只能访问一个插槽。玩家可以用扳手右键单击继电器改变：主手：只能访问当前选择（主手）快捷栏槽。随便：随机。指定ID：访问指定的槽数。通过右击空白块指定插槽ID。聊天中的消息会告诉你，当前选择的是哪个插槽ID。
+
+guide.content.potionrelay=药水填装机可以自动填装药水。它有两种工作模式，可以用扳手右键单击方块进行切换：填装模式：药水将被抽到继电器。一旦一个有效的物品被注入药水管理器，分配的药水效果被添加给玩家。药水将被转换成一个空的玻璃瓶，玻璃瓶将存储在管理器中。你可以用任何自动化的方法把玻璃瓶泵出来。如果玻璃瓶的内部缓冲区达到64，将无法自动添加药水效果给玩家。出口模式：当进入出口模式，玻璃瓶都被抽入为继电器。在出口模式下，管理器可以从玩家目前产生的效果中产生药剂效果，并从玩家身上移除效果。所创造的药剂具有相同的等级和持续时间。创建一个单一的药水从继电器将从你的网络流失 %1$d 的RF。
+
+guide.content.xprelay=经验管理器非常像药水填装机（见药水填装机文章）。每个瓶子被抽出来，将从玩家身上移除 %1$d XP点。每个瓶子被泵入，将给玩家添加在 %2$d 到 %3$d 之间的xp。
+
+guide.content.xprelay_liquid=经验管理器（液体），像正常经验管理器，可以访问玩家的XP点。但不会产生瓶子，而是产生液体。中续器产生的液体是Molten XP（AIM）或液体XP（EnderIO），你可以通过用扳手右击继电器来在两种液体之间切换。对于泵入继电器的每一个MB的流体，都将产生 %1$d 的XP点。从接力器中抽出来的每一个MB的液体，都将从玩家身上移出 %2$d XP点。这样可以更有效地存储和利用XP，因为 %3$d XP可以存储在正常的16000 MB的罐子中。
+
+guide.content.energyrelay=能量接收器可以接受来自外部来源的任何形式的能量，并将其转移到连接玩家的背包中，从而对接受RF,TESLA和Forge Power的任何物品进行充电。通过改变能量继电器的模式，你可以限制玩家库存中的哪个插槽受到充电的影响。
+
+guide.content.aimwrench=网络扳手是在网络中配置、构造和破坏方块的工具。你可以用这个扳手右击大多数装置，从而在不同的模式之间切换。通过右键单击任何目标块，可以立即破坏该块而无任何挖掘延迟。您也可以使用其他MODS的扳手，它们也适用于大多数机器。
+
+guide.content.infoprovider=网络信息提供者是获取关于您的网络更详细信息的工具。通过右键单击网络中的任何一块，您可以打开一个GUI，向您显示更多关于网络的详细信息，如电源统计信息、连接设备和玩家可访问性。通过右键单击空气，会显示一条聊天消息，显示连接到您的所有核心的位置以及当前的可访问状态。
+
+guide.content.inventorymanagementmanual=说明书是你的目标指南。在这本书中，你可以得到关于mod各个方面的信息。如果你丢失了这本书，只需用左边显示的配方制作一个新的。
+
+guide.content.moltenxp=XP是由XP继电器（液体）产生的液体，当XP从玩家中取出并从管理器作为流体抽出。液体XP可以放在桶中，但除了存储XP之外没有真正的用途。1桶熔融XP转换为 %1$d XP点。
+
+guide.content.togglecable=电缆开关的工作就像一个正常的网线，但通过红石信号，你可以让它阻止进行任何网络信号，红石信号应用时，将使所有设备与核心离线。这是启用或禁用某些功能使用红石网络有用。这是从网络上切断装置也不会流失任何权力从网络除非红石信号从开关电缆拆除。
+
+guide.content.motioneditor=运动管理器可以用来操纵玩家的速度。当设备接收到红石信号，速度将基于信号的强度来添加到所连接玩家。红石强度的1加1方块/秒，15的信号强度增加15块/秒的速度。方向（positive-x，负X，正..）可以用扳手右键单击动作管理器来选择。当每添加 1B/s 的速度,网络将多抽取 %1$d RF。15B/S的运动编辑需要 %2$d的RF。
+
+guide.content.hotbarselectioneditor=在快捷栏管理器可以迫使玩家选择一个特定快捷栏。当设备接收到红石脉冲，当前选择的插槽会根据在快捷栏选择编辑可以迫使玩家选择一个特定的连接槽的快捷栏。当设备接收到红石脉冲时，插槽会根据信号强度来选择。1信号强度将迫使第一快捷栏槽的选择、信号强度的9或以上，将迫使最后的选择（第九）快捷栏槽。每次接收新脉冲时，选中的插槽将被更新（详情请参阅“运动管理器”）。如果信号强度下降到0，它不会更新。每个插槽选择将从网络中流失 %1$d 的RF。
+
+guide.content.positioneditor=编辑的位置可以改变玩家在世界的位置，从而传送他。如果要设置目标，需要右键单击位置编辑器，并使用所描述的位置卡。这样做后，向设备发射红石脉冲。一个隐形传送过程将从网络中消耗 %1$d 的RF。
+
+guide.content.aimpositioncard=位置卡片用于存储世界上的特定位置。当使用位置卡右键单击一个方块时，该卡将保存被单击方块的坐标和维度。当前位置卡只能用于设置位置编辑器的目的地。右键单击一个位置编辑器，将保存在卡片上的数据传递给编辑器。

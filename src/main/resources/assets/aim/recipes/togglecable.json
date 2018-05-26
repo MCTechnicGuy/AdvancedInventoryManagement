@@ -1,0 +1,22 @@
+{
+  "result": {
+    "item": "aim:togglecable"
+  },
+  "pattern": [
+    "rtr",
+    "ccc",
+    "rtr"
+  ],
+  "type": "forge:ore_shaped",
+  "key": {
+    "r": {
+      "item": "#DUSTREDSTONE"
+    },
+    "c": {
+      "item": "aim:networkcable"
+    },
+    "t": {
+      "item": "minecraft:redstone_torch"
+    }
+  }
+}

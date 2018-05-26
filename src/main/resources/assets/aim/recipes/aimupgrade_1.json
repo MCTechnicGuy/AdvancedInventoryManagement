@@ -1,0 +1,24 @@
+{
+  "result": {
+    "item": "aim:aimupgrade",
+    "data": 1
+  },
+  "pattern": [
+    " r ",
+    "tpt",
+    " r "
+  ],
+  "type": "forge:ore_shaped",
+  "key": {
+    "p": {
+      "item": "aim:craftingcomponent",
+      "data": 2
+    },
+    "r": {
+      "item": "#DUSTREDSTONE"
+    },
+    "t": {
+      "item": "minecraft:redstone_torch"
+    }
+  }
+}

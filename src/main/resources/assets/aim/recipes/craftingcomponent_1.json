@@ -1,0 +1,27 @@
+{
+  "result": {
+    "item": "aim:craftingcomponent",
+    "data": 1
+  },
+  "pattern": [
+    "ded",
+    "obo",
+    "ded"
+  ],
+  "type": "forge:ore_shaped",
+  "key": {
+    "b": {
+      "item": "#GEMDIAMOND"
+    },
+    "d": {
+      "item": "aim:craftingcomponent",
+      "data": 0
+    },
+    "e": {
+      "item": "#ENDERPEARL"
+    },
+    "o": {
+      "item": "#OBSIDIAN"
+    }
+  }
+}
