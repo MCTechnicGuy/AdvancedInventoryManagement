@@ -1,12 +1,8 @@
 package com.mctechnicguy.aim.tileentity;
 
 import com.mctechnicguy.aim.AdvancedInventoryManagement;
-import com.mctechnicguy.aim.ModElementList;
 import net.minecraft.entity.player.EntityPlayerMP;
-import net.minecraft.item.ItemStack;
 import net.minecraft.network.play.server.SPacketEntityVelocity;
-
-import javax.annotation.Nonnull;
 
 public class TileEntityMotionEditor extends TileEntityAIMDevice {
 
@@ -25,17 +21,5 @@ public class TileEntityMotionEditor extends TileEntityAIMDevice {
                 rsStatus = newStatus;
             }
         }
-    }
-
-    @Nonnull
-    @Override
-    public String getLocalizedName() {
-        return "tile.motioneditor.name";
-    }
-
-    @Nonnull
-    @Override
-    public ItemStack getDisplayStack() {
-        return new ItemStack(ModElementList.blockMotionEditor);
     }
 }

@@ -2,8 +2,6 @@ package com.mctechnicguy.aim.blocks;
 
 import com.mctechnicguy.aim.AdvancedInventoryManagement;
 import com.mctechnicguy.aim.ModElementList;
-import com.mctechnicguy.aim.gui.IManualEntry;
-import com.mctechnicguy.aim.items.ItemAIMInfoProvider;
 import com.mctechnicguy.aim.tileentity.TileEntityNetworkSignalBridge;
 import com.mctechnicguy.aim.util.AIMUtils;
 import net.minecraft.block.properties.PropertyBool;
@@ -25,7 +23,7 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-public class BlockNetworkSignalBridge extends BlockAIMDevice implements IManualEntry {
+public class BlockNetworkSignalBridge extends BlockAIMDevice {
 
     public static final String NAME = "networksignalbridge";
     private static final PropertyBool UP = PropertyBool.create("up");
@@ -37,44 +35,36 @@ public class BlockNetworkSignalBridge extends BlockAIMDevice implements IManualE
 
     public BlockNetworkSignalBridge() {
         super(NAME);
-        this.setDefaultState(this.blockState.getBaseState().withProperty(ISACTIVE, false));
+        this.setDefaultState(this.blockState.getBaseState().withProperty(ISACTIVE, false).withProperty(DOWN, false).withProperty(NORTH, false).withProperty(EAST, false)
+                .withProperty(WEST, false).withProperty(ISACTIVE, false));
     }
 
     @Override
-    public boolean onBlockActivated(@Nonnull World world, BlockPos pos, IBlockState state, EntityPlayer player, EnumHand hand, EnumFacing side, float hitX, float hitY, float hitZ) {
-        if (player == null || player.getHeldItem(hand).getItem() instanceof ItemAIMInfoProvider) return false;
-        ItemStack heldItem = player.getHeldItem(hand);
-
-        if (player.isSneaking() && !heldItem.isEmpty() && heldItem.getItem() != ModElementList.itemAIMWrench && AIMUtils.isWrench(heldItem)) {
-            this.destroyWithWrench(player, world, pos, heldItem);
-            return true;
-        }
-        if (heldItem.getItem() == ModElementList.itemPositionCard) {
-            TileEntity bridge = world.getTileEntity(pos);
-            if (bridge instanceof TileEntityNetworkSignalBridge) {
-                ((TileEntityNetworkSignalBridge)bridge).transferCardData(heldItem, player);
-            }
-            return true;
-        }
-
-        if (world.isRemote) return true;
-
-        TileEntity te = (world.getTileEntity(pos));
-        if (te instanceof TileEntityNetworkSignalBridge && ((TileEntityNetworkSignalBridge)te).isPlayerAccessAllowed(player)) {
-
-            if (AIMUtils.isWrench(heldItem)) {
-                BlockPos destination = ((TileEntityNetworkSignalBridge)te).getDestination();
-                if (destination == null) {
-                    AIMUtils.sendChatMessage("message.nodestinationset", player, TextFormatting.AQUA);
-                } else {
-                    AIMUtils.sendChatMessageWithArgs("message.destinationat", player, TextFormatting.AQUA, destination.getX(), destination.getY(), destination.getZ());
+    protected EnumRightClickResult onBlockActivated(@Nonnull World world, BlockPos pos, IBlockState state, @Nullable EntityPlayer player, EnumHand hand, EnumFacing side, @Nullable TileEntity tileEntity, ItemStack heldItem) {
+        EnumRightClickResult superResult = super.onBlockActivated(world, pos, state, player, hand, side, tileEntity, heldItem);
+        if (superResult == EnumRightClickResult.ACTION_PASS) {
+            if (heldItem.getItem() == ModElementList.itemPositionCard) {
+                if (tileEntity instanceof TileEntityNetworkSignalBridge && !world.isRemote) {
+                    ((TileEntityNetworkSignalBridge)tileEntity).transferCardData(heldItem, player);
                 }
-                return true;
+                return EnumRightClickResult.ACTION_DONE;
             }
-        }
-        return false;
-    }
 
+            TileEntity te = (world.getTileEntity(pos));
+            if (te instanceof TileEntityNetworkSignalBridge && AIMUtils.isWrench(heldItem)) {
+                if (!world.isRemote) {
+                    BlockPos destination = ((TileEntityNetworkSignalBridge)te).getDestination();
+                    if (destination == null) {
+                        AIMUtils.sendChatMessage("message.nodestinationset", player, TextFormatting.AQUA);
+                    } else {
+                        AIMUtils.sendChatMessageWithArgs("message.destinationat", player, TextFormatting.AQUA, destination.getX(), destination.getY(), destination.getZ());
+                    }
+                }
+                return EnumRightClickResult.ACTION_DONE;
+            }
+            return EnumRightClickResult.ACTION_PASS;
+        } else return superResult;
+    }
 
     @Override
     public boolean doesSideBlockRendering(IBlockState state, IBlockAccess world, BlockPos pos, EnumFacing face) {
@@ -130,17 +120,6 @@ public class BlockNetworkSignalBridge extends BlockAIMDevice implements IManualE
         return new BlockStateContainer(this, UP, DOWN, NORTH, SOUTH, EAST, WEST, ISACTIVE);
     }
 
-    @Nonnull
-    @Override
-    public IBlockState getStateFromMeta(int meta) {
-        return getDefaultState().withProperty(UP, false).withProperty(DOWN, false).withProperty(NORTH, false).withProperty(EAST, false)
-                .withProperty(WEST, false).withProperty(ISACTIVE, false);
-    }
-
-    @Override
-    public int getMetaFromState(IBlockState state) {
-        return 0;
-    }
     @Nullable
     @Override
     public TileEntity createNewTileEntity(World world, int i) {
@@ -149,28 +128,8 @@ public class BlockNetworkSignalBridge extends BlockAIMDevice implements IManualE
 
     @Nonnull
     @Override
-    public String getManualName() {
-        return NAME;
-    }
-
-    @Override
-    public int getPageCount() {
-        return 1;
-    }
-
-    @Override
-    public boolean doesProvideOwnContent() {
-        return false;
-    }
-
-    @Nonnull
-    @Override
     public Object[] getParams(int page) {
         return new Object[] {AdvancedInventoryManagement.POWER_PER_BRIDGE};
     }
 
-    @Override
-    public boolean needsSmallerFont() {
-        return false;
-    }
 }

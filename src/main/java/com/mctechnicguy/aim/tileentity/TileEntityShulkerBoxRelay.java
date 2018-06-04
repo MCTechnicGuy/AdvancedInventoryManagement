@@ -1,6 +1,5 @@
 package com.mctechnicguy.aim.tileentity;
 
-import com.mctechnicguy.aim.ModElementList;
 import com.mctechnicguy.aim.util.NumberedItemStackHolder;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockShulkerBox;
@@ -256,15 +255,4 @@ public class TileEntityShulkerBoxRelay extends TileEntitySlotSelectionRelay {
         return this.filter == null || this.filter.isEmpty();
     }
 
-    @Nonnull
-    @Override
-    public String getLocalizedName() {
-        return "tile.shulkerboxrelay.name";
-    }
-
-    @Nonnull
-    @Override
-    public ItemStack getDisplayStack() {
-        return new ItemStack(ModElementList.blockShulkerBoxRelay);
-    }
 }

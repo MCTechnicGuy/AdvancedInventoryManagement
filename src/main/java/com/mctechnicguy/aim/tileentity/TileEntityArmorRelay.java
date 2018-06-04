@@ -1,7 +1,5 @@
 package com.mctechnicguy.aim.tileentity;
 
-import com.mctechnicguy.aim.ModElementList;
-
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumFacing;
 import net.minecraftforge.common.capabilities.Capability;
@@ -56,17 +54,5 @@ public class TileEntityArmorRelay extends TileEntityAIMDevice implements IItemHa
     public int getSlotLimit(int slot) {
         return isCoreActive() ? getPlayer().getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, EnumFacing.NORTH).getSlotLimit(slot) : 64;
     }
-
-	@Nonnull
-    @Override
-	public String getLocalizedName() {
-		return "tile.armorrelay.name";
-	}
-
-	@Nonnull
-    @Override
-	public ItemStack getDisplayStack() {
-		return new ItemStack(ModElementList.blockArmorRelay);
-	}
 
 }

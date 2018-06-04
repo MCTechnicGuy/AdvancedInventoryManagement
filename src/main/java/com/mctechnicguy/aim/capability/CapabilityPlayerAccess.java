@@ -1,10 +1,7 @@
 package com.mctechnicguy.aim.capability;
 
-import java.util.concurrent.Callable;
-
 import com.mctechnicguy.aim.AdvancedInventoryManagement;
 import com.mctechnicguy.aim.ModInfo;
-
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTBase;
 import net.minecraft.nbt.NBTTagCompound;
@@ -15,6 +12,7 @@ import net.minecraftforge.common.capabilities.ICapabilitySerializable;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import java.util.concurrent.Callable;
 
 public class CapabilityPlayerAccess implements ICapabilitySerializable {
 
@@ -81,7 +79,7 @@ public class CapabilityPlayerAccess implements ICapabilitySerializable {
 	public static class Factory implements Callable<CapabilityPlayerAccess> {
 		@Nullable
         @Override
-		public CapabilityPlayerAccess call() throws Exception {
+		public CapabilityPlayerAccess call() {
 			return null;
 		}
 	}

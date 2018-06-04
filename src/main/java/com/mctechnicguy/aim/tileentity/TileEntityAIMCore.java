@@ -5,6 +5,8 @@ import com.mctechnicguy.aim.blocks.BlockAIMCore;
 import com.mctechnicguy.aim.items.ItemAIMUpgrade;
 import com.mctechnicguy.aim.util.*;
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.client.gui.ScaledResolution;
+import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.ItemStackHelper;
@@ -41,7 +43,7 @@ import java.util.UUID;
 		@Optional.Interface(iface="net.darkhax.tesla.api.ITeslaConsumer", modid="tesla"),
 		@Optional.Interface(iface="ic2.api.energy.tile.IEnergySink", modid="ic2")
 })
-public class TileEntityAIMCore extends TileEntity implements IInventory, ITickable, IEnergyStorage, net.darkhax.tesla.api.ITeslaConsumer, ic2.api.energy.tile.IEnergySink {
+public class TileEntityAIMCore extends TileEntity implements IInventory, ITickable, IEnergyStorage, IProvidesNetworkInfo, net.darkhax.tesla.api.ITeslaConsumer, ic2.api.energy.tile.IEnergySink {
 
 	private static final float C_MAX_POWER = 1000000F;
 	private static final float C_MAX_POWER_DRAIN = 50000F;
@@ -755,5 +757,26 @@ public class TileEntityAIMCore extends TileEntity implements IInventory, ITickab
 	@Override
 	public boolean canReceive() {
 		return MaxPower() > Power;
+	}
+
+	@Override
+	public String getNameForOverlay() {
+		return I18n.format("tile.aimcore.name");
+	}
+
+	@Override
+	public void renderStatusInformation(ScaledResolution resolution) {
+
+	}
+
+	@Nullable
+	@Override
+	public NBTTagCompound getTagForOverlayUpdate() {
+		return null;
+	}
+
+	@Override
+	public void handleTagForOverlayUpdate(NBTTagCompound nbt) {
+
 	}
 }

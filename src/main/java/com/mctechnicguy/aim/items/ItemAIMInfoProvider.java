@@ -5,7 +5,6 @@ import com.mctechnicguy.aim.gui.IManualEntry;
 import com.mctechnicguy.aim.util.AIMUtils;
 import com.mctechnicguy.aim.util.NBTUtils;
 import com.mctechnicguy.aim.util.NetworkUtils;
-
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -16,7 +15,6 @@ import net.minecraft.util.EnumActionResult;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
 
@@ -33,13 +31,13 @@ public class ItemAIMInfoProvider extends Item implements IManualEntry{
 		this.setRegistryName(NAME);
 	}
 
-
-
-	@Nonnull
+    @Nonnull
 	@Override
 	public EnumActionResult onItemUse(@Nonnull EntityPlayer player, @Nonnull World world, @Nonnull BlockPos pos, EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ)
     {
-		return EnumActionResult.PASS;
+        if (player.isSneaking()) return EnumActionResult.PASS;
+        if (world.isRemote) return EnumActionResult.SUCCESS;
+		return NetworkUtils.checkNetworkStats(player, world, pos);
     }
 
 	@Nonnull
@@ -48,14 +46,8 @@ public class ItemAIMInfoProvider extends Item implements IManualEntry{
     {
 		if (playerIn.isSneaking() && !worldIn.isRemote) {
 			this.displayPlayerDetails(worldIn, playerIn);
-			return new ActionResult(EnumActionResult.SUCCESS, playerIn.getHeldItem(hand));
-		} else if (!worldIn.isRemote) {
-			RayTraceResult raytraceresult = this.rayTrace(worldIn, playerIn, false);
-			if (raytraceresult != null && raytraceresult.typeOfHit == RayTraceResult.Type.BLOCK) {
-				return new ActionResult<ItemStack>(NetworkUtils.checkNetworkStats(playerIn, worldIn, raytraceresult.getBlockPos()), playerIn.getHeldItem(hand));
-			}
 		}
-        return new ActionResult(EnumActionResult.SUCCESS, playerIn.getHeldItem(hand));
+        return new ActionResult<>(EnumActionResult.SUCCESS, playerIn.getHeldItem(hand));
     }
 
 

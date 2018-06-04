@@ -1,14 +1,10 @@
 package com.mctechnicguy.aim.tileentity;
 
 import com.mctechnicguy.aim.AdvancedInventoryManagement;
-import com.mctechnicguy.aim.ModElementList;
 import com.mctechnicguy.aim.network.PacketHelper;
 import com.mctechnicguy.aim.network.PacketHotbarSlotChanged;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.entity.player.InventoryPlayer;
-import net.minecraft.item.ItemStack;
-
-import javax.annotation.Nonnull;
 
 public class TileEntityHotbarSelectionEditor extends TileEntityAIMDevice {
 
@@ -25,17 +21,5 @@ public class TileEntityHotbarSelectionEditor extends TileEntityAIMDevice {
                 rsStatus = newStatus;
             }
         }
-    }
-
-    @Nonnull
-    @Override
-    public String getLocalizedName() {
-        return "tile.hotbarselectioneditor.name";
-    }
-
-    @Nonnull
-    @Override
-    public ItemStack getDisplayStack() {
-        return new ItemStack(ModElementList.blockHotbarSelectionEditor);
     }
 }

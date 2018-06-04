@@ -93,29 +93,7 @@ public class BlockToggleCable extends BlockNetworkCable {
 
     @Nonnull
     @Override
-    public String getManualName() {
-        return NAME;
-    }
-
-    @Override
-    public int getPageCount() {
-        return 1;
-    }
-
-    @Override
-    public boolean doesProvideOwnContent() {
-        return false;
-    }
-
-    @Nonnull
-    @Override
     public Object[] getParams(int page) {
         return new Object[] {};
     }
-
-    @Override
-    public boolean needsSmallerFont() {
-        return false;
-    }
-
 }

@@ -1,15 +1,11 @@
 package com.mctechnicguy.aim;
 
 import com.mctechnicguy.aim.container.ContainerAIMCore;
-import com.mctechnicguy.aim.network.PacketHelper;
-import com.mctechnicguy.aim.network.PacketKeyPressed;
-import com.mctechnicguy.aim.network.PacketOpenInfoGUI;
-import com.mctechnicguy.aim.tileentity.TileEntityAIMCore;
 import com.mctechnicguy.aim.gui.GuiAIMCore;
 import com.mctechnicguy.aim.gui.GuiAIMGuide;
 import com.mctechnicguy.aim.gui.GuiNetworkInfo;
-import com.mctechnicguy.aim.network.PacketHotbarSlotChanged;
-
+import com.mctechnicguy.aim.network.*;
+import com.mctechnicguy.aim.tileentity.TileEntityAIMCore;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
@@ -48,6 +44,13 @@ public class CommonProxy implements IGuiHandler {
 				return null;
 			}
 		}, PacketHotbarSlotChanged.class, 2, Side.CLIENT);
+		PacketHelper.wrapper.registerMessage(new IMessageHandler<PacketUpdateOverlayInfo, IMessage>() {
+			@Nullable
+			@Override
+			public IMessage onMessage(PacketUpdateOverlayInfo message, MessageContext ctx) {
+				return null;
+			}
+		}, PacketUpdateOverlayInfo.class, 3, Side.CLIENT);
 		PacketHelper.wrapper.registerMessage(PacketKeyPressed.PacketKeyPressedHandler.class, PacketKeyPressed.class, 0, Side.SERVER);
 	}
 

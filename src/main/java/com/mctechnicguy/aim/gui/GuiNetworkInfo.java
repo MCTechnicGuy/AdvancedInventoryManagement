@@ -156,7 +156,7 @@ public class GuiNetworkInfo extends GuiScreen {
 		BgStartY = (this.height / 2) - (BGY / 2);
 
 		for (TileEntityNetworkElement te : core.registeredDevices) {
-			String key = te.getLocalizedName();
+			String key = te.getUnlocalizedBlockName();
 			if (!devices.containsKey(key)) {
 				devices.put(key, 1);
 				stackMap.put(key, te.getDisplayStack());

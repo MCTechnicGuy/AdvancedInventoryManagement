@@ -3,7 +3,6 @@ package com.mctechnicguy.aim.tileentity;
 import com.mctechnicguy.aim.AdvancedInventoryManagement;
 import com.mctechnicguy.aim.ModElementList;
 import com.mctechnicguy.aim.util.ModCompatHelper;
-import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumFacing;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.fluids.Fluid;
@@ -37,16 +36,6 @@ public class TileEntityXPRelayLiquid extends TileEntityAIMDevice implements IFlu
     }
 
     @Override
-    public String getLocalizedName() {
-        return "tile.xprelay_liquid.name.short";
-    }
-
-    @Override
-    public ItemStack getDisplayStack() {
-        return new ItemStack(ModElementList.blockXPRelayLiquid);
-    }
-
-    @Override
     public IFluidTankProperties[] getTankProperties() {
         return new IFluidTankProperties[] {new FluidTankProperties(new FluidStack(getCurrentFluid(), isCoreActive() ? getFluidAmountFromPlayerXP() : 0), isCoreActive() ? Integer.MAX_VALUE - getFluidAmountFromPlayerXP() : 0)};
     }
@@ -75,7 +64,7 @@ public class TileEntityXPRelayLiquid extends TileEntityAIMDevice implements IFlu
     }
 
     private boolean isValidFluid(Fluid fluid) {
-        return fluid.equals(ModElementList.fluidMoltenXP) || (AdvancedInventoryManagement.USE_LIQUID_XP && ModCompatHelper.xpjuice != null && fluid.equals(ModCompatHelper.xpjuice));
+        return fluid.equals(ModElementList.fluidMoltenXP) || (AdvancedInventoryManagement.USE_LIQUID_XP && fluid.equals(ModCompatHelper.xpjuice));
     }
 
     @Override

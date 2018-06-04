@@ -2,7 +2,6 @@ package com.mctechnicguy.aim.network;
 
 import com.mctechnicguy.aim.AdvancedInventoryManagement;
 import com.mctechnicguy.aim.util.AIMUtils;
-
 import io.netty.buffer.ByteBuf;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.text.TextFormatting;
@@ -31,14 +30,7 @@ public class PacketKeyPressed implements IMessage {
 		@Nullable
         @Override
 		public IMessage onMessage(final PacketKeyPressed message, @Nonnull final MessageContext ctx) {
-			AdvancedInventoryManagement.proxy.addScheduledTask(new Runnable() {
-
-				@Override
-				public void run() {
-					processMessage(message, ctx);
-				}
-				
-			}, ctx);
+			AdvancedInventoryManagement.proxy.addScheduledTask(() -> processMessage(message, ctx), ctx);
 			return null;
 		}
 		

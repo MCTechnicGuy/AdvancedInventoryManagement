@@ -38,14 +38,7 @@ public class PacketHotbarSlotChanged implements IMessage {
 		@Nullable
         @Override
 		public IMessage onMessage(@Nonnull final PacketHotbarSlotChanged message, @Nonnull final MessageContext ctx) {
-			AdvancedInventoryManagement.proxy.addScheduledTask(new Runnable() {
-
-				@Override
-				public void run() {
-					processMessage(message, ctx);
-				}
-				
-			}, ctx);
+			AdvancedInventoryManagement.proxy.addScheduledTask(() -> processMessage(message, ctx), ctx);
 			return null;
 		}
 		

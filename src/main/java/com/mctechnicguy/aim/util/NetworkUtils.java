@@ -1,16 +1,13 @@
 package com.mctechnicguy.aim.util;
 
-import com.mctechnicguy.aim.blocks.BlockAIMMachine;
+import com.mctechnicguy.aim.blocks.BlockAIMBase;
 import com.mctechnicguy.aim.blocks.BlockNetworkCable;
 import com.mctechnicguy.aim.blocks.BlockNetworkSignalBridge;
 import com.mctechnicguy.aim.blocks.IAIMGenerator;
 import com.mctechnicguy.aim.network.PacketHelper;
 import com.mctechnicguy.aim.network.PacketOpenInfoGUI;
-import com.mctechnicguy.aim.tileentity.TileEntityAIMCore;
-import com.mctechnicguy.aim.tileentity.TileEntityAIMDevice;
-import com.mctechnicguy.aim.tileentity.TileEntityNetworkCable;
-import com.mctechnicguy.aim.tileentity.TileEntityNetworkElement;
-
+import com.mctechnicguy.aim.network.PacketUpdateOverlayInfo;
+import com.mctechnicguy.aim.tileentity.*;
 import net.minecraft.block.Block;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
@@ -35,7 +32,7 @@ public class NetworkUtils {
 	}
 
 	public static boolean isNetworkDevice(Block target) {
-		return target instanceof BlockAIMMachine;
+		return target instanceof BlockAIMBase;
 	}
 
 	public static boolean isNetworkBridge(Block target) {
@@ -67,15 +64,29 @@ public class NetworkUtils {
 		if (te instanceof TileEntityNetworkElement) {
 			if (!((TileEntityNetworkElement) te).hasCore()) {
 				AIMUtils.sendChatMessage("message.noCore", player, TextFormatting.RED);
+                return EnumActionResult.SUCCESS;
 			} else if (((TileEntityNetworkElement) te).getCore().isPlayerAccessAllowed(player)) {
 				displayInformation(player, world, ((TileEntityNetworkElement) te).getCore());
 			}
+            return EnumActionResult.SUCCESS;
 		} else if (te instanceof TileEntityAIMCore && ((TileEntityAIMCore) te).isPlayerAccessAllowed(player)) {
 			displayInformation(player, world, (TileEntityAIMCore) te);
-		}
-		return EnumActionResult.SUCCESS;
+            return EnumActionResult.SUCCESS;
+		} else {
+            return EnumActionResult.PASS;
+        }
 	}
-	
+
+	@Nonnull
+	public static EnumActionResult updateOverlayData(@Nonnull EntityPlayer player, @Nonnull World world, @Nonnull BlockPos pos) {
+		TileEntity te = world.getTileEntity(pos);
+		if (te instanceof IProvidesNetworkInfo && ((IProvidesNetworkInfo)te).getTagForOverlayUpdate() != null) {
+            PacketHelper.sendPacketToClient(new PacketUpdateOverlayInfo(te.getPos(), ((IProvidesNetworkInfo)te).getTagForOverlayUpdate()), (EntityPlayerMP) player);
+            return EnumActionResult.SUCCESS;
+		}
+		return EnumActionResult.PASS;
+	}
+
 	private static void displayInformation(EntityPlayer player, @Nonnull World world, @Nonnull TileEntityAIMCore core) {
 		if (!world.isRemote) {
 			PacketHelper.sendPacketToClient(new PacketOpenInfoGUI(core), (EntityPlayerMP) player);

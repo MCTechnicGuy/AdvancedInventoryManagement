@@ -1,6 +1,5 @@
 package com.mctechnicguy.aim.tileentity;
 
-import com.mctechnicguy.aim.ModElementList;
 import net.darkhax.tesla.api.ITeslaConsumer;
 import net.darkhax.tesla.api.ITeslaHolder;
 import net.minecraft.entity.player.InventoryPlayer;
@@ -13,8 +12,6 @@ import net.minecraftforge.common.capabilities.CapabilityInject;
 import net.minecraftforge.energy.CapabilityEnergy;
 import net.minecraftforge.energy.IEnergyStorage;
 import net.minecraftforge.fml.common.Optional;
-
-import javax.annotation.Nonnull;
 
 @Optional.InterfaceList({
         @Optional.Interface(iface="net.darkhax.tesla.api.ITeslaConsumer", modid="tesla"),
@@ -40,18 +37,6 @@ public class TileEntityEnergyRelay extends TileEntityAIMDevice implements IEnerg
         if (POWER_HOLDER_CAP != null && capability == POWER_HOLDER_CAP) return (T) this;
         if (capability == CapabilityEnergy.ENERGY) return (T) this;
         return super.getCapability(capability, facing);
-    }
-
-    @Nonnull
-    @Override
-    public String getLocalizedName() {
-        return "tile.energyrelay.name";
-    }
-
-    @Nonnull
-    @Override
-    public ItemStack getDisplayStack() {
-        return new ItemStack(ModElementList.blockEnergyRelay);
     }
 
     private int addPowerToPlayer(int maxReceive, boolean simulate) {

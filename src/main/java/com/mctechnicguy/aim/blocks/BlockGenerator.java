@@ -2,8 +2,6 @@ package com.mctechnicguy.aim.blocks;
 
 import com.mctechnicguy.aim.AdvancedInventoryManagement;
 import com.mctechnicguy.aim.tileentity.TileEntityGenerator;
-import com.mctechnicguy.aim.gui.IManualEntry;
-import com.mctechnicguy.aim.items.ItemAIMInfoProvider;
 import net.minecraft.block.properties.PropertyInteger;
 import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.IBlockState;
@@ -24,7 +22,7 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-public class BlockGenerator extends BlockAIMMachine implements IManualEntry, IAIMGenerator {
+public class BlockGenerator extends BlockAIMBase implements IAIMGenerator {
 
     public static final PropertyInteger BURNING_STAGE = PropertyInteger.create("burning_stage", 0, 5);
     public static final String NAME = "generator";
@@ -35,7 +33,7 @@ public class BlockGenerator extends BlockAIMMachine implements IManualEntry, IAI
     }
 
     @Override
-    public TileEntity createNewTileEntity(World p_149915_1_, int p_149915_2_) {
+    public TileEntity createNewTileEntity(World world, int i) {
         return new TileEntityGenerator();
     }
 
@@ -57,24 +55,20 @@ public class BlockGenerator extends BlockAIMMachine implements IManualEntry, IAI
     }
 
     @Override
-    public boolean onBlockActivated(@Nonnull World world, @Nonnull BlockPos pos, IBlockState state, @Nullable EntityPlayer player, EnumHand hand, EnumFacing side, float hitX, float hitY, float hitZ) {
-        if (player == null || player.getHeldItem(hand).getItem() instanceof ItemAIMInfoProvider) return false;
-        ItemStack heldItem = player.getHeldItem(hand);
+    protected EnumRightClickResult onBlockActivated(@Nonnull World world, BlockPos pos, IBlockState state, @Nullable EntityPlayer player, EnumHand hand, EnumFacing side, TileEntity tileEntity, ItemStack heldItem) {
+        EnumRightClickResult superResult = super.onBlockActivated(world, pos, state, player, hand, side, tileEntity, heldItem);
+        if (superResult == EnumRightClickResult.ACTION_PASS) {
+            if (!player.isSneaking() && !heldItem.isEmpty() && TileEntityFurnace.isItemFuel(heldItem) && !(heldItem.getItem() instanceof ItemBucket)) {
 
-        if (!player.isSneaking() && !heldItem.isEmpty() && TileEntityFurnace.isItemFuel(heldItem) && !(heldItem.getItem() instanceof ItemBucket)) {
-
-            if (world.getTileEntity(pos) instanceof TileEntityGenerator && TileEntityFurnace.getItemBurnTime(heldItem) <= TileEntityGenerator.MAX_BURN_TIME - ((TileEntityGenerator)world.getTileEntity(pos)).burnTimeRemaining) {
-                if (!world.isRemote) {
-                    ((TileEntityGenerator)world.getTileEntity(pos)).addBurnTime(TileEntityFurnace.getItemBurnTime(heldItem));
+                if (tileEntity instanceof TileEntityGenerator && !world.isRemote && TileEntityFurnace.getItemBurnTime(heldItem) <= TileEntityGenerator.MAX_BURN_TIME - ((TileEntityGenerator)tileEntity).burnTimeRemaining) {
+                    ((TileEntityGenerator)tileEntity).addBurnTime(TileEntityFurnace.getItemBurnTime(heldItem));
                     heldItem.shrink(1);
                     if (heldItem.getCount() <= 0) heldItem = ItemStack.EMPTY;
                     player.setHeldItem(hand, heldItem);
                 }
-                return true;
-            }
-        }
-
-        return super.onBlockActivated(world, pos, state, player, hand, side, hitX, hitY, hitZ);
+                return EnumRightClickResult.ACTION_DONE;
+            } else return EnumRightClickResult.ACTION_PASS;
+        } else return superResult;
     }
 
     @Override
@@ -101,22 +95,6 @@ public class BlockGenerator extends BlockAIMMachine implements IManualEntry, IAI
     @Override
     public int getLightValue(@Nonnull IBlockState state) {
         return state.getValue(BURNING_STAGE) * 3;
-    }
-
-    @Nonnull
-    @Override
-    public String getManualName() {
-        return NAME;
-    }
-
-    @Override
-    public int getPageCount() {
-        return 1;
-    }
-
-    @Override
-    public boolean doesProvideOwnContent() {
-        return false;
     }
 
     @Nonnull

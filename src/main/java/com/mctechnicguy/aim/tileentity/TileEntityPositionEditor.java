@@ -1,7 +1,6 @@
 package com.mctechnicguy.aim.tileentity;
 
 import com.mctechnicguy.aim.AdvancedInventoryManagement;
-import com.mctechnicguy.aim.ModElementList;
 import com.mctechnicguy.aim.util.AIMUtils;
 import com.mctechnicguy.aim.util.DirectTeleporter;
 import net.minecraft.entity.player.EntityPlayer;
@@ -103,15 +102,4 @@ public class TileEntityPositionEditor extends TileEntityAIMDevice {
         return nbt;
     }
 
-    @Nonnull
-    @Override
-    public String getLocalizedName() {
-        return "tile.positioneditor.name";
-    }
-
-    @Nonnull
-    @Override
-    public ItemStack getDisplayStack() {
-        return new ItemStack(ModElementList.blockPositionEditor);
-    }
 }

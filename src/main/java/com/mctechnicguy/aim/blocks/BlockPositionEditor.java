@@ -2,13 +2,9 @@ package com.mctechnicguy.aim.blocks;
 
 
 import com.mctechnicguy.aim.AdvancedInventoryManagement;
-import com.mctechnicguy.aim.tileentity.TileEntityPositionEditor;
 import com.mctechnicguy.aim.ModElementList;
-import com.mctechnicguy.aim.gui.IManualEntry;
-import com.mctechnicguy.aim.items.ItemAIMInfoProvider;
-import com.mctechnicguy.aim.util.AIMUtils;
+import com.mctechnicguy.aim.tileentity.TileEntityPositionEditor;
 import net.minecraft.block.Block;
-import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
@@ -21,7 +17,7 @@ import net.minecraft.world.World;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-public class BlockPositionEditor extends BlockAIMDevice implements IManualEntry {
+public class BlockPositionEditor extends BlockAIMDevice {
 
     public static final String NAME = "positioneditor";
 
@@ -31,21 +27,16 @@ public class BlockPositionEditor extends BlockAIMDevice implements IManualEntry 
     }
 
     @Override
-    public boolean onBlockActivated(@Nonnull World world, @Nonnull BlockPos pos, IBlockState state, @Nullable EntityPlayer player, EnumHand hand, EnumFacing side, float hitX, float hitY, float hitZ) {
-        if (player == null || player.getHeldItem(hand).getItem() instanceof ItemAIMInfoProvider) return false;
-        ItemStack heldItem = player.getHeldItem(hand);
-        if (player.isSneaking() && !heldItem.isEmpty() && heldItem.getItem() != ModElementList.itemAIMWrench && AIMUtils.isWrench(heldItem)) {
-            this.destroyWithWrench(player, world, pos, heldItem);
-            return true;
-        }
-        if (heldItem.getItem() == ModElementList.itemPositionCard) {
-            TileEntity editor = world.getTileEntity(pos);
-            if (editor instanceof TileEntityPositionEditor) {
-                ((TileEntityPositionEditor)editor).transferCardData(heldItem, player);
-            }
-            return true;
-        }
-        return false;
+    protected EnumRightClickResult onBlockActivated(@Nonnull World world, BlockPos pos, IBlockState state, @Nullable EntityPlayer player, EnumHand hand, EnumFacing side, TileEntity tileEntity, ItemStack heldItem) {
+        EnumRightClickResult superResult = super.onBlockActivated(world, pos, state, player, hand, side, tileEntity, heldItem);
+        if (superResult == EnumRightClickResult.ACTION_PASS) {
+            if (heldItem.getItem() == ModElementList.itemPositionCard) {
+                if (tileEntity instanceof TileEntityPositionEditor && !world.isRemote) {
+                    ((TileEntityPositionEditor)tileEntity).transferCardData(heldItem, player);
+                }
+                return EnumRightClickResult.ACTION_DONE;
+            } else return EnumRightClickResult.ACTION_PASS;
+        } else return superResult;
     }
 
     @Override
@@ -58,39 +49,6 @@ public class BlockPositionEditor extends BlockAIMDevice implements IManualEntry 
     @Override
     public TileEntity createNewTileEntity(World world, int i) {
         return new TileEntityPositionEditor();
-    }
-
-    @Nonnull
-    @Override
-    protected BlockStateContainer createBlockState() {
-        return new BlockStateContainer(this, ISACTIVE);
-    }
-
-    @Nonnull
-    @Override
-    public IBlockState getStateFromMeta(int meta) {
-        return getDefaultState().withProperty(ISACTIVE, false);
-    }
-
-    @Override
-    public int getMetaFromState(IBlockState state) {
-        return 0;
-    }
-
-    @Nonnull
-    @Override
-    public String getManualName() {
-        return NAME;
-    }
-
-    @Override
-    public int getPageCount() {
-        return 1;
-    }
-
-    @Override
-    public boolean doesProvideOwnContent() {
-        return false;
     }
 
     @Nonnull

@@ -31,6 +31,7 @@ public class ModElementList {
 	public static ItemAIMUpgrade itemAIMUpgrade;
 	public static ItemAIMWrench itemAIMWrench;
 	public static ItemAIMInfoProvider itemAIMInfoProvider;
+	public static ItemAdvancedInfoProvider itemAdvancedInfoProvider;
 	public static ItemAIMManual itemAIMManual;
 	public static ItemCraftingComponent itemCraftingComponent;
 	public static ItemPositionCard itemPositionCard;
@@ -101,6 +102,7 @@ public class ModElementList {
 		itemAIMUpgrade = new ItemAIMUpgrade();
 		itemAIMWrench = new ItemAIMWrench();
 		itemAIMInfoProvider = new ItemAIMInfoProvider();
+		itemAdvancedInfoProvider = new ItemAdvancedInfoProvider();
 		itemAIMManual = new ItemAIMManual();
 		itemCraftingComponent = new ItemCraftingComponent();
 		itemPositionCard = new ItemPositionCard();
@@ -117,7 +119,7 @@ public class ModElementList {
         };
 
         static final Item[] items = {
-                itemAIMWrench, itemAIMUpgrade, itemAIMInfoProvider, itemAIMManual, itemCraftingComponent, itemPositionCard
+                itemAIMWrench, itemAIMUpgrade, itemAIMInfoProvider, itemAdvancedInfoProvider, itemAIMManual, itemCraftingComponent, itemPositionCard
         };
 
 

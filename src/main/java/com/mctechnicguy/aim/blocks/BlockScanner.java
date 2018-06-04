@@ -1,5 +1,6 @@
 package com.mctechnicguy.aim.blocks;
 
+import com.mctechnicguy.aim.ModInfo;
 import com.mctechnicguy.aim.gui.GuiAIMGuide;
 import com.mctechnicguy.aim.gui.ICustomManualEntry;
 import com.mctechnicguy.aim.tileentity.TileEntityScanner;
@@ -22,7 +23,7 @@ import net.minecraft.world.World;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-public class BlockScanner extends BlockAIMMachine implements ICustomManualEntry{
+public class BlockScanner extends BlockAIMBase implements ICustomManualEntry{
 
 	public static final String NAME = "scanner";
 	public static final PropertyEnum ISACTIVE = PropertyEnum.create("isactive", EnumActivity.class);
@@ -98,12 +99,6 @@ public class BlockScanner extends BlockAIMMachine implements ICustomManualEntry{
 		return false;
 	}
 
-	@Nonnull
-	@Override
-	public String getManualName() {
-		return NAME;
-	}
-
 	@Override
 	public int getPageCount() {
 		return 2;
@@ -112,12 +107,6 @@ public class BlockScanner extends BlockAIMMachine implements ICustomManualEntry{
 	@Override
 	public boolean doesProvideOwnContent() {
 		return true;
-	}
-
-	@Nonnull
-	@Override
-	public Object[] getParams(int page) {
-		return new Object[0];
 	}
 
 	@Override
@@ -146,7 +135,7 @@ public class BlockScanner extends BlockAIMMachine implements ICustomManualEntry{
 	@Nullable
 	@Override
 	public ResourceLocation getRecipeForPage(int page) {
-		return null;
+		return new ResourceLocation(ModInfo.ID + ":" +  NAME);
 	}
 
 	@Override

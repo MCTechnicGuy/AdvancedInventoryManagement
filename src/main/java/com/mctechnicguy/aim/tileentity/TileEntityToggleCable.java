@@ -1,10 +1,6 @@
 package com.mctechnicguy.aim.tileentity;
 
-import com.mctechnicguy.aim.ModElementList;
-import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumFacing;
-
-import javax.annotation.Nonnull;
 
 public class TileEntityToggleCable extends TileEntityNetworkCable{
 
@@ -19,15 +15,4 @@ public class TileEntityToggleCable extends TileEntityNetworkCable{
         else return super.canTransferSignal(dir, false) && !isRSBlocked();
     }
 
-    @Nonnull
-    @Override
-    public String getLocalizedName() {
-        return "tile.togglecable.name";
-    }
-
-    @Nonnull
-    @Override
-    public ItemStack getDisplayStack() {
-        return new ItemStack(ModElementList.blockToggleCable);
-    }
 }

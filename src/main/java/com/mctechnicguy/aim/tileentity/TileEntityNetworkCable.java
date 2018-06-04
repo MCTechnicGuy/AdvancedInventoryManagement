@@ -1,9 +1,6 @@
 package com.mctechnicguy.aim.tileentity;
 
-import com.mctechnicguy.aim.ModElementList;
 import com.mctechnicguy.aim.util.AIMUtils;
-
-import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.NetworkManager;
 import net.minecraft.network.play.server.SPacketUpdateTileEntity;
@@ -96,18 +93,5 @@ public class TileEntityNetworkCable extends TileEntityNetworkElement {
 		this.readSyncNBT(nbt);
 		this.updateConnections();
 	}
-
-	@Nonnull
-    @Override
-	public String getLocalizedName() {
-		return "tile.networkcable.name";
-	}
-
-	@Nonnull
-    @Override
-	public ItemStack getDisplayStack() {
-		return new ItemStack(ModElementList.blockNetworkCable);
-	}
-
 
 }

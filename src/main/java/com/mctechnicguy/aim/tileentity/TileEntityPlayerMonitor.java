@@ -1,12 +1,10 @@
 package com.mctechnicguy.aim.tileentity;
 
 import com.mctechnicguy.aim.AdvancedInventoryManagement;
-import com.mctechnicguy.aim.ModElementList;
 import com.mctechnicguy.aim.blocks.BlockPlayerMonitor;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.InventoryPlayer;
-import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.NetworkManager;
 import net.minecraft.network.play.server.SPacketUpdateTileEntity;
@@ -209,18 +207,6 @@ public class TileEntityPlayerMonitor extends TileEntityAIMDevice implements ITic
 
     public String getMode_formatted() {
         return mode_formatted;
-    }
-
-    @Nonnull
-    @Override
-    public String getLocalizedName() {
-        return "tile.playermonitor.name";
-    }
-
-    @Nonnull
-    @Override
-    public ItemStack getDisplayStack() {
-        return new ItemStack(ModElementList.blockPlayerMonitor);
     }
 
     @Override

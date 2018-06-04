@@ -1,12 +1,9 @@
 package com.mctechnicguy.aim.util;
 
-import java.util.UUID;
-
 import com.mctechnicguy.aim.AdvancedInventoryManagement;
-import com.mctechnicguy.aim.blocks.BlockAIMMachine;
+import com.mctechnicguy.aim.blocks.BlockAIMBase;
 import com.mctechnicguy.aim.blocks.BlockNetworkCable;
 import com.mctechnicguy.aim.tileentity.TileEntityNetworkCable;
-
 import net.minecraft.block.Block;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
@@ -23,6 +20,7 @@ import net.minecraftforge.oredict.OreDictionary;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import java.util.UUID;
 
 public class AIMUtils {
 
@@ -49,42 +47,42 @@ public class AIMUtils {
 				&& ((w.getBlockState(pos.up()).getBlock() instanceof BlockNetworkCable && w.getTileEntity(pos.up()) != null
 						&& !((TileEntityNetworkCable) w.getTileEntity(pos.up()))
 								.isConnectionBlocked(dir.getOpposite()))
-				|| w.getBlockState(pos.up()).getBlock() instanceof BlockAIMMachine))
+				|| w.getBlockState(pos.up()).getBlock() instanceof BlockAIMBase))
 			return true;
 
 		else if (dir.equals(EnumFacing.DOWN)
 				&& ((w.getBlockState(pos.down()).getBlock() instanceof BlockNetworkCable && w.getTileEntity(pos.down()) != null
 						&& !((TileEntityNetworkCable) w.getTileEntity(pos.down()))
 								.isConnectionBlocked(dir.getOpposite()))
-				|| w.getBlockState(pos.down()).getBlock() instanceof BlockAIMMachine))
+				|| w.getBlockState(pos.down()).getBlock() instanceof BlockAIMBase))
 			return true;
 
 		else if (dir.equals(EnumFacing.WEST)
 				&& ((w.getBlockState(pos.west()).getBlock() instanceof BlockNetworkCable && w.getTileEntity(pos.west()) != null
 						&& !((TileEntityNetworkCable) w.getTileEntity(pos.west()))
 								.isConnectionBlocked(dir.getOpposite()))
-				|| w.getBlockState(pos.west()).getBlock() instanceof BlockAIMMachine))
+				|| w.getBlockState(pos.west()).getBlock() instanceof BlockAIMBase))
 			return true;
 
 		else if (dir.equals(EnumFacing.EAST)
 				&& ((w.getBlockState(pos.east()).getBlock() instanceof BlockNetworkCable && w.getTileEntity(pos.east()) != null
 						&& !((TileEntityNetworkCable) w.getTileEntity(pos.east()))
 								.isConnectionBlocked(dir.getOpposite()))
-				|| w.getBlockState(pos.east()).getBlock() instanceof BlockAIMMachine))
+				|| w.getBlockState(pos.east()).getBlock() instanceof BlockAIMBase))
 			return true;
 
 		else if (dir.equals(EnumFacing.NORTH)
 				&& ((w.getBlockState(pos.north()).getBlock() instanceof BlockNetworkCable && w.getTileEntity(pos.north()) != null
 						&& !((TileEntityNetworkCable) w.getTileEntity(pos.north()))
 								.isConnectionBlocked(dir.getOpposite()))
-				|| w.getBlockState(pos.north()).getBlock() instanceof BlockAIMMachine))
+				|| w.getBlockState(pos.north()).getBlock() instanceof BlockAIMBase))
 			return true;
 
 		else if (dir.equals(EnumFacing.SOUTH)
 				&& ((w.getBlockState(pos.south()).getBlock() instanceof BlockNetworkCable && w.getTileEntity(pos.south()) != null
 						&& !((TileEntityNetworkCable) w.getTileEntity(pos.south()))
 								.isConnectionBlocked(dir.getOpposite()))
-				|| w.getBlockState(pos.south()).getBlock() instanceof BlockAIMMachine))
+				|| w.getBlockState(pos.south()).getBlock() instanceof BlockAIMBase))
 			return true;
 
 		else

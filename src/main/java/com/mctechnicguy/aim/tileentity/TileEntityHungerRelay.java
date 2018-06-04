@@ -1,6 +1,5 @@
 package com.mctechnicguy.aim.tileentity;
 
-import com.mctechnicguy.aim.ModElementList;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemFood;
 import net.minecraft.item.ItemStack;
@@ -72,17 +71,4 @@ public class TileEntityHungerRelay extends TileEntityAIMDevice implements IItemH
 		default: return false;
 		}
 	}
-
-	@Nonnull
-    @Override
-	public String getLocalizedName() {
-		return "tile.hungerrelay.name";
-	}
-
-	@Nonnull
-    @Override
-	public ItemStack getDisplayStack() {
-		return new ItemStack(ModElementList.blockHungerRelay);
-	}
-	
 }

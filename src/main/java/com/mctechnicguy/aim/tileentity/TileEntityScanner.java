@@ -1,14 +1,10 @@
 package com.mctechnicguy.aim.tileentity;
 
-import java.util.List;
-
 import com.mctechnicguy.aim.AdvancedInventoryManagement;
 import com.mctechnicguy.aim.ModElementList;
 import com.mctechnicguy.aim.blocks.BlockScannerBase;
 import com.mctechnicguy.aim.util.AIMUtils;
-
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.NetworkManager;
 import net.minecraft.network.play.server.SPacketUpdateTileEntity;
@@ -19,6 +15,7 @@ import net.minecraft.util.text.TextFormatting;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import java.util.List;
 
 public class TileEntityScanner extends TileEntityAIMDevice implements ITickable {
 
@@ -199,12 +196,6 @@ public class TileEntityScanner extends TileEntityAIMDevice implements ITickable 
 		world.notifyBlockUpdate(pos, world.getBlockState(pos), world.getBlockState(pos), 3);
 		this.markDirty();
 	}
-
-	@Nonnull
-    @Override
-	public String getLocalizedName() {
-		return "tile.scanner.name";
-	}
 	
 	@Nonnull
     public EnumScanStatus getStatus() {
@@ -225,12 +216,6 @@ public class TileEntityScanner extends TileEntityAIMDevice implements ITickable 
 	
 	public int getActionTicksLeft() {
 		return ActionTicksLeft;
-	}
-
-	@Nonnull
-    @Override
-	public ItemStack getDisplayStack() {
-		return new ItemStack(ModElementList.blockScanner);
 	}
 
 	@Override

@@ -1,12 +1,9 @@
 package com.mctechnicguy.aim.blocks;
 
 import com.mctechnicguy.aim.AdvancedInventoryManagement;
-import com.mctechnicguy.aim.ModElementList;
 import com.mctechnicguy.aim.gui.IManualEntry;
-import com.mctechnicguy.aim.items.ItemAIMInfoProvider;
 import com.mctechnicguy.aim.tileentity.TileEntityAIMCore;
 import com.mctechnicguy.aim.tileentity.TileEntityNetworkElement;
-import com.mctechnicguy.aim.util.AIMUtils;
 import com.mctechnicguy.aim.util.NBTUtils;
 import com.mctechnicguy.aim.util.NetworkUtils;
 import net.minecraft.block.properties.PropertyBool;
@@ -28,7 +25,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.Random;
 
-public class BlockAIMCore extends BlockAIMMachine implements IManualEntry{
+public class BlockAIMCore extends BlockAIMBase implements IManualEntry{
 
 	private final Random rand = new Random();
 	public static final String NAME = "aimcore";
@@ -64,29 +61,19 @@ public class BlockAIMCore extends BlockAIMMachine implements IManualEntry{
 		return new TileEntityAIMCore();
 	}
 
-	@Override
-	public boolean onBlockActivated(@Nonnull World world, @Nonnull BlockPos pos, IBlockState state, @Nullable EntityPlayer player, EnumHand hand, EnumFacing side, float hitX, float hitY, float hitZ)
-    {
-		if (player == null || player.getHeldItem(hand).getItem() instanceof ItemAIMInfoProvider) return false;
-		ItemStack heldItem = player.getHeldItem(hand);
-		if (player.isSneaking() && !heldItem.isEmpty() && heldItem.getItem() != ModElementList.itemAIMWrench && AIMUtils.isWrench(heldItem)) {
-			this.destroyWithWrench(player, world, pos, heldItem);
-			return true;
-		}
-		
-		if (player.isSneaking() || (!heldItem.isEmpty() && heldItem.getItem() == ModElementList.itemAIMInfoProvider)) {
-			return false;
-		}
+    @Override
+    protected EnumRightClickResult onBlockActivated(@Nonnull World world, BlockPos pos, IBlockState state, @Nullable EntityPlayer player, EnumHand hand, EnumFacing side, @Nullable TileEntity tileEntity, ItemStack heldItem) {
+	    EnumRightClickResult superResult = super.onBlockActivated(world, pos, state, player, hand, side, tileEntity, heldItem);
+        if (superResult == EnumRightClickResult.ACTION_PASS) {
+            if (tileEntity instanceof TileEntityAIMCore
+                    && ((TileEntityAIMCore) tileEntity).isPlayerAccessAllowed(player) && !world.isRemote) {
+                FMLNetworkHandler.openGui(player, AdvancedInventoryManagement.instance, AdvancedInventoryManagement.guiIDCore, world, pos.getX(), pos.getY(), pos.getZ());
+            }
+            return EnumRightClickResult.ACTION_DONE;
+        } else return superResult;
+    }
 
-		if (!world.isRemote && world.getTileEntity(pos) instanceof TileEntityAIMCore
-				&& ((TileEntityAIMCore) world.getTileEntity(pos)).isPlayerAccessAllowed(player)) {
-			FMLNetworkHandler.openGui(player, AdvancedInventoryManagement.instance, AdvancedInventoryManagement.guiIDCore, world, pos.getX(), pos.getY(), pos.getZ());
-		}
-
-		return true;
-	}
-
-	@Override
+    @Override
 	 public void onBlockPlacedBy(@Nonnull World world, @Nonnull BlockPos pos, @Nonnull IBlockState state, EntityLivingBase placer, @Nonnull ItemStack stack)
     {
 		if (!NetworkUtils.canPlaceAIMBlock(placer, world, pos)) {
@@ -114,7 +101,7 @@ public class BlockAIMCore extends BlockAIMMachine implements IManualEntry{
 			for (int j1 = 0; j1 < tileentityaimcore.getSizeInventory(); ++j1) {
 				ItemStack itemstack = tileentityaimcore.getStackInSlot(j1);
 
-				if (itemstack != null) {
+				if (!itemstack.isEmpty()) {
 					float f = this.rand.nextFloat() * 0.8F + 0.1F;
 					float f1 = this.rand.nextFloat() * 0.8F + 0.1F;
 					float f2 = this.rand.nextFloat() * 0.8F + 0.1F;
@@ -169,30 +156,5 @@ public class BlockAIMCore extends BlockAIMMachine implements IManualEntry{
 		}
 	}
 
-	@Nonnull
-	@Override
-	public String getManualName() {
-		return NAME;
-	}
 
-	@Override
-	public int getPageCount() {
-		return 1;
-	}
-
-	@Override
-	public boolean doesProvideOwnContent() {
-		return false;
-	}
-
-	@Nonnull
-	@Override
-	public Object[] getParams(int page) {
-		return new Object[0];
-	}
-
-	@Override
-	public boolean needsSmallerFont() {
-		return false;
-	}
 }

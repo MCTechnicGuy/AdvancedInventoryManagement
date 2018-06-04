@@ -1,7 +1,6 @@
 package com.mctechnicguy.aim.tileentity;
 
 
-import com.mctechnicguy.aim.ModElementList;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumFacing;
@@ -173,18 +172,4 @@ public class TileEntityEnderChestRelay extends TileEntityAIMDevice implements II
     {
         return getPlayer().getInventoryEnderChest();
     }
-
-    @Nonnull
-    @Override
-    public String getLocalizedName() {
-        return "tile.enderchestrelay.name";
-    }
-
-    @Nonnull
-    @Override
-    public ItemStack getDisplayStack() {
-        return new ItemStack(ModElementList.blockEnderChestRelay);
-    }
-
-
 }

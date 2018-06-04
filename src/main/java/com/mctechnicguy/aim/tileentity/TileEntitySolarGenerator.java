@@ -1,29 +1,13 @@
 package com.mctechnicguy.aim.tileentity;
 
 import com.mctechnicguy.aim.AdvancedInventoryManagement;
-import com.mctechnicguy.aim.ModElementList;
 import com.mctechnicguy.aim.blocks.BlockSolarGenerator;
-import net.minecraft.item.ItemStack;
 import net.minecraft.util.ITickable;
 import net.minecraft.world.biome.Biome;
-
-import javax.annotation.Nonnull;
 
 public class TileEntitySolarGenerator extends TileEntityAIMDevice implements ITickable {
 
     private boolean lastActive;
-
-    @Nonnull
-    @Override
-    public String getLocalizedName() {
-        return "tile.solargenerator.name";
-    }
-
-    @Nonnull
-    @Override
-    public ItemStack getDisplayStack() {
-        return new ItemStack(ModElementList.blockSolarGenerator);
-    }
 
     @Override
     public void update() {

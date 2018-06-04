@@ -2,13 +2,10 @@ package com.mctechnicguy.aim.blocks;
 
 import com.mctechnicguy.aim.AdvancedInventoryManagement;
 import com.mctechnicguy.aim.tileentity.TileEntityScanner;
-import com.mctechnicguy.aim.gui.IManualEntry;
 import com.mctechnicguy.aim.util.IWrenchDestroyable;
-
 import net.minecraft.block.Block;
 import net.minecraft.block.SoundType;
 import net.minecraft.block.material.Material;
-import net.minecraft.block.properties.IProperty;
 import net.minecraft.block.properties.PropertyEnum;
 import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.IBlockState;
@@ -24,7 +21,7 @@ import net.minecraft.world.World;
 
 import javax.annotation.Nonnull;
 
-public class BlockScannerBase extends Block implements IWrenchDestroyable, IManualEntry{
+public class BlockScannerBase extends Block implements IWrenchDestroyable {
 
 	public static final String NAME = "scannerbase";
 	public static final PropertyEnum POS = PropertyEnum.create("pos", BlockScannerBase.EnumPos.class);
@@ -66,7 +63,6 @@ public class BlockScannerBase extends Block implements IWrenchDestroyable, IManu
 				this.harvestBlock(w, (EntityPlayer) e, pos, state, w.getTileEntity(pos), stack);
 				this.removedByPlayer(state, w, pos, (EntityPlayer) e, true);
 			}
-			return;
 		}
 	}
 
@@ -85,7 +81,7 @@ public class BlockScannerBase extends Block implements IWrenchDestroyable, IManu
 	}
 
 
-	private final TileEntityScanner getScanner(@Nonnull World w, @Nonnull BlockPos pos) {
+	private TileEntityScanner getScanner(@Nonnull World w, @Nonnull BlockPos pos) {
 		for (EnumFacing f : EnumFacing.HORIZONTALS) {
 			if (w.getTileEntity(pos.offset(f)) instanceof TileEntityScanner)
 				return (TileEntityScanner) w.getTileEntity(pos.offset(f));
@@ -122,39 +118,12 @@ public class BlockScannerBase extends Block implements IWrenchDestroyable, IManu
 	@Nonnull
 	@Override
 	protected BlockStateContainer createBlockState() {
-	    return new BlockStateContainer(this, new IProperty[] { POS });
+	    return new BlockStateContainer(this, POS);
 	}
 
 	@Override
 	public int getMetaFromState(IBlockState state) {
 		return 0;
-	}
-
-	@Nonnull
-	@Override
-	public String getManualName() {
-		return NAME;
-	}
-
-	@Override
-	public int getPageCount() {
-		return 1;
-	}
-
-	@Override
-	public boolean doesProvideOwnContent() {
-		return false;
-	}
-
-	@Nonnull
-	@Override
-	public Object[] getParams(int page) {
-		return new Object[0];
-	}
-
-	@Override
-	public boolean needsSmallerFont() {
-		return false;
 	}
 
 	public enum EnumPos implements IStringSerializable{
@@ -174,7 +143,7 @@ public class BlockScannerBase extends Block implements IWrenchDestroyable, IManu
 		private String name;
 		
 		
-		private EnumPos(int id, String name) {
+		EnumPos(int id, String name) {
 			this.id = id;
 			this.name = name;
 		}

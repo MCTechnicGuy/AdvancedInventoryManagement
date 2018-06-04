@@ -1,13 +1,13 @@
 package com.mctechnicguy.aim.blocks;
 
 import com.mctechnicguy.aim.AdvancedInventoryManagement;
-import com.mctechnicguy.aim.tileentity.TileEntityAIMDevice;
-import com.mctechnicguy.aim.ModElementList;
+import com.mctechnicguy.aim.gui.IManualEntry;
 import com.mctechnicguy.aim.items.ItemAIMInfoProvider;
+import com.mctechnicguy.aim.items.ItemAdvancedInfoProvider;
+import com.mctechnicguy.aim.tileentity.TileEntityAIMDevice;
 import com.mctechnicguy.aim.util.AIMUtils;
 import com.mctechnicguy.aim.util.IWrenchDestroyable;
 import com.mctechnicguy.aim.util.NetworkUtils;
-
 import net.minecraft.block.Block;
 import net.minecraft.block.ITileEntityProvider;
 import net.minecraft.block.SoundType;
@@ -26,9 +26,9 @@ import net.minecraft.world.World;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-public class BlockAIMMachine extends Block implements ITileEntityProvider, IWrenchDestroyable {
+public class BlockAIMBase extends Block implements ITileEntityProvider, IWrenchDestroyable, IManualEntry {
 	
-	public BlockAIMMachine(@Nonnull String bname) {
+	public BlockAIMBase(@Nonnull String bname) {
 		super(Material.IRON);
 		this.setHardness(3.5F);
 		this.setSoundType(SoundType.STONE);
@@ -38,18 +38,23 @@ public class BlockAIMMachine extends Block implements ITileEntityProvider, IWren
 		this.setUnlocalizedName(bname);
 		this.setRegistryName(bname);
 	}
-	
+
 	@Override
-	public boolean onBlockActivated(@Nonnull World world, BlockPos pos, IBlockState state, @Nullable EntityPlayer player, EnumHand hand, EnumFacing side, float hitX, float hitY, float hitZ)
+	public final boolean onBlockActivated(@Nonnull World world, BlockPos pos, IBlockState state, @Nullable EntityPlayer player, EnumHand hand, EnumFacing side, float hitX, float hitY, float hitZ)
     {
-		if (player == null || player.getHeldItem(hand).getItem() instanceof ItemAIMInfoProvider) return false;
-		ItemStack heldItem = player.getHeldItem(hand);
-		if (player.isSneaking() && !heldItem.isEmpty() && heldItem.getItem() != ModElementList.itemAIMWrench && AIMUtils.isWrench(heldItem)) {
-			this.destroyWithWrench(player, world, pos, heldItem);
-			return true;
-		}
-		return false;
+		return onBlockActivated(world, pos, state, player, hand, side, world.getTileEntity(pos), player.getHeldItem(hand)) == EnumRightClickResult.ACTION_DONE;
     }
+
+    protected EnumRightClickResult onBlockActivated(@Nonnull World world, BlockPos pos, IBlockState state, @Nullable EntityPlayer player, EnumHand hand, EnumFacing side, @Nullable TileEntity tileEntity, ItemStack heldItem) {
+	    if (player == null) return EnumRightClickResult.ACTION_DISABLED;
+	    if (heldItem.getItem() instanceof ItemAIMInfoProvider || heldItem.getItem() instanceof ItemAdvancedInfoProvider) return EnumRightClickResult.ACTION_DISABLED;
+        if (player.isSneaking() && AIMUtils.isWrench(heldItem)) {
+            if (!world.isRemote) this.destroyWithWrench(player, world, pos, heldItem);
+            return EnumRightClickResult.ACTION_DONE;
+        }
+	    return EnumRightClickResult.ACTION_PASS;
+    }
+
 
 	@Override
 	public void onBlockPlacedBy(@Nonnull World worldIn, @Nonnull BlockPos pos, @Nonnull IBlockState state, EntityLivingBase placer, @Nonnull ItemStack stack)
@@ -107,5 +112,38 @@ public class BlockAIMMachine extends Block implements ITileEntityProvider, IWren
 			((TileEntityAIMDevice)world.getTileEntity(pos)).getCore().forceNetworkUpdate(5);
 		super.breakBlock(world, pos, state);
 	}
+
+	@Nonnull
+	@Override
+	public String getManualName() {
+		return getRegistryName().getResourcePath();
+	}
+
+	@Override
+	public int getPageCount() {
+		return 1;
+	}
+
+	@Override
+	public boolean doesProvideOwnContent() {
+		return false;
+	}
+
+	@Nonnull
+	@Override
+	public Object[] getParams(int page) {
+		return new Object[0];
+	}
+
+	@Override
+	public boolean needsSmallerFont() {
+		return false;
+	}
+
+	protected enum EnumRightClickResult {
+	    ACTION_DONE,
+        ACTION_DISABLED,
+        ACTION_PASS;
+    }
 
 }

@@ -1,7 +1,6 @@
 package com.mctechnicguy.aim.tileentity;
 
 import com.mctechnicguy.aim.AdvancedInventoryManagement;
-import com.mctechnicguy.aim.ModElementList;
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemGlassBottle;
 import net.minecraft.item.ItemPotion;
@@ -11,6 +10,7 @@ import net.minecraft.nbt.NBTTagList;
 import net.minecraft.potion.PotionEffect;
 import net.minecraft.potion.PotionUtils;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.NonNullList;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
@@ -18,10 +18,12 @@ import net.minecraftforge.items.IItemHandler;
 import javax.annotation.Nonnull;
 import java.util.Collection;
 
-public class TileEntityPotionRelay extends TileEntityAIMDevice implements IItemHandler{
+public class TileEntityPotionRelay extends TileEntityAIMDevice implements IItemHandler, IHasOwnInventory {
 
     @Nonnull
 	private ItemStack bottleStack = ItemStack.EMPTY;
+
+    private boolean hasAccurateServerInfo = false;
 	
 	public TileEntityPotionRelay() {}
 
@@ -130,7 +132,7 @@ public class TileEntityPotionRelay extends TileEntityAIMDevice implements IItemH
     @Override
 	public NBTTagCompound writeToNBT(NBTTagCompound nbt) {
 		nbt = super.writeToNBT(nbt);
-		nbt.setInteger("bottleCount", this.bottleStack == ItemStack.EMPTY ? 0 : this.bottleStack.getCount());
+		nbt.setInteger("bottleCount", this.bottleStack.getCount());
 		return nbt;
 	}
 	
@@ -165,16 +167,35 @@ public class TileEntityPotionRelay extends TileEntityAIMDevice implements IItemH
         return stack;
     }
 
-	@Nonnull
-    @Override
-	public String getLocalizedName() {
-		return "tile.potionrelay.name";
-	}
 
-	@Nonnull
     @Override
-	public ItemStack getDisplayStack() {
-		return new ItemStack(ModElementList.blockPotionRelay);
-	}
+    public NonNullList<ItemStack> getOwnInventoryContent() {
+	    if (world.isRemote && !hasAccurateServerInfo) return null;
+	    else return NonNullList.withSize(1, this.bottleStack);
+    }
 
+    @Override
+    public ItemStack getStackInOwnInventorySlot(int slot) {
+        return this.bottleStack;
+    }
+
+    @Override
+    public int getOwnInventorySize() {
+        return 1;
+    }
+
+    @Override
+    public NBTTagCompound getTagForOverlayUpdate() {
+	    NBTTagCompound nbt = new NBTTagCompound();
+	    nbt.setInteger("bottleCount", this.bottleStack.getCount());
+        return nbt;
+    }
+
+    @Override
+    public void handleTagForOverlayUpdate(NBTTagCompound nbt) {
+        if (nbt.getInteger("bottleCount") > 0) {
+            this.bottleStack = new ItemStack(Items.GLASS_BOTTLE, nbt.getInteger("bottleCount"));
+        } else this.bottleStack = ItemStack.EMPTY;
+        this.hasAccurateServerInfo = true;
+    }
 }

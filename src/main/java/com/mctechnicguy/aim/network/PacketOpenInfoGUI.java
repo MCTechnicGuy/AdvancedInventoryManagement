@@ -1,11 +1,11 @@
 package com.mctechnicguy.aim.network;
 
-import com.mctechnicguy.aim.tileentity.TileEntityAIMCore;
 import com.mctechnicguy.aim.AdvancedInventoryManagement;
+import com.mctechnicguy.aim.tileentity.TileEntityAIMCore;
 import com.mctechnicguy.aim.util.AIMUtils;
-
 import io.netty.buffer.ByteBuf;
 import net.minecraft.client.Minecraft;
+import net.minecraft.network.PacketBuffer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.fml.common.network.internal.FMLNetworkHandler;
@@ -18,7 +18,8 @@ import javax.annotation.Nullable;
 
 public class PacketOpenInfoGUI implements IMessage {
 
-	private int x, y, z, Power;
+	private int Power;
+	private BlockPos pos;
 	private boolean playerAccessible;
 	
 	
@@ -27,29 +28,25 @@ public class PacketOpenInfoGUI implements IMessage {
 	}
 	
 	public PacketOpenInfoGUI(@Nonnull TileEntityAIMCore core) {
-		this.x = core.getPos().getX();
-		this.y = core.getPos().getY();
-		this.z = core.getPos().getZ();
+		this.pos = core.getPos();
 		this.Power = core.Power;
 		this.playerAccessible = AIMUtils.isPlayerAccessible(core.getConnectedPlayer());
 	}
 
 	@Override
 	public void fromBytes(@Nonnull ByteBuf buf) {
-		x = buf.readInt();
-		y = buf.readInt();
-		z = buf.readInt();
-		Power = buf.readInt();
-		playerAccessible = buf.readBoolean();
+	    PacketBuffer pf = new PacketBuffer(buf);
+		pos = pf.readBlockPos();
+		Power = pf.readInt();
+		playerAccessible = pf.readBoolean();
 	}
 
 	@Override
 	public void toBytes(@Nonnull ByteBuf buf) {
-		buf.writeInt(x);
-		buf.writeInt(y);
-		buf.writeInt(z);
-		buf.writeInt(Power);
-		buf.writeBoolean(playerAccessible);
+        PacketBuffer pf = new PacketBuffer(buf);
+		pf.writeBlockPos(pos);
+        pf.writeInt(Power);
+        pf.writeBoolean(playerAccessible);
 	}
 
 	public static class PacketOpenInfoGUIHandler implements IMessageHandler<PacketOpenInfoGUI, IMessage> {
@@ -57,25 +54,18 @@ public class PacketOpenInfoGUI implements IMessage {
 		@Nullable
         @Override
 		public IMessage onMessage(@Nonnull final PacketOpenInfoGUI message, @Nonnull final MessageContext ctx) {
-			AdvancedInventoryManagement.proxy.addScheduledTask(new Runnable() {
-
-				@Override
-				public void run() {
-					processMessage(message, ctx);
-				}
-				
-			}, ctx);
+			AdvancedInventoryManagement.proxy.addScheduledTask(() -> processMessage(message, ctx), ctx);
 			return null;
 		}
 		
-		public void processMessage(@Nonnull PacketOpenInfoGUI message, MessageContext ctx) {
-			TileEntity te = Minecraft.getMinecraft().world.getTileEntity(new BlockPos(message.x, message.y, message.z));
+		void processMessage(@Nonnull PacketOpenInfoGUI message, MessageContext ctx) {
+			TileEntity te = Minecraft.getMinecraft().world.getTileEntity(message.pos);
 			if (!(te instanceof TileEntityAIMCore)) return;
 			((TileEntityAIMCore)te).searchForDevicesInNetwork();
 			((TileEntityAIMCore)te).Power = message.Power;
 			((TileEntityAIMCore)te).playerAccessible = message.playerAccessible;
 			FMLNetworkHandler.openGui(Minecraft.getMinecraft().player, AdvancedInventoryManagement.instance, AdvancedInventoryManagement.guiIDNetworkInfo,
-					Minecraft.getMinecraft().world, message.x, message.y, message.z);
+					Minecraft.getMinecraft().world, message.pos.getX(), message.pos.getY(), message.pos.getZ());
 		}
 
 	}

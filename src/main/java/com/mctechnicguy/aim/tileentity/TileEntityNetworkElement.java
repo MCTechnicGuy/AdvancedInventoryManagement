@@ -1,6 +1,9 @@
 package com.mctechnicguy.aim.tileentity;
 
+import com.mctechnicguy.aim.client.render.NetworkInfoOverlayRenderer;
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.client.gui.ScaledResolution;
+import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -9,20 +12,19 @@ import net.minecraft.network.play.server.SPacketUpdateTileEntity;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-public abstract class TileEntityNetworkElement extends TileEntity{
+public abstract class TileEntityNetworkElement extends TileEntity implements IProvidesNetworkInfo {
 	
 	@Nullable
     private TileEntityAIMCore coreTile;
 	private BlockPos corePos;
 	//Single-use-variable to store the core state when the block is rendered for the first time. After that, the core will send updates
 	private boolean coreActive;
-
-	@Nonnull
-	public abstract String getLocalizedName();
 
 	public void readFromNBT(NBTTagCompound nbt) {
 		super.readFromNBT(nbt);
@@ -50,6 +52,7 @@ public abstract class TileEntityNetworkElement extends TileEntity{
 		return new SPacketUpdateTileEntity(this.getPos(), 0, nbtTag);
 	}
 
+	@Override
 	public void onDataPacket(NetworkManager net, @Nonnull SPacketUpdateTileEntity packet) {
 		this.readCoreData(packet.getNbtCompound());
 	}
@@ -145,6 +148,36 @@ public abstract class TileEntityNetworkElement extends TileEntity{
 		return false;
 	}
 
-	@Nonnull
-	public abstract ItemStack getDisplayStack();
+    @Nonnull
+    @SideOnly(Side.CLIENT)
+    public final ItemStack getDisplayStack() {
+        return this.hasWorld() ? new ItemStack(this.getBlockType()) : ItemStack.EMPTY;
+    }
+
+    @SideOnly(Side.CLIENT)
+	public String getNameForOverlay() {
+		return I18n.format(getUnlocalizedBlockName());
+	}
+
+    @SideOnly(Side.CLIENT)
+	public void renderStatusInformation(ScaledResolution res) {
+		NetworkInfoOverlayRenderer.renderStatusString(res, this.isCoreActive());
+    }
+
+    @Nonnull
+    @SideOnly(Side.CLIENT)
+    public final String getUnlocalizedBlockName() {
+        return this.hasWorld() ? this.getBlockType().getUnlocalizedName() : "";
+    }
+
+    @Nullable
+    @Override
+    public NBTTagCompound getTagForOverlayUpdate() {
+        return null;
+    }
+
+    @Override
+    public void handleTagForOverlayUpdate(NBTTagCompound nbt) {
+
+    }
 }

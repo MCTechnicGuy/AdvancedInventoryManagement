@@ -1,6 +1,5 @@
 package com.mctechnicguy.aim.tileentity;
 
-import com.mctechnicguy.aim.ModElementList;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumFacing;
@@ -72,16 +71,4 @@ public class TileEntityInventoryRelay extends TileEntityAIMDevice implements IIt
     public int getSlotLimit(int slot) {
         return isCoreActive() ? getPlayer().getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, EnumFacing.UP).getSlotLimit(slot + getSlotOffset()) : 64;
     }
-
-    @Nonnull
-    @Override
-	public String getLocalizedName() {
-		return "tile.inventoryrelay.name";
-	}
-
-	@Nonnull
-    @Override
-	public ItemStack getDisplayStack() {
-		return new ItemStack(ModElementList.blockInventoryRelay);
-	}
 }

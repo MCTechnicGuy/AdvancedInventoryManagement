@@ -1,6 +1,5 @@
 package com.mctechnicguy.aim.tileentity;
 
-import com.mctechnicguy.aim.ModElementList;
 import com.mctechnicguy.aim.util.AIMUtils;
 import com.mctechnicguy.aim.util.NetworkUtils;
 import net.minecraft.entity.player.EntityPlayer;
@@ -102,17 +101,5 @@ public class TileEntityNetworkSignalBridge extends TileEntityAIMDevice {
             nbt.setInteger("destZ", destination.getZ());
         }
         return nbt;
-    }
-
-    @Nonnull
-    @Override
-    public String getLocalizedName() {
-        return "tile.networksignalbridge.name";
-    }
-
-    @Nonnull
-    @Override
-    public ItemStack getDisplayStack() {
-        return new ItemStack(ModElementList.blockNetworkSignalBridge);
     }
 }

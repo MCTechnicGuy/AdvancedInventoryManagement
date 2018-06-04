@@ -1,19 +1,19 @@
 package com.mctechnicguy.aim.tileentity;
 
-import com.mctechnicguy.aim.ModElementList;
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemExpBottle;
 import net.minecraft.item.ItemGlassBottle;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.NonNullList;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
 
 import javax.annotation.Nonnull;
 
-public class TileEntityXPRelay extends TileEntityAIMDevice implements IItemHandler {
+public class TileEntityXPRelay extends TileEntityAIMDevice implements IItemHandler, IHasOwnInventory {
 
 	@Nonnull
     private ItemStack bottleStack = ItemStack.EMPTY;
@@ -177,17 +177,18 @@ public class TileEntityXPRelay extends TileEntityAIMDevice implements IItemHandl
 		getPlayer().experience = xpDiff / xpToNextLevel;
     }
 
-	@Nonnull
     @Override
-	public String getLocalizedName() {
-		return "tile.xprelay.name.short";
-	}
+    public NonNullList<ItemStack> getOwnInventoryContent() {
+        return NonNullList.withSize(1, bottleStack);
+    }
 
-	@Nonnull
     @Override
-	public ItemStack getDisplayStack() {
-		return new ItemStack(ModElementList.blockXPRelay);
-	}
+    public ItemStack getStackInOwnInventorySlot(int slot) {
+        return this.bottleStack;
+    }
 
-
+    @Override
+    public int getOwnInventorySize() {
+        return 1;
+    }
 }

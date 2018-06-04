@@ -1,7 +1,5 @@
 package com.mctechnicguy.aim.tileentity;
 
-import com.mctechnicguy.aim.ModElementList;
-
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -89,18 +87,6 @@ public class TileEntitySlotSelectionRelay extends TileEntityAIMDevice implements
 	@Override
 	public int getSlotLimit(int slot) {
 		return isCoreActive() ? getPlayer().getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, null).getSlotLimit(getCurrentSlotID()) : 64;
-	}
-
-	@Nonnull
-    @Override
-	public String getLocalizedName() {
-		return "tile.slotselectionrelay.name.short";
-	}
-
-	@Nonnull
-    @Override
-	public ItemStack getDisplayStack() {
-		return new ItemStack(ModElementList.blockSlotSelectionRelay);
 	}
 
 	@Nullable

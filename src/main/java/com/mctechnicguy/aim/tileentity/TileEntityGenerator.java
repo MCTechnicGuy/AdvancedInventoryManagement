@@ -1,7 +1,6 @@
 package com.mctechnicguy.aim.tileentity;
 
 import com.mctechnicguy.aim.AdvancedInventoryManagement;
-import com.mctechnicguy.aim.ModElementList;
 import com.mctechnicguy.aim.blocks.BlockGenerator;
 import net.minecraft.item.ItemBucket;
 import net.minecraft.item.ItemStack;
@@ -35,18 +34,6 @@ public class TileEntityGenerator extends TileEntityAIMDevice implements ITickabl
             return super.getCapability(capability, facing);
         }
         return super.getCapability(capability, facing);
-    }
-
-    @Nonnull
-    @Override
-    public String getLocalizedName() {
-        return "tile.generator.name";
-    }
-
-    @Nonnull
-    @Override
-    public ItemStack getDisplayStack() {
-        return new ItemStack(ModElementList.blockGenerator);
     }
 
     private int getBurningStage() {

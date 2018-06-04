@@ -1,12 +1,7 @@
 package com.mctechnicguy.aim.blocks;
 
-import com.mctechnicguy.aim.tileentity.TileEntityAIMDevice;
 import com.mctechnicguy.aim.tileentity.TileEntityXPRelay;
-import com.mctechnicguy.aim.ModElementList;
-import com.mctechnicguy.aim.gui.IManualEntry;
-import com.mctechnicguy.aim.items.ItemAIMInfoProvider;
 import com.mctechnicguy.aim.util.AIMUtils;
-
 import net.minecraft.block.properties.PropertyEnum;
 import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.IBlockState;
@@ -14,8 +9,6 @@ import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.EnumFacing;
-import net.minecraft.util.EnumHand;
 import net.minecraft.util.IStringSerializable;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextComponentTranslation;
@@ -23,10 +16,9 @@ import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
 
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import java.util.Random;
 
-public class BlockXPRelay extends BlockAIMDevice implements IManualEntry{
+public class BlockXPRelay extends BlockAIMDevice implements IHasModes {
 
 	public static final String NAME = "xprelay";
     private final Random rand = new Random();
@@ -36,36 +28,6 @@ public class BlockXPRelay extends BlockAIMDevice implements IManualEntry{
 		super(NAME);
 		this.setDefaultState(this.blockState.getBaseState().withProperty(MODE, EnumType.INLET).withProperty(ISACTIVE, false));
 	}
-	
-	@Override
-	public boolean onBlockActivated(@Nonnull World world, @Nonnull BlockPos pos, IBlockState state, @Nullable EntityPlayer player, EnumHand hand, EnumFacing side, float hitX, float hitY, float hitZ)
-    {
-		if (player == null || player.getHeldItem(hand).getItem() instanceof ItemAIMInfoProvider) return false;
-		ItemStack heldItem = player.getHeldItem(hand);
-
-		if (player.isSneaking() && !heldItem.isEmpty() && heldItem.getItem() != ModElementList.itemAIMWrench && AIMUtils.isWrench(heldItem)) {
-			this.destroyWithWrench(player, world, pos, heldItem);
-			return true;
-		}
-		
-		if (world.isRemote) return true;
-		TileEntity te = (world.getTileEntity(pos));
-		if (AIMUtils.isWrench(heldItem) && te instanceof TileEntityAIMDevice && ((TileEntityAIMDevice)te).isPlayerAccessAllowed(player)) {
-			int mode = ((TileEntityAIMDevice) te).getDeviceMode();
-			if (mode < EnumType.values().length - 1) {
-				mode++;
-			} else
-				mode = 0;
-			world.setBlockState(pos, world.getBlockState(pos).withProperty(BlockXPRelay.MODE, EnumType.fromID(mode)), 2);
-			TextComponentTranslation modeName = new TextComponentTranslation("mode.xp." + EnumType.fromID(mode).getName(), new Object[] {});
-			modeName.getStyle().setColor(TextFormatting.AQUA);
-			AIMUtils.sendChatMessageWithArgs("message.modechange", player, TextFormatting.RESET, modeName);
-			return true;
-		}
-		return false;
-	}
-
-
 
 	public TileEntity createNewTileEntity(World w, int i) {
 		return new TileEntityXPRelay();
@@ -81,12 +43,6 @@ public class BlockXPRelay extends BlockAIMDevice implements IManualEntry{
 	@Override
 	public IBlockState getStateFromMeta(int meta) {
 	    return getDefaultState().withProperty(MODE, EnumType.fromID(meta)).withProperty(ISACTIVE, false);
-	}
-
-	@Override
-	public int getMetaFromState(IBlockState state) {
-	    EnumType type = (EnumType) state.getValue(MODE);
-	    return type.getID();
 	}
 
     @Override
@@ -129,29 +85,39 @@ public class BlockXPRelay extends BlockAIMDevice implements IManualEntry{
 
 	@Nonnull
 	@Override
-	public String getManualName() {
-		return NAME;
-	}
-
-	@Override
-	public int getPageCount() {
-		return 1;
-	}
-
-	@Override
-	public boolean doesProvideOwnContent() {
-		return false;
-	}
-
-	@Nonnull
-	@Override
 	public Object[] getParams(int page) {
 		return new Object[] {8, 3, 12};
 	}
 
 	@Override
-	public boolean needsSmallerFont() {
-		return false;
+	public int getIDFromState(IBlockState state) {
+        EnumType type = (EnumType) state.getValue(MODE);
+        return type.getID();
+	}
+
+	@Override
+	public String getCurrentModeUnlocalizedName(World world, BlockPos pos) {
+		return "mode.xp." + EnumType.fromID(getIDFromState(world.getBlockState(pos))).getName();
+	}
+
+	@Override
+	public void cycleToNextMode(World world, BlockPos pos, EntityPlayer causer) {
+		int mode = getIDFromState(world.getBlockState(pos));
+		if (mode < EnumType.values().length - 1) {
+			mode++;
+		} else
+			mode = 0;
+		setMode(world, pos, mode, causer);
+	}
+
+	@Override
+	public void setMode(World world, BlockPos pos, int id, EntityPlayer causer) {
+		world.setBlockState(pos, world.getBlockState(pos).withProperty(MODE, EnumType.fromID(id)), 2);
+		if (causer != null) {
+			TextComponentTranslation modeName = new TextComponentTranslation("mode.xp." + EnumType.fromID(id).getName());
+			modeName.getStyle().setColor(TextFormatting.AQUA);
+			AIMUtils.sendChatMessageWithArgs("message.modechange", causer, TextFormatting.RESET, modeName);
+		}
 	}
 
 	private enum EnumType implements IStringSerializable{

@@ -125,6 +125,16 @@ gui.AIMCore.Problems.wrongSetup.desc=The physical setup of the network is wrong.
 gui.AIMCore.Problems.wrongSetup.desc.2=Maybe the network is too large or there
 gui.AIMCore.Problems.wrongSetup.desc.3=are two cores built in.
 
+#Overlay-Text
+aimoverlay.status=Status: %1$s
+aimoverlay.status.active=Active
+aimoverlay.status.inactive=Inactive
+aimoverlay.mode=Current mode: %1$s
+aimoverlay.content=Content:
+aimoverlay.content.unknown=Unknown
+aimoverlay.content.none=None
+aimoverlay.update=Right-click to update.
+
 fluid.fluid_moltenxp=Molten XP
 
 #Container-Names
