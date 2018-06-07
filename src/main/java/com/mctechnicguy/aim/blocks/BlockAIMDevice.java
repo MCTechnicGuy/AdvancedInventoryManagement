@@ -2,7 +2,6 @@ package com.mctechnicguy.aim.blocks;
 
 import com.mctechnicguy.aim.tileentity.TileEntityAIMDevice;
 import com.mctechnicguy.aim.tileentity.TileEntityNetworkElement;
-import com.mctechnicguy.aim.util.AIMUtils;
 import net.minecraft.block.properties.PropertyBool;
 import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.IBlockState;
@@ -24,15 +23,33 @@ public abstract class BlockAIMDevice extends BlockAIMBase {
 	
 	public BlockAIMDevice(@Nonnull String bname) {
 		super(bname);
+		this.setDefaultState(blockState.getBaseState().withProperty(ISACTIVE, false));
 	}
 
-	@Nonnull
+    @Nonnull
 	@Override
 	public IBlockState getActualState(IBlockState state, IBlockAccess worldIn, BlockPos pos) {
 		TileEntity te = worldIn.getTileEntity(pos);
 		if (!(te instanceof TileEntityNetworkElement)) return state.withProperty(ISACTIVE, false);
 		else return state.withProperty(ISACTIVE,((TileEntityNetworkElement)te).getCoreActive() || ((TileEntityNetworkElement)te).isCoreActive());
 	}
+
+    @Nonnull
+    @Override
+    public IBlockState getStateFromMeta(int meta) {
+        return getDefaultState().withProperty(ISACTIVE, false);
+    }
+
+    @Override
+    public int getMetaFromState(IBlockState state) {
+        return 0;
+    }
+
+    @Nonnull
+    @Override
+    protected BlockStateContainer createBlockState() {
+        return new BlockStateContainer(this, ISACTIVE);
+    }
 
 
     @Override
@@ -44,11 +61,6 @@ public abstract class BlockAIMDevice extends BlockAIMBase {
 
             if (!(tileEntity instanceof TileEntityAIMDevice)) return EnumRightClickResult.ACTION_DISABLED;
 
-            if (this instanceof IHasModes && AIMUtils.isWrench(heldItem) && ((TileEntityAIMDevice) tileEntity).isPlayerAccessAllowed(player)) {
-                if (!world.isRemote) ((IHasModes)this).cycleToNextMode(world, pos, player);
-                return EnumRightClickResult.ACTION_DONE;
-            }
-
             return EnumRightClickResult.ACTION_PASS;
         } else return superResult;
     }
@@ -57,20 +69,5 @@ public abstract class BlockAIMDevice extends BlockAIMBase {
 	@Override
 	public abstract TileEntity createNewTileEntity(World world, int i);
 
-    @Nonnull
-    @Override
-    protected BlockStateContainer createBlockState() {
-        return new BlockStateContainer(this, ISACTIVE);
-    }
-
-    @Override
-    public IBlockState getStateFromMeta(int meta) {
-        return this.getDefaultState();
-    }
-
-    @Override
-    public int getMetaFromState(IBlockState state) {
-        return this instanceof IHasModes ? ((IHasModes)this).getIDFromState(state) : 0;
-    }
 
 }

@@ -32,7 +32,6 @@ public class BlockPlayerMonitor extends BlockAIMDevice implements ICustomManualE
 
     public BlockPlayerMonitor() {
         super(NAME);
-        this.setDefaultState(blockState.getBaseState().withProperty(ISACTIVE, false));
     }
 
     @Override

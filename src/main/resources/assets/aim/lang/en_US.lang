@@ -141,31 +141,36 @@ fluid.fluid_moltenxp=Molten XP
 container.aimcore=Inventory Management Core
 
 #Modes for the Inventory Relay
-mode.all=All
-mode.maininv=Main Inventory
-mode.hotbar=Hotbar
+mode.inventoryrelay.all=All
+mode.inventoryrelay.maininv=Main Inventory
+mode.inventoryrelay.hotbar=Hotbar
 
 #Modes for the Hunger Relay
-mode.always=Feed always
-mode.hunger=Feed if player is hungry
-mode.efficiency=Feed at most efficient rate
+mode.hungerrelay.always=Feed always
+mode.hungerrelay.hunger=Feed if player is hungry
+mode.hungerrelay.efficiency=Feed at most efficient rate
 
 #Modes for the Potion Relay
-mode.inlet=Potions - IN, Bottles - OUT
-mode.outlet=Potions - OUT, Bottles - IN
+mode.potionrelay.inlet=Potions - IN, Bottles - OUT
+mode.potionrelay.outlet=Potions - OUT, Bottles - IN
 
 #Modes for the Experience Bottle Relay
-mode.xp.inlet=XP - IN, Bottles - OUT
-mode.xp.outlet=XP - OUT, Bottles - IN
+mode.xprelay.inlet=XP - IN, Bottles - OUT
+mode.xprelay.outlet=XP - OUT, Bottles - IN
 
 #Modes for the Experience Liquid Relay
-mode.xp.liquid.moltenxp=Prefer Molten XP (Advanced Inventory Management)
-mode.xp.liquid.xpjuice=Prefer Liquid XP (OpenBlocks | EnderIO)
+mode.xprelay_liquid.moltenxp=Prefer Molten XP (Advanced Inventory Management)
+mode.xprelay_liquid.xpjuice=Prefer Liquid XP (OpenBlocks | EnderIO)
 
 #Modes for the Slot Selection Relay
-mode.mainhand=Use current selected Hotbar-Slot
-mode.offhand=Use Offhand-Slot
-mode.slotbyid=Select Slot by its ID (Right-Click with an empty hand to change ID)
+mode.slotselectionrelay.mainhand=Use current selected Hotbar-Slot
+mode.slotselectionrelay.offhand=Use Offhand-Slot
+mode.slotselectionrelay.slotbyid=Select Slot by its ID (Right-Click with an empty hand to change ID)
+
+#Modes for the Shulker Box Relay
+mode.shulkerboxrelay.mainhand=Use current selected Hotbar-Slot
+mode.shulkerboxrelay.offhand=Use Offhand-Slot
+mode.shulkerboxrelay.slotbyid=Select Slot by its ID (Right-Click with an empty hand to change ID)
 
 #Modes for the Player Monitor
 mode.monitor.health=Display Health
@@ -220,18 +225,18 @@ rsmode.monitor.4=Emit current value (Inverted)
 rsmode.monitor.5=Emit last change as pulse
 
 #Modes for the Motion Editor
-mode.down=Decrease Y-Motion
-mode.up=Increase Y-Motion
-mode.north=Decrease Z-Motion
-mode.south=Increase Z-Motion
-mode.east=Increase X-Motion
-mode.west=Decrease X-Motion
+mode.motioneditor.down=Decrease Y-Motion
+mode.motioneditor.up=Increase Y-Motion
+mode.motioneditor.north=Decrease Z-Motion
+mode.motioneditor.south=Increase Z-Motion
+mode.motioneditor.east=Increase X-Motion
+mode.motioneditor.west=Decrease X-Motion
 
 #Modes for the Energy Relay
-mode.charge.all=Charge all slots
-mode.charge.hotbar=Charge only hotbar slots
-mode.charge.mainhand=Charge items in currently selected hotbar slot
-mode.charge.offhand=Charge items in offhand slot
+mode.energyrelay.all=Charge all slots
+mode.energyrelay.hotbar=Charge only hotbar slots
+mode.energyrelay.mainhand=Charge items in currently selected hotbar slot
+mode.energyrelay.offhand=Charge items in offhand slot
 
 #Scanner Damage
 death.attack.scannerDamage=%1$s was analyzed into his atoms.

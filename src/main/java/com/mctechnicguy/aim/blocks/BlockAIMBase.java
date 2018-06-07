@@ -91,7 +91,7 @@ public class BlockAIMBase extends Block implements ITileEntityProvider, IWrenchD
 
 	}
 
-	public boolean removedByPlayerSupercall(@Nonnull IBlockState state, @Nonnull World world, @Nonnull BlockPos pos, @Nonnull EntityPlayer player, boolean willHarvest) {
+	boolean removedByPlayerSupercall(@Nonnull IBlockState state, @Nonnull World world, @Nonnull BlockPos pos, @Nonnull EntityPlayer player, boolean willHarvest) {
 		return super.removedByPlayer(state, world, pos, player, willHarvest);
 	}
 

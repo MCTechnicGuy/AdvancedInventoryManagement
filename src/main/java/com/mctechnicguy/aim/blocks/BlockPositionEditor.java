@@ -23,7 +23,6 @@ public class BlockPositionEditor extends BlockAIMDevice {
 
     public BlockPositionEditor() {
         super(NAME);
-        this.setDefaultState(this.blockState.getBaseState().withProperty(ISACTIVE, false));
     }
 
     @Override

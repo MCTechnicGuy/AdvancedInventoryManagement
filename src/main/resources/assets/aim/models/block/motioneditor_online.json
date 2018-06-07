@@ -15,6 +15,7 @@
     ],
     "textures": {
         "side": "aim:blocks/motioneditor_online_side",
-        "top": "aim:blocks/motioneditor_online_top"
+        "top": "aim:blocks/motioneditor_online_top",
+        "particle": "aim:blocks/motioneditor_online_top"
     }
 }

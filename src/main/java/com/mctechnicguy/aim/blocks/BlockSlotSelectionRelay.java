@@ -1,33 +1,27 @@
 package com.mctechnicguy.aim.blocks;
 
+import com.mctechnicguy.aim.blocks.property.PropertyAIMMode;
 import com.mctechnicguy.aim.tileentity.TileEntitySlotSelectionRelay;
 import com.mctechnicguy.aim.util.AIMUtils;
-import net.minecraft.block.properties.PropertyEnum;
-import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
-import net.minecraft.util.IStringSerializable;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-public class BlockSlotSelectionRelay extends BlockAIMDevice implements IHasModes {
+public class BlockSlotSelectionRelay extends BlockAIMModulatedDevice {
 
 	public static final String NAME = "slotselectionrelay";
-	public static final PropertyEnum MODE = PropertyEnum.create("mode", BlockSlotSelectionRelay.EnumType.class);
-
+	public static final PropertyAIMMode MODE = PropertyAIMMode.create("mode", "mainhand", "offhand", "slotbyid");
 	public BlockSlotSelectionRelay() {
 		super(NAME);
-		this.setDefaultState(
-				this.blockState.getBaseState().withProperty(MODE, EnumType.MAINHAND).withProperty(ISACTIVE, false));
 	}
 
     @Override
@@ -35,7 +29,7 @@ public class BlockSlotSelectionRelay extends BlockAIMDevice implements IHasModes
         EnumRightClickResult superResult = super.onBlockActivated(world, pos, state, player, hand, side, tileEntity, heldItem);
         if (superResult == EnumRightClickResult.ACTION_PASS) {
             if (heldItem.isEmpty()) {
-                if (tileEntity instanceof TileEntitySlotSelectionRelay && this.getMetaFromState(state) == EnumType.SLOTBYID.getID()) {
+                if (tileEntity instanceof TileEntitySlotSelectionRelay && this.getMetaFromState(state) == 2) {
                     if (!world.isRemote) {
                         int change = player.isSneaking() ? -1 : 1;
                         Object[] args = ((TileEntitySlotSelectionRelay)tileEntity).setSlotID(((TileEntitySlotSelectionRelay)tileEntity).slotID + change);
@@ -53,93 +47,14 @@ public class BlockSlotSelectionRelay extends BlockAIMDevice implements IHasModes
 		return new TileEntitySlotSelectionRelay();
 	}
 
-	@Nonnull
-	@Override
-	protected BlockStateContainer createBlockState() {
-		return new BlockStateContainer(this, MODE, ISACTIVE);
-	}
-
-	@Nonnull
-	@Override
-	public IBlockState getStateFromMeta(int meta) {
-		return getDefaultState().withProperty(MODE, EnumType.fromID(meta)).withProperty(ISACTIVE, false);
-	}
 
 	public boolean needsSmallerFont() {
 		return true;
 	}
 
-	@Override
-	public int getIDFromState(IBlockState state) {
-        EnumType type = (EnumType) state.getValue(MODE);
-        return type.getID();
-	}
-
-	@Override
-	public String getCurrentModeUnlocalizedName(World world, BlockPos pos) {
-		return "mode." + EnumType.fromID(getIDFromState(world.getBlockState(pos))).getName();
-	}
-
-	@Override
-	public void cycleToNextMode(World world, BlockPos pos, EntityPlayer causer) {
-		int mode = getIDFromState(world.getBlockState(pos));
-		if (mode < EnumType.values().length - 1) {
-			mode++;
-		} else
-			mode = 0;
-		setMode(world, pos, mode, causer);
-	}
-
-	@Override
-	public void setMode(World world, BlockPos pos, int id, EntityPlayer causer) {
-		world.setBlockState(pos, world.getBlockState(pos).withProperty(MODE, EnumType.fromID(id)), 2);
-		if (causer != null) {
-			TextComponentTranslation modeName = new TextComponentTranslation("mode." + EnumType.fromID(id).getName());
-			modeName.getStyle().setColor(TextFormatting.AQUA);
-			AIMUtils.sendChatMessageWithArgs("message.modechange", causer, TextFormatting.RESET, modeName);
-		}
-	}
-
-	public enum EnumType implements IStringSerializable {
-
-		MAINHAND(0, "mainhand"), OFFHAND(1, "offhand"), SLOTBYID(2, "slotbyid");
-
-		private int id;
-		private String name;
-
-		EnumType(int id, String name) {
-			this.id = id;
-			this.name = name;
-		}
-
-		@Override
-		public String getName() {
-			return name;
-		}
-
-		public int getID() {
-			return id;
-		}
-
-		@Override
-		public String toString() {
-			return getName();
-		}
-
-		@Nonnull
-		public static EnumType fromID(int id) {
-			switch (id) {
-			case 0:
-				return MAINHAND;
-			case 1:
-				return OFFHAND;
-			case 2:
-				return SLOTBYID;
-			default:
-				return MAINHAND;
-			}
-		}
-
-	}
+    @Override
+    protected PropertyAIMMode getModeProperty() {
+        return MODE;
+    }
 
 }

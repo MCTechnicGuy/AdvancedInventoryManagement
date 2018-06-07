@@ -1,6 +1,6 @@
 package com.mctechnicguy.aim.tileentity;
 
-import com.mctechnicguy.aim.blocks.IHasModes;
+import com.mctechnicguy.aim.blocks.BlockAIMModulatedDevice;
 import com.mctechnicguy.aim.client.render.NetworkInfoOverlayRenderer;
 import net.minecraft.client.gui.ScaledResolution;
 import net.minecraft.entity.player.EntityPlayer;
@@ -29,8 +29,8 @@ public abstract class TileEntityAIMDevice extends TileEntityNetworkElement {
 
 	public void renderStatusInformation(ScaledResolution res) {
 		super.renderStatusInformation(res);
-		if (this.blockType instanceof IHasModes) {
-            NetworkInfoOverlayRenderer.renderModeString(res, ((IHasModes)blockType).getCurrentModeUnlocalizedName(world, pos));
+		if (this.blockType instanceof BlockAIMModulatedDevice) {
+            NetworkInfoOverlayRenderer.renderModeString(res, ((BlockAIMModulatedDevice)blockType).getCurrentModeUnlocalizedName(world, pos));
         }
         if (this instanceof IHasOwnInventory) {
 		    NetworkInfoOverlayRenderer.renderInventoryContent(res, ((IHasOwnInventory) this).getOwnInventoryContent(), 40);

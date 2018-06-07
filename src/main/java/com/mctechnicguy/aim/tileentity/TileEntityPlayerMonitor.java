@@ -257,6 +257,7 @@ public class TileEntityPlayerMonitor extends TileEntityAIMDevice implements ITic
                 updateBlock();
             }
         } else {
+            //FIXME: Proper update mechanics for redstone output...
             if (getCurrentValue() != prevValue || needsUpdate) {
                 switch (redstone_behaviour) {
                     case 0: powerLevel = 0; break;
