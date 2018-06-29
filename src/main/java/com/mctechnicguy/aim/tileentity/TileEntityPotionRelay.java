@@ -22,8 +22,6 @@ public class TileEntityPotionRelay extends TileEntityAIMDevice implements IItemH
 
     @Nonnull
 	private ItemStack bottleStack = ItemStack.EMPTY;
-
-    private boolean hasAccurateServerInfo = false;
 	
 	public TileEntityPotionRelay() {}
 

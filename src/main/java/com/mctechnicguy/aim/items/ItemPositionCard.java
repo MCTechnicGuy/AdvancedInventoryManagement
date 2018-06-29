@@ -13,6 +13,8 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -51,6 +53,7 @@ public class ItemPositionCard extends Item  implements IManualEntry {
     }
 
     @Override
+    @SideOnly(Side.CLIENT)
     public void addInformation(ItemStack stack, @Nullable World worldIn, List<String> tooltip, ITooltipFlag flagIn) {
         super.addInformation(stack, worldIn, tooltip, flagIn);
         if (stack.hasTagCompound()) {
@@ -73,22 +76,10 @@ public class ItemPositionCard extends Item  implements IManualEntry {
         return 1;
     }
 
-    @Override
-    public boolean doesProvideOwnContent() {
-        return false;
-    }
-
     @Nonnull
     @Override
     public Object[] getParams(int page) {
         return new Object[0];
     }
-
-    @Override
-    public boolean needsSmallerFont() {
-        return false;
-    }
-
-
 
 }

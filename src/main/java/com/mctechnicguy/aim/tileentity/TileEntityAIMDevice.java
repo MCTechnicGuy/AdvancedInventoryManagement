@@ -2,15 +2,17 @@ package com.mctechnicguy.aim.tileentity;
 
 import com.mctechnicguy.aim.blocks.BlockAIMModulatedDevice;
 import com.mctechnicguy.aim.client.render.NetworkInfoOverlayRenderer;
-import net.minecraft.client.gui.ScaledResolution;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.InventoryPlayer;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
 import javax.annotation.Nullable;
 
 public abstract class TileEntityAIMDevice extends TileEntityNetworkElement {
 	
-	
+	boolean hasAccurateServerInfo = false;
+
 	public TileEntityAIMDevice() {
 	}
 
@@ -27,15 +29,23 @@ public abstract class TileEntityAIMDevice extends TileEntityNetworkElement {
 		return this.getCore().getConnectedPlayer();
 	}
 
-	public void renderStatusInformation(ScaledResolution res) {
-		super.renderStatusInformation(res);
+	@Override
+    @SideOnly(Side.CLIENT)
+	public void renderStatusInformation(NetworkInfoOverlayRenderer renderer) {
+		super.renderStatusInformation(renderer);
 		if (this.blockType instanceof BlockAIMModulatedDevice) {
-            NetworkInfoOverlayRenderer.renderModeString(res, ((BlockAIMModulatedDevice)blockType).getCurrentModeUnlocalizedName(world, pos));
+            renderer.renderModeString(((BlockAIMModulatedDevice)blockType).getCurrentModeUnlocalizedName(world, pos));
         }
         if (this instanceof IHasOwnInventory) {
-		    NetworkInfoOverlayRenderer.renderInventoryContent(res, ((IHasOwnInventory) this).getOwnInventoryContent(), 40);
+            renderer.renderInventoryContent(((IHasOwnInventory) this).getOwnInventoryContent());
         }
 
 	}
 
+    @Override
+    @SideOnly(Side.CLIENT)
+    public void invalidateServerInfo() {
+        super.invalidateServerInfo();
+        hasAccurateServerInfo = false;
+    }
 }

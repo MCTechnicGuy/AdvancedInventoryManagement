@@ -1,5 +1,6 @@
 package com.mctechnicguy.aim.tileentity;
 
+import com.mctechnicguy.aim.client.render.NetworkInfoOverlayRenderer;
 import com.mctechnicguy.aim.util.NumberedItemStackHolder;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockShulkerBox;
@@ -10,7 +11,10 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.NonNullList;
+import net.minecraft.util.text.TextFormatting;
 import net.minecraftforge.common.capabilities.Capability;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
 
@@ -20,6 +24,7 @@ import java.util.ArrayList;
 public class TileEntityShulkerBoxRelay extends TileEntitySlotSelectionRelay {
 
     public String filter;
+    private int shulkerBoxNumber;
 
     @Override
     public boolean hasCapability(@Nonnull Capability<?> capability, EnumFacing facing) {
@@ -242,7 +247,6 @@ public class TileEntityShulkerBoxRelay extends TileEntitySlotSelectionRelay {
         return 64;
     }
 
-
     public void setFilter(String filter) {
         this.filter = filter;
     }
@@ -253,6 +257,42 @@ public class TileEntityShulkerBoxRelay extends TileEntitySlotSelectionRelay {
 
     private boolean isUnfiltered() {
         return this.filter == null || this.filter.isEmpty();
+    }
+
+    @Override
+    public NBTTagCompound getTagForOverlayUpdate() {
+        NBTTagCompound nbt = super.getTagForOverlayUpdate();
+        if (this.isCoreActive()) {
+            nbt.setInteger("numberBoxes", this.getApplicableShulkerBoxes().size());
+        }
+        if (this.filter != null) {
+            nbt.setString("filter", this.filter);
+        }
+        return nbt;
+    }
+
+    @Override
+    public void handleTagForOverlayUpdate(NBTTagCompound nbt) {
+        super.handleTagForOverlayUpdate(nbt);
+        if (nbt.hasKey("numberBoxes")) {
+            this.shulkerBoxNumber = nbt.getInteger("numberBoxes");
+        }
+        if (nbt.hasKey("filter")) {
+            this.filter = nbt.getString("filter");
+        } else {
+            this.filter = null;
+        }
+    }
+
+    @Override
+    @SideOnly(Side.CLIENT)
+    public void renderStatusInformation(NetworkInfoOverlayRenderer renderer) {
+        super.renderStatusInformation(renderer);
+        renderer.renderTileValues("selectedshulkerboxes", TextFormatting.GREEN, !hasAccurateServerInfo, shulkerBoxNumber);
+        if (!isUnfiltered()) {
+            renderer.renderTileValues("shulkerboxfilter", TextFormatting.YELLOW, !hasAccurateServerInfo, this.filter);
+        }
+
     }
 
 }

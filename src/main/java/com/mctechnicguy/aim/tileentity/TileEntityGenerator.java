@@ -2,17 +2,22 @@ package com.mctechnicguy.aim.tileentity;
 
 import com.mctechnicguy.aim.AdvancedInventoryManagement;
 import com.mctechnicguy.aim.blocks.BlockGenerator;
+import com.mctechnicguy.aim.client.render.NetworkInfoOverlayRenderer;
 import net.minecraft.item.ItemBucket;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntityFurnace;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ITickable;
+import net.minecraft.util.text.TextFormatting;
 import net.minecraftforge.common.capabilities.Capability;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 public class TileEntityGenerator extends TileEntityAIMDevice implements ITickable, IItemHandler{
 
@@ -123,5 +128,31 @@ public class TileEntityGenerator extends TileEntityAIMDevice implements ITickabl
     @Override
     public int getSlotLimit(int slot) {
         return 64;
+    }
+
+    @Nullable
+    @Override
+    public NBTTagCompound getTagForOverlayUpdate() {
+        NBTTagCompound nbt = new NBTTagCompound();
+        nbt.setInteger("burnTime", burnTimeRemaining);
+        return nbt;
+    }
+
+    @Override
+    public void handleTagForOverlayUpdate(NBTTagCompound nbt) {
+        super.handleTagForOverlayUpdate(nbt);
+        if (nbt.hasKey("burnTime")) {
+            this.burnTimeRemaining = nbt.getInteger("burnTime");
+            this.hasAccurateServerInfo = true;
+        }
+    }
+
+    @Override
+    @SideOnly(Side.CLIENT)
+    public void renderStatusInformation(NetworkInfoOverlayRenderer renderer) {
+        renderer.renderStatusString(hasCore() ? getBurningStage() > 0 ? "aimoverlay.generatorstatus.active" : "aimoverlay.generatorstatus.idle" : "aimoverlay.generatorstatus.offline",
+                hasCore() ? getBurningStage() > 0 ? TextFormatting.GREEN : TextFormatting.YELLOW : TextFormatting.RED);
+        renderer.renderTileValues("burntime", TextFormatting.GREEN, !hasAccurateServerInfo, (int)(burnTimeRemaining / 20));
+        renderer.renderTileValues("poweroutput", TextFormatting.GREEN, !hasAccurateServerInfo, hasCore() ? Math.round(AdvancedInventoryManagement.MAX_GENERATOR_POWER_OUTPUT / 5) * getBurningStage() : 0);
     }
 }

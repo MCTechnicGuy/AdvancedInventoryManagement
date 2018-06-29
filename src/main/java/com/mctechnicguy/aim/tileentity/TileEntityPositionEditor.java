@@ -1,8 +1,11 @@
 package com.mctechnicguy.aim.tileentity;
 
 import com.mctechnicguy.aim.AdvancedInventoryManagement;
+import com.mctechnicguy.aim.client.render.NetworkInfoOverlayRenderer;
 import com.mctechnicguy.aim.util.AIMUtils;
 import com.mctechnicguy.aim.util.DirectTeleporter;
+import net.minecraft.block.Block;
+import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.ItemStack;
@@ -10,8 +13,11 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.WorldServer;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 public class TileEntityPositionEditor extends TileEntityAIMDevice {
 
@@ -74,7 +80,7 @@ public class TileEntityPositionEditor extends TileEntityAIMDevice {
         if (dimension == null) {
             return true;
         }
-        return !dimension.getBlockState(destination).isTranslucent() || !dimension.getBlockState(destination.up()).isTranslucent();
+        return dimension.getBlockState(destination).getCollisionBoundingBox(dimension, destination) != Block.NULL_AABB || dimension.getBlockState(destination.up()).getCollisionBoundingBox(dimension, destination.up()) != Block.NULL_AABB;
     }
 
     @Override
@@ -100,6 +106,41 @@ public class TileEntityPositionEditor extends TileEntityAIMDevice {
         nbt.setInteger("destDim", destDimension);
         nbt.setBoolean("rsstatus", rsStatus);
         return nbt;
+    }
+
+    @Nullable
+    @Override
+    public NBTTagCompound getTagForOverlayUpdate() {
+        NBTTagCompound nbt = new NBTTagCompound();
+        if (destination != null) {
+            nbt.setBoolean("hasDest", true);
+            nbt.setInteger("destX", destination.getX());
+            nbt.setInteger("destY", destination.getY());
+            nbt.setInteger("destZ", destination.getZ());
+            nbt.setInteger("destDim", destDimension);
+        }
+        return nbt;
+    }
+
+    @Override
+    public void handleTagForOverlayUpdate(NBTTagCompound nbt) {
+        super.handleTagForOverlayUpdate(nbt);
+        if (nbt.getBoolean("hasDest")) {
+            destination = new BlockPos(nbt.getInteger("destX"), nbt.getInteger("destY"), nbt.getInteger("destZ"));
+            destDimension = nbt.getInteger("destDim");
+        } else {
+            destination = null;
+        }
+        hasAccurateServerInfo = true;
+    }
+
+    @Override
+    @SideOnly(Side.CLIENT)
+    public void renderStatusInformation(NetworkInfoOverlayRenderer renderer) {
+        super.renderStatusInformation(renderer);
+        renderer.renderTileValues("destinationblock", TextFormatting.GREEN, !hasAccurateServerInfo,
+                destination != null ? I18n.format("aimoverlay.destinationblock.coorddimvalue", destination.getX(), destination.getY(), destination.getZ(), destDimension)
+                        : I18n.format("aimoverlay.destinationblock.none"));
     }
 
 }

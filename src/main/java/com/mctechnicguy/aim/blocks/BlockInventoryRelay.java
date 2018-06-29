@@ -18,11 +18,6 @@ public class BlockInventoryRelay extends BlockAIMModulatedDevice {
 		return new TileEntityInventoryRelay();
 	}
 
-	@Override
-	public boolean needsSmallerFont() {
-		return true;
-	}
-
     @Override
     protected PropertyAIMMode getModeProperty() {
         return MODE;

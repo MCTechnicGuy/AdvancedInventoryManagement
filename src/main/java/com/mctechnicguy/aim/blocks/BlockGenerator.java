@@ -73,7 +73,7 @@ public class BlockGenerator extends BlockAIMBase implements IAIMGenerator {
 
     @Override
     public boolean doesSideBlockRendering(IBlockState state, IBlockAccess world, BlockPos pos, EnumFacing face) {
-        return false;
+        return face == EnumFacing.UP || face == EnumFacing.DOWN;
     }
 
     @Nonnull
@@ -103,8 +103,4 @@ public class BlockGenerator extends BlockAIMBase implements IAIMGenerator {
         return new Object[] {AdvancedInventoryManagement.MAX_GENERATOR_POWER_OUTPUT};
     }
 
-    @Override
-    public boolean needsSmallerFont() {
-        return true;
-    }
 }

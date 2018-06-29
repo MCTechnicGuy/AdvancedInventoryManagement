@@ -1,7 +1,9 @@
 package com.mctechnicguy.aim.tileentity;
 
+import com.mctechnicguy.aim.client.render.NetworkInfoOverlayRenderer;
 import com.mctechnicguy.aim.util.AIMUtils;
 import com.mctechnicguy.aim.util.NetworkUtils;
+import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -9,8 +11,11 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextFormatting;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 public class TileEntityNetworkSignalBridge extends TileEntityAIMDevice {
 
@@ -101,5 +106,38 @@ public class TileEntityNetworkSignalBridge extends TileEntityAIMDevice {
             nbt.setInteger("destZ", destination.getZ());
         }
         return nbt;
+    }
+
+    @Nullable
+    @Override
+    public NBTTagCompound getTagForOverlayUpdate() {
+        NBTTagCompound nbt = new NBTTagCompound();
+        if (destination != null) {
+            nbt.setBoolean("hasDest", true);
+            nbt.setInteger("destX", destination.getX());
+            nbt.setInteger("destY", destination.getY());
+            nbt.setInteger("destZ", destination.getZ());
+        }
+        return nbt;
+    }
+
+    @Override
+    public void handleTagForOverlayUpdate(NBTTagCompound nbt) {
+        super.handleTagForOverlayUpdate(nbt);
+        if (nbt.getBoolean("hasDest")) {
+            destination = new BlockPos(nbt.getInteger("destX"), nbt.getInteger("destY"), nbt.getInteger("destZ"));
+        } else {
+            destination = null;
+        }
+        hasAccurateServerInfo = true;
+    }
+
+    @Override
+    @SideOnly(Side.CLIENT)
+    public void renderStatusInformation(NetworkInfoOverlayRenderer renderer) {
+        super.renderStatusInformation(renderer);
+        renderer.renderTileValues("destinationblock", TextFormatting.GREEN, !hasAccurateServerInfo,
+                destination != null ? I18n.format("aimoverlay.destinationblock.coordvalue", destination.getX(), destination.getY(), destination.getZ())
+                        : I18n.format("aimoverlay.destinationblock.none"));
     }
 }

@@ -1,17 +1,16 @@
 package com.mctechnicguy.aim.util;
 
-import java.util.UUID;
-
 import com.mctechnicguy.aim.AdvancedInventoryManagement;
 import com.mctechnicguy.aim.tileentity.TileEntityAIMCore;
-import org.apache.logging.log4j.Level;
-
 import net.minecraft.nbt.NBTBase;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.world.World;
+import org.apache.logging.log4j.Level;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+import java.util.UUID;
 
 public class NBTUtils {
 
@@ -63,10 +62,11 @@ public class NBTUtils {
 		return ExtendedWorldData.instance(world).data;
 	}
 
+	@Nullable
 	public static NBTTagList readPlayerInfo(@Nonnull UUID playerID, @Nonnull World world) {
 		if (!world.isRemote) {
 			NBTTagCompound mainTag = readNBTFromFile(world);
-			if (mainTag == null || !(mainTag.getTag(playerID.toString()) instanceof NBTTagList))
+			if (!(mainTag.getTag(playerID.toString()) instanceof NBTTagList))
 				return null;
 			else
 				return (NBTTagList) mainTag.getTag(playerID.toString());

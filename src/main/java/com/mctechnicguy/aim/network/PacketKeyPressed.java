@@ -34,7 +34,7 @@ public class PacketKeyPressed implements IMessage {
 			return null;
 		}
 		
-		public void processMessage(PacketKeyPressed message, @Nonnull MessageContext ctx) {
+		void processMessage(PacketKeyPressed message, @Nonnull MessageContext ctx) {
 			EntityPlayer player = AdvancedInventoryManagement.proxy.getPlayer(ctx);
 			if (player == null) return;
 			if (!player.hasCapability(AdvancedInventoryManagement.PLAYER_ACCESS_CAP, null)) return;

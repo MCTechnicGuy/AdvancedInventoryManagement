@@ -2,9 +2,13 @@ package com.mctechnicguy.aim;
 
 import com.mctechnicguy.aim.client.render.TileEntityPlayerMonitorRenderer;
 import com.mctechnicguy.aim.client.render.TileEntityScannerRenderer;
+import com.mctechnicguy.aim.gui.GuiAIMCore;
+import com.mctechnicguy.aim.gui.GuiAIMGuide;
+import com.mctechnicguy.aim.gui.GuiNetworkInfo;
 import com.mctechnicguy.aim.items.ItemAIMUpgrade;
 import com.mctechnicguy.aim.items.ItemCraftingComponent;
 import com.mctechnicguy.aim.network.*;
+import com.mctechnicguy.aim.tileentity.TileEntityAIMCore;
 import com.mctechnicguy.aim.tileentity.TileEntityPlayerMonitor;
 import com.mctechnicguy.aim.tileentity.TileEntityScanner;
 import net.minecraft.block.Block;
@@ -14,10 +18,14 @@ import net.minecraft.client.renderer.ItemMeshDefinition;
 import net.minecraft.client.renderer.block.model.ModelBakery;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.client.renderer.block.statemap.StateMapperBase;
+import net.minecraft.client.resources.I18n;
 import net.minecraft.client.settings.KeyBinding;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.World;
 import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.fluids.BlockFluidClassic;
 import net.minecraftforge.fml.client.registry.ClientRegistry;
@@ -26,6 +34,7 @@ import net.minecraftforge.fml.relauncher.Side;
 import org.lwjgl.input.Keyboard;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.UUID;
 
 public class ClientProxy extends CommonProxy {
@@ -104,6 +113,29 @@ public class ClientProxy extends CommonProxy {
         });
     }
 
+    @Nullable
+    @Override
+    public Object getClientGuiElement(int ID, @Nonnull EntityPlayer player, @Nonnull World world, int x, int y, int z) {
+        TileEntity entity = world.getTileEntity(new BlockPos(x, y, z));
+        if (entity != null) {
+            switch (ID) {
+                case AdvancedInventoryManagement.guiIDCore:
+                    if (entity instanceof TileEntityAIMCore) {
+                        return new GuiAIMCore(player.inventory, (TileEntityAIMCore) entity);
+                    }
+                case AdvancedInventoryManagement.guiIDNetworkInfo:
+                    if (entity instanceof TileEntityAIMCore) {
+                        return new GuiNetworkInfo((TileEntityAIMCore)entity);
+                    }
+            }
+        } else if (ID == AdvancedInventoryManagement.guiIDGuide) {
+            return new GuiAIMGuide();
+        }
+
+        return null;
+
+    }
+
 	private void reg(Item item) {
         ModelLoader.setCustomModelResourceLocation(item, 0, new ModelResourceLocation(ModInfo.ID + ":" + item.getRegistryName().getResourcePath()));
 	}
@@ -123,7 +155,7 @@ public class ClientProxy extends CommonProxy {
 	}
 	
 	public EntityPlayer getPlayer(@Nonnull MessageContext ctx) {
-		return (ctx.side.isClient() ? Minecraft.getMinecraft().player : super.getPlayer(ctx));
+		return Minecraft.getMinecraft().player;
 	}
 	
 	public void addScheduledTask(@Nonnull Runnable run, @Nonnull MessageContext ctx) {
@@ -136,5 +168,16 @@ public class ClientProxy extends CommonProxy {
 		PacketHelper.wrapper.registerMessage(PacketKeyPressed.PacketKeyPressedHandler.class, PacketKeyPressed.class, 0, Side.SERVER);
 		PacketHelper.wrapper.registerMessage(PacketHotbarSlotChanged.PacketHotbarSlotChangedHandler.class, PacketHotbarSlotChanged.class, 2, Side.CLIENT);
 		PacketHelper.wrapper.registerMessage(PacketUpdateOverlayInfo.PacketUpdateOverlayInfoHandler.class, PacketUpdateOverlayInfo.class, 3, Side.CLIENT);
+        PacketHelper.wrapper.registerMessage(PacketOpenNetworkCoreList.PacketOpenNetworkCoreListHandler.class, PacketOpenNetworkCoreList.class, 4, Side.CLIENT);
 	}
+
+	@Override
+    public void addPreBlockPagesToGuide() {
+        GuiAIMGuide.addPreBlockPages();
+    }
+
+    @Nullable
+    public String tryToLocalizeString(String format, Object... args) {
+        return I18n.format(format, args);
+    }
 }

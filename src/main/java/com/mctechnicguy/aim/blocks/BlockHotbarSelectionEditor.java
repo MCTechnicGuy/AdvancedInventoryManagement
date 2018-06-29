@@ -38,8 +38,4 @@ public class BlockHotbarSelectionEditor extends BlockAIMDevice {
         return new Object[] {AdvancedInventoryManagement.POWER_PER_SLOT_SELECTION};
     }
 
-    @Override
-    public boolean needsSmallerFont() {
-        return true;
-    }
 }

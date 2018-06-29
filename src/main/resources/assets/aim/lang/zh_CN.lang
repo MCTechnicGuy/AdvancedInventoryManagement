@@ -117,31 +117,31 @@ fluid.fluid_moltenxp=液体XP
 container.aimcore=核心
 
 #Modes for the Inventory Relay
-mode.all=全部
-mode.maininv=主要的背包
-mode.hotbar=快捷栏
+mode.inventoryrelay.all=全部
+mode.inventoryrelay.maininv=主要的背包
+mode.inventoryrelay.hotbar=快捷栏
 
 #Modes for the Hunger Relay
-mode.always=总食物
-mode.hunger=如果玩家饿了 便喂食
-mode.efficiency=最快效率
+mode.hungerrelay.always=总食物
+mode.hungerrelay.hunger=如果玩家饿了 便喂食
+mode.hungerrelay.efficiency=最快效率
 
 #Modes for the Potion Relay
-mode.inlet=药水- 输入, 瓶子 - 输出
-mode.outlet=药水 - 输出, 瓶子 - 输入
+mode.potionrelay..inlet=药水- 输入, 瓶子 - 输出
+mode.potionrelay.outlet=药水 - 输出, 瓶子 - 输入
 
 #Modes for the Experience Bottle Relay
-mode.xp.inlet=XP - 输入, 瓶子 - 输出
-mode.xp.outlet=XP - 输出, 瓶子 - 输入
+mode.xprelay.inlet=XP - 输入, 瓶子 - 输出
+mode.xprelay.outlet=XP - 输出, 瓶子 - 输入
 
 #Modes for the Experience Liquid Relay
-mode.xp.liquid.moltenxp=液体XP (先进的背包管理)
-mode.xp.liquid.xpjuice=液体XP (OpenBlocks | EnderIO)
+mode.xprelay_liquid.moltenxp=液体XP (先进的背包管理)
+mode.xprelay_liquid.xpjuice=液体XP (OpenBlocks | EnderIO)
 
 #Modes for the Slot Selection Relay
-mode.mainhand=使用当前选定的快捷栏槽
-mode.offhand=用随机的槽
-mode.slotbyid=通过它的ID选择插槽（用空手右击来更改ID）
+mode.slotselectionrelay.mainhand=使用当前选定的快捷栏槽
+mode.slotselectionrelay.offhand=用随机的槽
+mode.slotselectionrelay.slotbyid=通过它的ID选择插槽（用空手右击来更改ID）
 
 #Modes for the Player Monitor
 mode.monitor.health=显示生命值
@@ -196,18 +196,18 @@ rsmode.monitor.4=发出当前值（倒）
 rsmode.monitor.5=以脉冲方式发出最后一次更改
 
 #Modes for the Motion Editor
-mode.down=减少Y轴方向运动
-mode.up=增加Y轴方向运动
-mode.north=减少Z轴方向运动
-mode.south=增加Z轴方向运动
-mode.east=增加X轴方向运动
-mode.west=减少X轴方向运动
+mode.motioneditor.down=减少Y轴方向运动
+mode.motioneditor.up=增加Y轴方向运动
+mode.motioneditor.north=减少Z轴方向运动
+mode.motioneditor.south=增加Z轴方向运动
+mode.motioneditor.east=增加X轴方向运动
+mode.motioneditor.west=减少X轴方向运动
 
 #Modes for the Energy Relay
-mode.charge.all=负责所有插槽
-mode.charge.hotbar=只收取物品栏上方
-mode.charge.mainhand=负责当前选中的插槽
-mode.charge.offhand=负责的插槽
+mode.energyrelay.all=负责所有插槽
+mode.energyrelay.hotbar=只收取物品栏上方
+mode.energyrelay.mainhand=负责当前选中的插槽
+mode.energyrelay.offhand=负责的插槽
 
 #Scanner Damage
 death.attack.scannerDamage=%1$s 被分析成能量。

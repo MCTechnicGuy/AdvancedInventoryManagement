@@ -438,19 +438,9 @@ public class BlockNetworkCable extends Block implements ITileEntityProvider, IWr
 		return 1;
 	}
 
-	@Override
-	public boolean doesProvideOwnContent() {
-		return false;
-	}
-
 	@Nonnull
 	@Override
 	public Object[] getParams(int page) {
 		return new Object[] {AdvancedInventoryManagement.POWER_PER_CABLE};
-	}
-
-	@Override
-	public boolean needsSmallerFont() {
-		return false;
 	}
 }

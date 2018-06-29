@@ -2,10 +2,10 @@ package com.mctechnicguy.aim.tileentity;
 
 import com.mctechnicguy.aim.AdvancedInventoryManagement;
 import com.mctechnicguy.aim.blocks.BlockAIMCore;
+import com.mctechnicguy.aim.client.render.NetworkInfoOverlayRenderer;
 import com.mctechnicguy.aim.items.ItemAIMUpgrade;
 import com.mctechnicguy.aim.util.*;
 import net.minecraft.block.state.IBlockState;
-import net.minecraft.client.gui.ScaledResolution;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
@@ -45,18 +45,24 @@ import java.util.UUID;
 })
 public class TileEntityAIMCore extends TileEntity implements IInventory, ITickable, IEnergyStorage, IProvidesNetworkInfo, net.darkhax.tesla.api.ITeslaConsumer, ic2.api.energy.tile.IEnergySink {
 
-	private static final float C_MAX_POWER = 1000000F;
-	private static final float C_MAX_POWER_DRAIN = 50000F;
+	private static final float BASE_MAX_POWER = 1000000F;
+	private static final float BASE_MAX_POWER_DRAIN = 50000F;
 
 	public int Power;
+    private int lastPower;
+    private int currentPowerInput;
+
+    //Client-Side-Variables, not used on the server!
+    private int maxPower;
+    private int powerDrain;
+    private boolean hasAccurateServerInfo;
+    public boolean playerAccessible;
+
 	private int EU_energy_buffer;
     private int NumberCablesConnected;
     private int NumberDevicesConnected;
 	private int NumberBridgesConnected;
 	private int NumberGeneratorsConnected;
-
-	@SideOnly(Side.CLIENT)
-	public boolean playerAccessible;
 
 	private boolean active;
 	private boolean lastCheckSuccess;
@@ -64,7 +70,7 @@ public class TileEntityAIMCore extends TileEntity implements IInventory, ITickab
 	private boolean firstUpdate;
 
 	@Nonnull
-	public List<TileEntityNetworkElement> registeredDevices = new ArrayList<TileEntityNetworkElement>();
+	public List<TileEntityNetworkElement> registeredDevices = new ArrayList<>();
 
 	@Nonnull
 	private NonNullList<ItemStack> slots = NonNullList.withSize(5, ItemStack.EMPTY);
@@ -80,12 +86,12 @@ public class TileEntityAIMCore extends TileEntity implements IInventory, ITickab
 	private static Capability<net.darkhax.tesla.api.ITeslaConsumer> POWER_STORAGE_CAP = null;
 
 	@Override
-	public boolean hasCapability(Capability<?> capability, EnumFacing facing) {
+	public boolean hasCapability(@Nonnull Capability<?> capability, EnumFacing facing) {
 		return capability == CapabilityEnergy.ENERGY || (POWER_STORAGE_CAP != null && capability == POWER_STORAGE_CAP) || super.hasCapability(capability, facing);
 	}
 
 	@Override
-	public <T> T getCapability(Capability<T> capability, EnumFacing facing) {
+	public <T> T getCapability(@Nonnull Capability<T> capability, EnumFacing facing) {
 		if (POWER_STORAGE_CAP != null && capability == POWER_STORAGE_CAP) return (T) this;
 		if (capability == CapabilityEnergy.ENERGY) return (T) this;
 		return super.getCapability(capability, facing);
@@ -144,11 +150,11 @@ public class TileEntityAIMCore extends TileEntity implements IInventory, ITickab
 
 			if(registered != this)
 			{
-				if(registered instanceof ic2.api.energy.tile.IEnergyTile)
+				if(registered != null)
 				{
 					MinecraftForge.EVENT_BUS.post(new ic2.api.energy.event.EnergyTileUnloadEvent(registered));
 				}
-				else if(registered == null)
+				else
 				{
 					MinecraftForge.EVENT_BUS.post(new ic2.api.energy.event.EnergyTileLoadEvent(this));
 				}
@@ -164,7 +170,7 @@ public class TileEntityAIMCore extends TileEntity implements IInventory, ITickab
 		{
 			ic2.api.energy.tile.IEnergyTile registered = ic2.api.energy.EnergyNet.instance.getTile(world, getPos());
 
-			if(registered instanceof ic2.api.energy.tile.IEnergyTile)
+			if(registered != null)
 			{
 				MinecraftForge.EVENT_BUS.post(new ic2.api.energy.event.EnergyTileUnloadEvent(registered));
 			}
@@ -227,7 +233,7 @@ public class TileEntityAIMCore extends TileEntity implements IInventory, ITickab
 	}
 
 
-	public void setConnectedPlayer(@Nonnull EntityPlayer newPlayer) {
+	void setConnectedPlayer(@Nonnull EntityPlayer newPlayer) {
 		this.playerConnectedID = newPlayer.getUniqueID();
 		this.playerConnectedName = newPlayer.getDisplayNameString();
 		TickCounter = AdvancedInventoryManagement.CORE_UPDATE_TIME;
@@ -245,6 +251,7 @@ public class TileEntityAIMCore extends TileEntity implements IInventory, ITickab
 		return new SPacketUpdateTileEntity(pos, 0, nbtTag);
 	}
 
+	@SideOnly(Side.CLIENT)
 	public void onDataPacket(NetworkManager net, @Nonnull SPacketUpdateTileEntity packet) {
 		this.active = packet.getNbtCompound().getBoolean("active");
 		this.playerConnectedName = packet.getNbtCompound().getString("pName");
@@ -255,6 +262,7 @@ public class TileEntityAIMCore extends TileEntity implements IInventory, ITickab
 	}
 
 	@Override
+    @Nonnull
 	public NBTTagCompound getUpdateTag() {
 		NBTTagCompound nbtTag = super.getUpdateTag();
 		nbtTag.setBoolean("active", isActive());
@@ -266,7 +274,7 @@ public class TileEntityAIMCore extends TileEntity implements IInventory, ITickab
 	}
 
 	@Override
-	public void handleUpdateTag(NBTTagCompound tag) {
+	public void handleUpdateTag(@Nonnull NBTTagCompound tag) {
 		super.handleUpdateTag(tag);
 		this.setIsActive(tag.getBoolean("active"));
 		this.playerConnectedName = tag.getString("pName");
@@ -278,17 +286,17 @@ public class TileEntityAIMCore extends TileEntity implements IInventory, ITickab
 
 	private int MaxPowerDrain() {
 		if (!this.hasUpgrade(2))
-			return (int) C_MAX_POWER_DRAIN;
+			return (int) BASE_MAX_POWER_DRAIN;
 		else
-			return (int) (C_MAX_POWER_DRAIN
-					+ C_MAX_POWER_DRAIN * (Math.min(this.getUpgradeCount(2), 16) / 4F));
+			return (int) (BASE_MAX_POWER_DRAIN
+					+ BASE_MAX_POWER_DRAIN * (Math.min(this.getUpgradeCount(2), 16) / 4F));
 	}
 
 	public int MaxPower() {
 		if (!this.hasUpgrade(2))
-			return (int) C_MAX_POWER;
+			return (int) BASE_MAX_POWER;
 		else
-			return (int) (C_MAX_POWER + C_MAX_POWER * (Math.min(this.getUpgradeCount(2), 16) / 4F));
+			return (int) (BASE_MAX_POWER + BASE_MAX_POWER * (Math.min(this.getUpgradeCount(2), 16) / 4F));
 	}
 
 	private float getUpgradeCount(int i) {
@@ -308,10 +316,16 @@ public class TileEntityAIMCore extends TileEntity implements IInventory, ITickab
 
 			if (ModCompatHelper.isIC2Loaded && !isRegistered) register();
 
+			this.currentPowerInput = this.Power - this.lastPower;
+			if (this.currentPowerInput < 0) this.currentPowerInput = 0;
+
 			if (Power > 0 && this.active)
 				this.Power -= this.getNetworkPowerDrain();
 			if (Power < 0)
 				Power = 0;
+
+            this.lastPower = Power;
+
 			this.rechargeFromItem();
 
 			if (this.TickCounter >= AdvancedInventoryManagement.CORE_UPDATE_TIME) {
@@ -386,7 +400,6 @@ public class TileEntityAIMCore extends TileEntity implements IInventory, ITickab
 
 	/**
 	 * Searches for Devices connected to the core
-	 * 
 	 * @return true if the search ended successfully.
 	 */
 	public boolean searchForDevicesInNetwork() {
@@ -589,7 +602,7 @@ public class TileEntityAIMCore extends TileEntity implements IInventory, ITickab
 
 
 	@Override
-	public boolean isUsableByPlayer(EntityPlayer entityplayer) {
+	public boolean isUsableByPlayer(@Nonnull EntityPlayer entityplayer) {
 		return this.isPlayerAccessAllowed(entityplayer) && this.world.getTileEntity(this.pos) == this && entityplayer.getDistanceSq(pos.add(0.5D, 0.5D, 0.5D)) <= 64.0D;
 	}
 
@@ -760,23 +773,45 @@ public class TileEntityAIMCore extends TileEntity implements IInventory, ITickab
 	}
 
 	@Override
+    @SideOnly(Side.CLIENT)
 	public String getNameForOverlay() {
 		return I18n.format("tile.aimcore.name");
 	}
 
 	@Override
-	public void renderStatusInformation(ScaledResolution resolution) {
-
+    @SideOnly(Side.CLIENT)
+	public void renderStatusInformation(NetworkInfoOverlayRenderer renderer) {
+	    renderer.renderStatusString(active);
+        renderer.renderInventoryContent(hasAccurateServerInfo ? slots : null);
+        renderer.renderTileValues("power", TextFormatting.GREEN, !hasAccurateServerInfo, Power, maxPower);
+        renderer.renderTileValues("powerchange", TextFormatting.YELLOW, !hasAccurateServerInfo, currentPowerInput, powerDrain);
+        renderer.renderTileValues("playerconnected", TextFormatting.AQUA, !hasAccurateServerInfo, playerConnectedName);
 	}
 
 	@Nullable
 	@Override
 	public NBTTagCompound getTagForOverlayUpdate() {
-		return null;
+		NBTTagCompound nbt = new NBTTagCompound();
+		nbt.setInteger("Power", this.Power);
+		nbt.setInteger("PowerDrain", active ? this.getNetworkPowerDrain() : 0);
+		nbt.setInteger("MaxPower", this.MaxPower());
+		nbt.setInteger("PowerInput", this.currentPowerInput);
+        ItemStackHelper.saveAllItems(nbt, slots);
+        return nbt;
 	}
 
 	@Override
 	public void handleTagForOverlayUpdate(NBTTagCompound nbt) {
-
+        this.Power = nbt.getInteger("Power");
+        this.maxPower = nbt.getInteger("MaxPower");
+        this.powerDrain = nbt.getInteger("PowerDrain");
+        this.currentPowerInput = nbt.getInteger("PowerInput");
+        ItemStackHelper.loadAllItems(nbt, slots);
+        this.hasAccurateServerInfo = true;
 	}
+
+    @Override
+    public void invalidateServerInfo() {
+        this.hasAccurateServerInfo = false;
+    }
 }

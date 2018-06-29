@@ -22,7 +22,7 @@ public class TileEntityPlayerMonitorRenderer extends TileEntitySpecialRenderer<T
             OpenGlHelper.setLightmapTextureCoords(OpenGlHelper.lightmapTexUnit, 61680.0F, 0.0F);
 
             getFontRenderer().drawString(te.getCore().playerConnectedName, -getFontRenderer().getStringWidth(te.getCore().playerConnectedName) / 2, -30, 1000000);
-            getFontRenderer().drawString(te.getMode_formatted(), -getFontRenderer().getStringWidth(te.getMode_formatted()) / 2, -18, 1000000);
+            getFontRenderer().drawString(te.getModeFormatted(), -getFontRenderer().getStringWidth(te.getModeFormatted()) / 2, -18, 1000000);
             String value = te.getFormattedValue();
             if (value != null) {
                 getFontRenderer().drawString(value, -getFontRenderer().getStringWidth(value) / 2, -6, 1000000);

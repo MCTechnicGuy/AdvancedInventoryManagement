@@ -1,6 +1,6 @@
 package com.mctechnicguy.aim.tileentity;
 
-import net.minecraft.client.gui.ScaledResolution;
+import com.mctechnicguy.aim.client.render.NetworkInfoOverlayRenderer;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
@@ -13,7 +13,10 @@ public interface IProvidesNetworkInfo {
     String getNameForOverlay();
 
     @SideOnly(Side.CLIENT)
-    void renderStatusInformation(ScaledResolution resolution);
+    void renderStatusInformation(NetworkInfoOverlayRenderer renderer);
+
+    @SideOnly(Side.CLIENT)
+    void invalidateServerInfo();
 
     /** Will only ever be called server-side **/
     @Nullable

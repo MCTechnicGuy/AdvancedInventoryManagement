@@ -9,10 +9,6 @@ public interface IManualEntry {
 
     int getPageCount();
 
-    boolean doesProvideOwnContent();
-
     @Nonnull
     Object[] getParams(int page);
-
-    boolean needsSmallerFont();
 }

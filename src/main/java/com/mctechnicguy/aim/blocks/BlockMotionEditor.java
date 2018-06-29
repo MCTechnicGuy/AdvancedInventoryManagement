@@ -38,10 +38,6 @@ public class BlockMotionEditor extends BlockAIMModulatedDevice {
         return new Object[] {AdvancedInventoryManagement.POWER_PER_MOTION_EDIT, AdvancedInventoryManagement.POWER_PER_MOTION_EDIT * 225};
     }
 
-    @Override
-    public boolean needsSmallerFont() {
-        return true;
-    }
 
     @Override
     protected PropertyAIMMode getModeProperty() {

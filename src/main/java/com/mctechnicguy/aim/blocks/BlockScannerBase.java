@@ -24,7 +24,7 @@ import javax.annotation.Nonnull;
 public class BlockScannerBase extends Block implements IWrenchDestroyable {
 
 	public static final String NAME = "scannerbase";
-	public static final PropertyEnum POS = PropertyEnum.create("pos", BlockScannerBase.EnumPos.class);
+	public static final PropertyEnum<EnumPos> POS = PropertyEnum.create("pos", BlockScannerBase.EnumPos.class);
 	
 	public BlockScannerBase() {
 		super(Material.IRON);

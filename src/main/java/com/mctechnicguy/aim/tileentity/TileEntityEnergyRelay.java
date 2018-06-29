@@ -1,23 +1,33 @@
 package com.mctechnicguy.aim.tileentity;
 
+import com.mctechnicguy.aim.client.render.NetworkInfoOverlayRenderer;
 import net.darkhax.tesla.api.ITeslaConsumer;
 import net.darkhax.tesla.api.ITeslaHolder;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.NonNullList;
+import net.minecraft.util.text.TextFormatting;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.CapabilityInject;
 import net.minecraftforge.energy.CapabilityEnergy;
 import net.minecraftforge.energy.IEnergyStorage;
 import net.minecraftforge.fml.common.Optional;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 @Optional.InterfaceList({
         @Optional.Interface(iface="net.darkhax.tesla.api.ITeslaConsumer", modid="tesla"),
         @Optional.Interface(iface="net.darkhax.tesla.api.ITeslaHolder", modid="tesla")
 })
 public class TileEntityEnergyRelay extends TileEntityAIMDevice implements IEnergyStorage, net.darkhax.tesla.api.ITeslaConsumer, net.darkhax.tesla.api.ITeslaHolder{
+
+    private int lastPowerFlow;
 
     @CapabilityInject(net.darkhax.tesla.api.ITeslaConsumer.class)
     private static Capability<ITeslaConsumer> POWER_STORAGE_CAP = null;
@@ -26,13 +36,13 @@ public class TileEntityEnergyRelay extends TileEntityAIMDevice implements IEnerg
     private static Capability<ITeslaHolder> POWER_HOLDER_CAP = null;
 
     @Override
-    public boolean hasCapability(Capability<?> capability, EnumFacing facing) {
+    public boolean hasCapability(@Nonnull Capability<?> capability, EnumFacing facing) {
         return capability == CapabilityEnergy.ENERGY || (POWER_STORAGE_CAP != null && capability == POWER_STORAGE_CAP) ||
                 (POWER_HOLDER_CAP != null && capability == POWER_HOLDER_CAP) || super.hasCapability(capability, facing);
     }
 
     @Override
-    public <T> T getCapability(Capability<T> capability, EnumFacing facing) {
+    public <T> T getCapability(@Nonnull Capability<T> capability, EnumFacing facing) {
         if (POWER_STORAGE_CAP != null && capability == POWER_STORAGE_CAP) return (T) this;
         if (POWER_HOLDER_CAP != null && capability == POWER_HOLDER_CAP) return (T) this;
         if (capability == CapabilityEnergy.ENERGY) return (T) this;
@@ -51,6 +61,7 @@ public class TileEntityEnergyRelay extends TileEntityAIMDevice implements IEnerg
                 toReceive -= stack.getCapability(POWER_STORAGE_CAP, null).givePower(toReceive, simulate);
             }
         }
+        lastPowerFlow = maxReceive - toReceive;
         return maxReceive - toReceive;
     }
 
@@ -117,6 +128,7 @@ public class TileEntityEnergyRelay extends TileEntityAIMDevice implements IEnerg
         return PowerSum;
     }
 
+    @Override
     public long givePower(long powerOffered, boolean simulated) {
         return addPowerToPlayer((int)powerOffered, simulated);
     }
@@ -159,5 +171,28 @@ public class TileEntityEnergyRelay extends TileEntityAIMDevice implements IEnerg
     @Override
     public long getCapacity() {
         return getMaxPowerAtPlayer();
+    }
+
+    @Nullable
+    @Override
+    public NBTTagCompound getTagForOverlayUpdate() {
+        NBTTagCompound nbt = new NBTTagCompound();
+        nbt.setInteger("lastPowerFlow", lastPowerFlow);
+        return nbt;
+    }
+
+    @Override
+    public void handleTagForOverlayUpdate(NBTTagCompound nbt) {
+        if (nbt.hasKey("lastPowerFlow")) {
+            this.lastPowerFlow = nbt.getInteger("lastPowerFlow");
+            hasAccurateServerInfo = true;
+        }
+    }
+
+    @Override
+    @SideOnly(Side.CLIENT)
+    public void renderStatusInformation(NetworkInfoOverlayRenderer renderer) {
+        super.renderStatusInformation(renderer);
+        renderer.renderTileValues("powerinput", TextFormatting.GREEN, !hasAccurateServerInfo, lastPowerFlow);
     }
 }

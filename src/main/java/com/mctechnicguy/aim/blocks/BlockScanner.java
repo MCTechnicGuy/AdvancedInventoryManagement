@@ -2,6 +2,7 @@ package com.mctechnicguy.aim.blocks;
 
 import com.mctechnicguy.aim.ModInfo;
 import com.mctechnicguy.aim.gui.GuiAIMGuide;
+import com.mctechnicguy.aim.gui.GuiUtils;
 import com.mctechnicguy.aim.gui.ICustomManualEntry;
 import com.mctechnicguy.aim.tileentity.TileEntityScanner;
 import net.minecraft.block.properties.PropertyEnum;
@@ -19,6 +20,8 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -105,28 +108,19 @@ public class BlockScanner extends BlockAIMBase implements ICustomManualEntry{
 	}
 
 	@Override
-	public boolean doesProvideOwnContent() {
-		return true;
-	}
-
-	@Override
-	public boolean needsSmallerFont() {
-		return true;
-	}
-
-	@Override
 	public boolean showCraftingRecipe(int page) {
 		return page == 0;
 	}
 
-	@Override
+	 @Override
 	public boolean hasLeftSidePicture(int page) {
 		return page != 0;
 	}
 
 	@Override
+    @SideOnly(Side.CLIENT)
 	public void drawLeftSidePicture(int page, @Nonnull Minecraft mc, @Nonnull GuiAIMGuide gui, float zLevel) {
-		GuiAIMGuide.drawScaledTexturedQuad(gui.BgStartX + 15, gui.BgStartY + (GuiAIMGuide.BGY / 2D) - 76, 163, 320, 400, 512, GuiAIMGuide.BGX / 2D - 30, 193 * ((GuiAIMGuide.BGX / 2D - 30) / 237), zLevel);
+		GuiUtils.drawScaledTexturedQuad(gui.BgStartX + 15, gui.BgStartY + (GuiAIMGuide.BGY / 2D) - 76, 163, 320, 400, 512, 512, GuiAIMGuide.BGX / 2D - 30, 193 * ((GuiAIMGuide.BGX / 2D - 30) / 237), zLevel);
 		GlStateManager.scale(0.75, 0.75, 0.75);
 		mc.fontRenderer.drawSplitString(I18n.format("guide.picture.scanner"), (int)Math.round((gui.BgStartX + 15) * (1/0.75D)), (int)Math.round((gui.BgStartY + 130) * (1/0.75D)), (int)Math.round((GuiAIMGuide.BGX / 2 - 30) * (1/0.75D)), 4210752);
 		GlStateManager.scale(1 / 0.75, 1 / 0.75, 1 / 0.75);
@@ -149,7 +143,7 @@ public class BlockScanner extends BlockAIMBase implements ICustomManualEntry{
 		private int id;
 		private String name;
 
-		private EnumActivity(int id, String name) {
+		EnumActivity(int id, String name) {
 			this.id = id;
 			this.name = name;
 		}

@@ -49,47 +49,47 @@ public class GuiAIMCore extends GuiContainer {
 			TickCounter++;
 		
 		
-		String problemMessage = "gui.AIMCore.Problems.none";
-		if (core.playerConnectedName == null || core.playerConnectedName.isEmpty()) problemMessage = "gui.AIMCore.Problems.noPlayer";
-		else if (!SearchSuccess) problemMessage = "gui.AIMCore.Problems.wrongSetup";
-		else if (core.Power <= core.getNetworkPowerDrain()) problemMessage = "gui.AIMCore.Problems.noPower";
+		String problemMessage = "gui.aimcore.problems.none";
+		if (core.playerConnectedName == null || core.playerConnectedName.isEmpty()) problemMessage = "gui.aimcore.problems.noplayer";
+		else if (!SearchSuccess) problemMessage = "gui.aimcore.problems.wrongsetup";
+		else if (core.Power <= core.getNetworkPowerDrain()) problemMessage = "gui.aimcore.problems.nopower";
 
 		String name = core.hasCustomName() ? core.getName() : I18n.format(core.getName());
 		this.fontRenderer.drawString(name, this.xSize / 2 - this.fontRenderer.getStringWidth(name) / 2 + 5, 6, 4210752);
 		this.fontRenderer.drawString(I18n.format("container.inventory"), 115, this.ySize - 105, 4210752);
-		this.fontRenderer.drawString(I18n.format("gui.AIMCore.Upgrades"), 120, 25, 4210752);
+		this.fontRenderer.drawString(I18n.format("gui.aimcore.upgrades"), 120, 25, 4210752);
 
 		GL11.glScaled(0.8, 0.8, 0.8);
 
-		this.fontRenderer.drawString(I18n.format("gui.AIMInfo.isActive"), 39, 29, 4210752);
-		this.fontRenderer.drawString(I18n.format(core.isActive() ? "gui.AIMInfo.boolTrue" : "gui.AIMInfo.boolFalse"), 45, 38,
+		this.fontRenderer.drawString(I18n.format("gui.aiminfo.issctive"), 39, 29, 4210752);
+		this.fontRenderer.drawString(I18n.format(core.isActive() ? "gui.aiminfo.booltrue" : "gui.aiminfo.boolfalse"), 45, 38,
 				core.isActive() ? 1238807 : 15208978);
 
-		this.fontRenderer.drawString(I18n.format("gui.AIMInfo.PowerDrain"), 39, 49, 4210752);
+		this.fontRenderer.drawString(I18n.format("gui.aiminfo.powerdrain"), 39, 49, 4210752);
 		this.fontRenderer.drawString((core.isActive() ? core.getNetworkPowerDrain() : 0) + " RF/t", 45, 58, 4210752);
 
-		this.fontRenderer.drawString(I18n.format("gui.AIMInfo.connectedPlayer"), 39, 69, 4210752);
+		this.fontRenderer.drawString(I18n.format("gui.aiminfo.connectedplayer"), 39, 69, 4210752);
 		this.fontRenderer.drawString(
-				(core.playerConnectedName != null && !core.playerConnectedName.equals("") ? core.playerConnectedName : I18n.format("gui.AIMInfo.noPlayer")),
+				(core.playerConnectedName != null && !core.playerConnectedName.equals("") ? core.playerConnectedName : I18n.format("gui.aiminfo.noplayer")),
 				45, 78, 1234664);
 
-		this.fontRenderer.drawString(I18n.format("gui.AIMCore.Problems"), 39, 89, 4210752);
-		this.fontRenderer.drawString((I18n.format(problemMessage)), 45, 98, problemMessage.equals("gui.AIMCore.Problems.none") ? 1238807 : 15208978);
+		this.fontRenderer.drawString(I18n.format("gui.aimcore.problems"), 39, 89, 4210752);
+		this.fontRenderer.drawString((I18n.format(problemMessage)), 45, 98, problemMessage.equals("gui.aimcore.problems.none") ? 1238807 : 15208978);
 
 		GL11.glScaled(1.25, 1.25, 1.25);
 		
 		if (par1 >= guiLeft + 8 && par1 <= guiLeft + 24 && par2 <= guiTop + 71 && par2 >= guiTop + 21) {
-			List list = new ArrayList<String>();
+			List<String> list = new ArrayList<>();
 			list.add(core.Power + "/" + core.MaxPower() + " RF");
 			this.drawHoveringText(list, par1 - guiLeft, par2 - guiTop, this.fontRenderer);
 		}
 		
 		
-		if (!problemMessage.equals("gui.AIMCore.Problems.none") && par1 >= guiLeft + 31 && par1 <= guiLeft + 101 && par2 <= guiTop + 91 && par2 >= guiTop + 75) {
-			List list = new ArrayList<String>();
+		if (!problemMessage.equals("gui.aimcore.problems.none") && par1 >= guiLeft + 31 && par1 <= guiLeft + 101 && par2 <= guiTop + 91 && par2 >= guiTop + 75) {
+			List<String> list = new ArrayList<>();
 			list.add(I18n.format(problemMessage + ".desc"));
-			if (problemMessage.equals("gui.AIMCore.Problems.wrongSetup") || problemMessage.equals("gui.AIMCore.Problems.noPower")) list.add(I18n.format(problemMessage + ".desc.2"));
-			if (problemMessage.equals("gui.AIMCore.Problems.wrongSetup")) list.add(I18n.format(problemMessage + ".desc.3"));
+			if (problemMessage.equals("gui.aimcore.problems.wrongsetup") || problemMessage.equals("gui.aimcore.problems.nopower")) list.add(I18n.format(problemMessage + ".desc.2"));
+			if (problemMessage.equals("gui.aimcore.problems.wrongsetup")) list.add(I18n.format(problemMessage + ".desc.3"));
 			this.drawHoveringText(list, par1 - guiLeft, par2 - guiTop, this.fontRenderer);
 		}
 		

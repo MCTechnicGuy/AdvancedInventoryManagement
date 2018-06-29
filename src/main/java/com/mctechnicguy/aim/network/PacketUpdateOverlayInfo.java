@@ -12,6 +12,8 @@ import net.minecraftforge.fml.common.network.ByteBufUtils;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -45,6 +47,7 @@ public class PacketUpdateOverlayInfo implements IMessage{
         ByteBufUtils.writeTag(buf, data);
     }
 
+    @SideOnly(Side.CLIENT)
     public static class PacketUpdateOverlayInfoHandler implements IMessageHandler<PacketUpdateOverlayInfo, IMessage> {
 
         @Nullable

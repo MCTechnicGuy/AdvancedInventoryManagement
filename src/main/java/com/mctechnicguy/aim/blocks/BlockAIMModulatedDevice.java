@@ -31,7 +31,7 @@ public abstract class BlockAIMModulatedDevice extends BlockAIMDevice {
     }
 
     @Nonnull
-    AIMMode getModeFromID(int id) {
+    public AIMMode getModeFromID(int id) {
         return getModeProperty().getModeForID(id);
     }
 

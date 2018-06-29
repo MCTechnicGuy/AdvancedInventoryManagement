@@ -2,7 +2,10 @@ package com.mctechnicguy.aim.gui;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiButton;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
+@SideOnly(Side.CLIENT)
 public class GuideTexturedButton extends GuiButton {
 
     private int u, v;
@@ -15,6 +18,6 @@ public class GuideTexturedButton extends GuiButton {
 
     @Override
     public void drawButton(Minecraft mc, int mouseX, int mouseY, float partialTicks) {
-        GuiAIMGuide.drawTexturedQuad(this.x, this.y, u, v, width, height, zLevel);
+        GuiUtils.drawTexturedQuad(this.x, this.y, u, v, width, height, 512, zLevel);
     }
 }

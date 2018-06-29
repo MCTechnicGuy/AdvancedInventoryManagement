@@ -13,6 +13,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.profiler.Profiler;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraftforge.client.event.DrawBlockHighlightEvent;
 import net.minecraftforge.client.event.RenderGameOverlayEvent;
@@ -26,6 +27,8 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import javax.annotation.Nonnull;
 
 public class AIMEventHandler {
+
+    private BlockPos lastSelectedBlockPos = null;
 
 	@SubscribeEvent
 	@SideOnly(Side.CLIENT)
@@ -48,13 +51,23 @@ public class AIMEventHandler {
 
                 RayTraceResult traceResult = mc.objectMouseOver;
                 if (traceResult != null && traceResult.typeOfHit == RayTraceResult.Type.BLOCK) {
+
+
+                    if (lastSelectedBlockPos != null && !lastSelectedBlockPos.equals(traceResult.getBlockPos()) && mc.world.getTileEntity(lastSelectedBlockPos) instanceof IProvidesNetworkInfo) {
+                        ((IProvidesNetworkInfo) mc.world.getTileEntity(lastSelectedBlockPos)).invalidateServerInfo();
+                    }
                     TileEntity tileEntity = mc.world.getTileEntity(traceResult.getBlockPos());
                     if (tileEntity instanceof IProvidesNetworkInfo) {
+                        lastSelectedBlockPos = traceResult.getBlockPos();
                         NetworkInfoOverlayRenderer.renderNetworkInfoOverlay(event, (IProvidesNetworkInfo)tileEntity);
+                    } else {
+                        lastSelectedBlockPos = null;
                     }
                 }
                 profiler.endSection();
             }
+        } else  if (lastSelectedBlockPos != null && mc.world.getTileEntity(lastSelectedBlockPos) instanceof IProvidesNetworkInfo) {
+            ((IProvidesNetworkInfo) mc.world.getTileEntity(lastSelectedBlockPos)).invalidateServerInfo();
         }
     }
 	

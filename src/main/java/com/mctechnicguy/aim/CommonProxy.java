@@ -1,9 +1,6 @@
 package com.mctechnicguy.aim;
 
 import com.mctechnicguy.aim.container.ContainerAIMCore;
-import com.mctechnicguy.aim.gui.GuiAIMCore;
-import com.mctechnicguy.aim.gui.GuiAIMGuide;
-import com.mctechnicguy.aim.gui.GuiNetworkInfo;
 import com.mctechnicguy.aim.network.*;
 import com.mctechnicguy.aim.tileentity.TileEntityAIMCore;
 import net.minecraft.entity.player.EntityPlayer;
@@ -51,6 +48,13 @@ public class CommonProxy implements IGuiHandler {
 				return null;
 			}
 		}, PacketUpdateOverlayInfo.class, 3, Side.CLIENT);
+        PacketHelper.wrapper.registerMessage(new IMessageHandler<PacketOpenNetworkCoreList, IMessage>() {
+            @Nullable
+            @Override
+            public IMessage onMessage(PacketOpenNetworkCoreList message, MessageContext ctx) {
+                return null;
+            }
+        }, PacketOpenNetworkCoreList.class, 4, Side.CLIENT);
 		PacketHelper.wrapper.registerMessage(PacketKeyPressed.PacketKeyPressedHandler.class, PacketKeyPressed.class, 0, Side.SERVER);
 	}
 
@@ -83,24 +87,7 @@ public class CommonProxy implements IGuiHandler {
 	@Nullable
     @Override
 	public Object getClientGuiElement(int ID, @Nonnull EntityPlayer player, @Nonnull World world, int x, int y, int z) {
-		TileEntity entity = world.getTileEntity(new BlockPos(x, y, z));
-		if (entity != null) {
-			switch (ID) {
-			case AdvancedInventoryManagement.guiIDCore:
-				if (entity instanceof TileEntityAIMCore) {
-					return new GuiAIMCore(player.inventory, (TileEntityAIMCore) entity);
-				}
-			case AdvancedInventoryManagement.guiIDNetworkInfo:
-				if (entity instanceof TileEntityAIMCore) {
-					return new GuiNetworkInfo((TileEntityAIMCore)entity);
-				}
-			}
-		} else if (ID == AdvancedInventoryManagement.guiIDGuide) {
-			return new GuiAIMGuide();
-		}
-
-		return null;
-
+	    return getServerGuiElement(ID, player, world, x, y, z);
 	}
 	
 	public void addScheduledTask(@Nonnull Runnable run, @Nonnull MessageContext ctx) {
@@ -111,5 +98,13 @@ public class CommonProxy implements IGuiHandler {
 		return ctx.getServerHandler().player;
 	}
 
+	public void addPreBlockPagesToGuide() {
+
+    }
+
+    @Nullable
+    public String tryToLocalizeString(String format, Object... args) {
+	    return null;
+    }
 
 }

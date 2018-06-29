@@ -42,19 +42,9 @@ public class ItemAIMManual extends Item implements IManualEntry{
         return 1;
     }
 
-    @Override
-    public boolean doesProvideOwnContent() {
-        return false;
-    }
-
     @Nonnull
     @Override
     public Object[] getParams(int page) {
         return new Object[0];
-    }
-
-    @Override
-    public boolean needsSmallerFont() {
-        return false;
     }
 }

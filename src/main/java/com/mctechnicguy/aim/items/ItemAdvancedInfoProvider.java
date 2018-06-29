@@ -2,20 +2,21 @@ package com.mctechnicguy.aim.items;
 
 import com.mctechnicguy.aim.AdvancedInventoryManagement;
 import com.mctechnicguy.aim.gui.IManualEntry;
+import com.mctechnicguy.aim.network.PacketHelper;
+import com.mctechnicguy.aim.network.PacketOpenNetworkCoreList;
 import com.mctechnicguy.aim.util.AIMUtils;
 import com.mctechnicguy.aim.util.NBTUtils;
 import com.mctechnicguy.aim.util.NetworkUtils;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.EnumActionResult;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
 
 import javax.annotation.Nonnull;
@@ -54,20 +55,9 @@ public class ItemAdvancedInfoProvider extends Item implements IManualEntry {
     private void displayPlayerDetails(@Nonnull World world, @Nonnull EntityPlayer player) {
         if (!world.isRemote) {
             NBTTagList list = NBTUtils.readPlayerInfo(player.getUniqueID(), world);
-            AIMUtils.sendChatMessageWithArgs("message.playerCoreLocation.start", player, TextFormatting.AQUA, player.getDisplayName());
-            if (list == null || list.tagCount() == 0) {
-                AIMUtils.sendChatMessageWithArgs("message.playerCoreLocation.noneFound", player, TextFormatting.RED);
-            } else {
-                for (int i = 0; i < list.tagCount(); i++) {
-                    NBTTagCompound ct = list.getCompoundTagAt(i);
-                    AIMUtils.sendChatMessageWithArgs("message.playerCoreLocation.tag", player, TextFormatting.RESET, ct.getInteger("coreX"),
-                            ct.getInteger("coreY"), ct.getInteger("coreZ"), ct.getString("DimName"), ct.getInteger("DimID"));
-                }
+            if (list != null) {
+                PacketHelper.sendPacketToClient(new PacketOpenNetworkCoreList(list, AIMUtils.isPlayerAccessible(player)), (EntityPlayerMP) player);
             }
-            AIMUtils.sendChatMessageWithArgs(
-                    AIMUtils.isPlayerAccessible(player) ? "message.playerAccessibility.true" : "message.playerAccessibility.false", player,
-                    AIMUtils.isPlayerAccessible(player) ? TextFormatting.GREEN : TextFormatting.RED);
-            AIMUtils.sendChatMessageWithArgs("message.playerCoreLocation.end", player, TextFormatting.AQUA, player.getDisplayName());
         }
     }
 
@@ -82,20 +72,10 @@ public class ItemAdvancedInfoProvider extends Item implements IManualEntry {
         return 1;
     }
 
-    @Override
-    public boolean doesProvideOwnContent() {
-        return false;
-    }
-
     @Nonnull
     @Override
     public Object[] getParams(int page) {
         return new Object[0];
-    }
-
-    @Override
-    public boolean needsSmallerFont() {
-        return false;
     }
 
 }

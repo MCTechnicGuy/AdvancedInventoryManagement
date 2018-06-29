@@ -71,11 +71,6 @@ public class BlockPotionRelay extends BlockAIMModulatedDevice {
 		return new Object[] {AdvancedInventoryManagement.POWER_PER_POTION_GENERATION};
 	}
 
-	@Override
-	public boolean needsSmallerFont() {
-		return true;
-	}
-
     @Override
     protected PropertyAIMMode getModeProperty() {
         return MODE;

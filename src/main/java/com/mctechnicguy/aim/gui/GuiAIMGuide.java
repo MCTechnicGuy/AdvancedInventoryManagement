@@ -3,15 +3,11 @@ package com.mctechnicguy.aim.gui;
 import com.mctechnicguy.aim.ModElementList;
 import com.mctechnicguy.aim.ModInfo;
 import com.mctechnicguy.aim.blocks.BlockFluidMoltenXP;
-import com.mctechnicguy.aim.blocks.BlockPotionRelay;
 import net.minecraft.block.Block;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiScreen;
-import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.RenderHelper;
-import net.minecraft.client.renderer.Tessellator;
-import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
@@ -19,13 +15,15 @@ import net.minecraft.item.crafting.IRecipe;
 import net.minecraft.item.crafting.Ingredient;
 import net.minecraft.util.NonNullList;
 import net.minecraft.util.ResourceLocation;
-import org.lwjgl.opengl.GL11;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
 import javax.annotation.Nonnull;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+@SideOnly(Side.CLIENT)
 public class GuiAIMGuide extends GuiScreen {
 
     private static final ResourceLocation GuiTexture = new ResourceLocation(ModInfo.ID, "textures/gui/guiaimguide.png");
@@ -43,7 +41,6 @@ public class GuiAIMGuide extends GuiScreen {
     private int currentPage;
     private int currentSubPage;
     private int tableOfContentButtonOffset = 0;
-    private static final double FONT_SCALE = 0.75;
     private GuideTexturedButton pageBack;
     private GuideTexturedButton pageForward;
     private GuideTexturedButton buttonListUp;
@@ -80,20 +77,20 @@ public class GuiAIMGuide extends GuiScreen {
     public void drawScreen(int mouseX, int mouseY, float partialTicks) {
         drawDefaultBackground();
         mc.getTextureManager().bindTexture(GuiTexture);
-        drawTexturedQuad(BgStartX, BgStartY, 0, 0, BGX, BGY, zLevel);
+        GuiUtils.drawTexturedQuad(BgStartX, BgStartY, 0, 0, BGX, BGY, 512, zLevel);
         if (currentPage > 1) pageBack.drawButton(mc, mouseX, mouseY, partialTicks);
         if (currentPage <= content.size()) pageForward.drawButton(mc, mouseX, mouseY, partialTicks);
 
         if (currentPage > 1) {
-            if (!content.get(currentPage - 2).doesProvideOwnContent()) {
-                displayHeader();
-                if (currentSubPage == 0) displayCraftingRecipe();
-                displayPageText();
-            } else if (content.get(currentPage - 2) instanceof ICustomManualEntry){
+            if (content.get(currentPage - 2) instanceof ICustomManualEntry) {
                 ICustomManualEntry entry = (ICustomManualEntry)content.get(currentPage - 2);
                 if (entry.showCraftingRecipe(currentSubPage)) displayCraftingRecipe();
                 else if (entry.hasLeftSidePicture(currentSubPage)) entry.drawLeftSidePicture(currentSubPage, mc, this, zLevel);
                 if (entry.showHeaderOnPage(currentSubPage)) displayHeader();
+                displayPageText();
+            } else {
+                displayHeader();
+                if (currentSubPage == 0) displayCraftingRecipe();
                 displayPageText();
             }
         } else {
@@ -105,7 +102,6 @@ public class GuiAIMGuide extends GuiScreen {
     }
 
     private void displayHeader() {
-        
         GlStateManager.scale(0.9, 0.9, 0.9);
         String header = I18n.format("guide.header." + content.get(currentPage - 2).getManualName());
         fontRenderer.drawString(header, (int)Math.round((BgStartX + (BGX / 4) + 4 - (fontRenderer.getStringWidth(header) / 2)) * (1/0.9)), (int)Math.round((BgStartY + 15) * (1/0.9)), 4210752);
@@ -114,13 +110,9 @@ public class GuiAIMGuide extends GuiScreen {
 
     private void displayIntroduction() {
         mc.getTextureManager().bindTexture(LogoTexture);
-        drawScaledTexturedQuad(BgStartX + 15, BgStartY + 30, 0, 512, 512, 512 + 210, (BGX / 2 - 30), 210 * ((BGX / 2D - 30) / 512D), zLevel);
-
+        GuiUtils.drawScaledTexturedQuad(BgStartX + 15, BgStartY + 30, 0, 512, 512, 512 + 210,512, (BGX / 2 - 30), 210 * ((BGX / 2D - 30) / 512D), zLevel);
         String textToPrint = I18n.format("guide.content.introduction", mc.gameSettings.keyBindInventory.getDisplayName());
-        double scale = textToPrint.length() > 750 ? FONT_SCALE * 0.9 : FONT_SCALE;
-        GlStateManager.scale(scale, scale, scale);
-        fontRenderer.drawSplitString(textToPrint, (int)Math.round((BgStartX +  + 20) * (1 / scale)), (int)Math.round((BgStartY + 100) * (1 / scale)), (int)Math.round((BGX / 2 - 30) * (1 / scale)), 4210752);
-        GlStateManager.scale(1 / scale, 1 / scale, 1 / scale);
+        GuiUtils.drawScaledMultilineString(fontRenderer, textToPrint, BgStartX +  + 20, BgStartY + 90, BGX / 2 - 30, (int)Math.round(BGY - (210 * ((BGX / 2D - 30) / 512D)) - 30), 4210752, 0.1, 0.75);
     }
 
     private void displayTableOfContents(int mouseX, int mouseY) {
@@ -168,7 +160,7 @@ public class GuiAIMGuide extends GuiScreen {
         } else {
             buttonList.removeAll(contentButtons);
             contentButtons.clear();
-            ArrayList<Integer> results = new ArrayList<Integer>();
+            ArrayList<Integer> results = new ArrayList<>();
             int btnCount = 0;
 
             for (int i = 0; i < content.size(); i++) {
@@ -243,11 +235,7 @@ public class GuiAIMGuide extends GuiScreen {
 
     private void displayPageText() {
         String textToPrint = I18n.format("guide.content." + content.get(currentPage - 2).getManualName() + (currentSubPage > 0 ? String.valueOf(currentSubPage) : ""), content.get(currentPage - 2).getParams(currentSubPage)).replace("\\n", "\n");
-        double scale = content.get(currentPage - 2).needsSmallerFont() ? FONT_SCALE * 0.9 : FONT_SCALE;
-        if (content.get(currentPage - 2) instanceof BlockPotionRelay) scale = 0.6;
-        GlStateManager.scale(scale, scale, scale);
-        fontRenderer.drawSplitString(textToPrint, (int)Math.round((BgStartX + (BGX / 2) + 15) * (1 / scale)), (int)Math.round((BgStartY + 15) * (1 / scale)), (int)Math.round((BGX / 2 - 30) * (1 / scale)), 4210752);
-        GlStateManager.scale(1 / scale, 1 / scale, 1 / scale);
+        GuiUtils.drawScaledMultilineString(fontRenderer, textToPrint, BgStartX + (BGX / 2) + 15, BgStartY + 15, BGX / 2 - 30, BGY - 50, 4210752, 0.1, 0.75);
     }
 
     @Override
@@ -352,7 +340,7 @@ public class GuiAIMGuide extends GuiScreen {
 
         if (currentPage > 1) {
             for (GuiButton b : contentButtons) b.enabled = false;
-            if (!content.get(currentPage - 2).doesProvideOwnContent() || (content.get(currentPage - 2) instanceof ICustomManualEntry && (((ICustomManualEntry)content.get(currentPage - 2)).showCraftingRecipe(currentSubPage)))) {
+            if (!(content.get(currentPage - 2) instanceof ICustomManualEntry) || (((ICustomManualEntry)content.get(currentPage - 2)).showCraftingRecipe(currentSubPage))) {
                 for (GuiButton b : craftingButtons) b.enabled = true;
             }
             buttonListDown.enabled = false;
@@ -372,31 +360,9 @@ public class GuiAIMGuide extends GuiScreen {
 
     private void setCurrentSubPage(int subPage) {
         currentSubPage = subPage;
-        if (currentPage > 1 && !content.get(currentPage - 2).doesProvideOwnContent() || (content.get(currentPage - 2) instanceof ICustomManualEntry && (((ICustomManualEntry)content.get(currentPage - 2)).showCraftingRecipe(currentSubPage)))) {
+        if (currentPage > 1 && (!(content.get(currentPage - 2) instanceof ICustomManualEntry)) || (((ICustomManualEntry)content.get(currentPage - 2)).showCraftingRecipe(currentSubPage))) {
             for (GuiButton b : craftingButtons) b.enabled = true;
         }
     }
 
-    //Because the normal drawTexturedModalRect didn't work, i wrote my own version of it.
-    static void drawTexturedQuad(double x, double y, double u, double v, double width, double height, double zLevel){
-        Tessellator tessellator = Tessellator.getInstance();
-        BufferBuilder vb = tessellator.getBuffer();
-        vb.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_TEX);
-        vb.pos(x, y, zLevel).tex(u / 512, v / 512).endVertex();
-        vb.pos(x, y + height, zLevel).tex(u / 512, (v + height) / 512).endVertex();
-        vb.pos(x + width, y + height, zLevel).tex((u + width) / 512, (v + height) / 512).endVertex();
-        vb.pos(x + width, y, zLevel).tex((u + width) / 512, v / 512).endVertex();
-        tessellator.draw();
-    }
-
-    public static void drawScaledTexturedQuad(double x, double y, double u, double v, double maxU, double maxV, double width, double height, double zLevel){
-        Tessellator tessellator = Tessellator.getInstance();
-        BufferBuilder vb = tessellator.getBuffer();
-        vb.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_TEX);
-        vb.pos(x, y, zLevel).tex(u / 512, v / 512).endVertex();
-        vb.pos(x, y + height, zLevel).tex(u / 512, maxV / 512).endVertex();
-        vb.pos(x + width, y + height, zLevel).tex(maxU / 512, maxV / 512).endVertex();
-        vb.pos(x + width, y, zLevel).tex(maxU / 512, v / 512).endVertex();
-        tessellator.draw();
-    }
 }

@@ -59,20 +59,12 @@ public class ItemCraftingComponent extends Item implements ICustomManualEntry{
 		return 3;
 	}
 
-	public boolean doesProvideOwnContent() {
-		return true;
-	}
-
 	@Nonnull
 	@Override
 	public Object[] getParams(int page) {
 		return new Object[0];
 	}
 
-	@Override
-	public boolean needsSmallerFont() {
-		return false;
-	}
 
 	@Override
 	public boolean hasLeftSidePicture(int page) {

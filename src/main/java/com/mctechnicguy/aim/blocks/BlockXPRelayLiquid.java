@@ -31,10 +31,6 @@ public class BlockXPRelayLiquid extends BlockAIMModulatedDevice {
 		return new Object[] {(double)AdvancedInventoryManagement.XP_PER_BUCKET / 1000D, (double)AdvancedInventoryManagement.XP_PER_BUCKET / 1000D, (double)AdvancedInventoryManagement.XP_PER_BUCKET * 16};
 	}
 
-	@Override
-	public boolean needsSmallerFont() {
-		return true;
-	}
 
 	@Override
 	public void cycleToNextMode(World world, BlockPos pos, EntityPlayer causer) {

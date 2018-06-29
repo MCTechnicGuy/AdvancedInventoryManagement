@@ -9,6 +9,8 @@ import net.minecraft.client.renderer.RenderHelper;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 import org.lwjgl.opengl.GL11;
 
 import javax.annotation.Nonnull;
@@ -16,6 +18,7 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
+@SideOnly(Side.CLIENT)
 public class GuiNetworkInfo extends GuiScreen {
 
 	private static final ResourceLocation GuiTexture = new ResourceLocation(ModInfo.ID.toLowerCase(), "textures/gui/guinetworkinfo.png");
@@ -56,54 +59,54 @@ public class GuiNetworkInfo extends GuiScreen {
 		// Scrollbar
 		drawTexturedModalRect(BgStartX + 194, BgStartY + 56 + ScrollBarPos, BGX, 50, 12, 15);
 
-		this.fontRenderer.drawString(I18n.format("gui.AIMInfo.coreHeader"), BgStartX + 10, BgStartY + 7, 4210752);
-		this.fontRenderer.drawString(I18n.format("gui.AIMInfo.networkHeader"), BgStartX + 115, BgStartY + 7, 4210752);
+		this.fontRenderer.drawString(I18n.format("gui.aiminfo.coreheader"), BgStartX + 10, BgStartY + 7, 4210752);
+		this.fontRenderer.drawString(I18n.format("gui.aiminfo.networkheader"), BgStartX + 115, BgStartY + 7, 4210752);
 
 		GL11.glPushMatrix();
 		GL11.glScalef(0.75F, 0.75F, 0.75F);
 		double scale = 1/0.75F;
 
 		// Core Information
-		this.fontRenderer.drawString(I18n.format("gui.AIMInfo.Power"), (int) ((BgStartX + 31) * scale), (int) ((BgStartY + 22) * scale), 4210752);
+		this.fontRenderer.drawString(I18n.format("gui.aiminfo.power"), (int) ((BgStartX + 31) * scale), (int) ((BgStartY + 22) * scale), 4210752);
 		this.fontRenderer.drawString(core.Power + " RF", (int) ((BgStartX + 31) * scale), (int) ((BgStartY + 31) * scale), 4210752);
 
-		this.fontRenderer.drawString(I18n.format("gui.AIMInfo.PowerDrain"), (int) ((BgStartX + 31) * scale), (int) ((BgStartY + 40) * scale),
+		this.fontRenderer.drawString(I18n.format("gui.aiminfo.powerdrain"), (int) ((BgStartX + 31) * scale), (int) ((BgStartY + 40) * scale),
 				4210752);
 		this.fontRenderer.drawString((core.isActive() ? core.getNetworkPowerDrain() : 0) + " RF/t", (int) ((BgStartX + 31) * scale),
 				(int) ((BgStartY + 49) * scale), 4210752);
 
-		this.fontRenderer.drawString(I18n.format("gui.AIMInfo.isActive"), (int) ((BgStartX + 31) * scale), (int) ((BgStartY + 58) * scale), 4210752);
-		this.fontRenderer.drawString(I18n.format(core.isActive() ? "gui.AIMInfo.boolTrue" : "gui.AIMInfo.boolFalse"),
+		this.fontRenderer.drawString(I18n.format("gui.aiminfo.isactive"), (int) ((BgStartX + 31) * scale), (int) ((BgStartY + 58) * scale), 4210752);
+		this.fontRenderer.drawString(I18n.format(core.isActive() ? "gui.aiminfo.booltrue" : "gui.aiminfo.boolfalse"),
 				(int) ((BgStartX + 31) * scale), (int) ((BgStartY + 67) * scale), core.isActive() ? 1238807 : 15208978);
 
-		this.fontRenderer.drawString(I18n.format("gui.AIMInfo.connectedPlayer"), (int) ((BgStartX + 10) * scale), (int) ((BgStartY + 76) * scale),
+		this.fontRenderer.drawString(I18n.format("gui.aiminfo.connectedplayer"), (int) ((BgStartX + 10) * scale), (int) ((BgStartY + 76) * scale),
 				4210752);
-		this.fontRenderer.drawString((core.playerConnectedName != null && !core.playerConnectedName.isEmpty() ? core.playerConnectedName : I18n.format("gui.AIMInfo.noPlayer")),
+		this.fontRenderer.drawString((core.playerConnectedName != null && !core.playerConnectedName.isEmpty() ? core.playerConnectedName : I18n.format("gui.aiminfo.noplayer")),
 				(int) ((BgStartX + 13) * scale), (int) ((BgStartY + 85) * scale), 1234664);
 
-		this.fontRenderer.drawString(I18n.format("gui.AIMInfo.isPlayerAccessible"), (int) ((BgStartX + 10) * scale), (int) ((BgStartY + 94) * scale),
+		this.fontRenderer.drawString(I18n.format("gui.aiminfo.isplayeraccessible"), (int) ((BgStartX + 10) * scale), (int) ((BgStartY + 94) * scale),
 				4210752);
-		this.fontRenderer.drawString(I18n.format(core.playerAccessible ? "gui.AIMInfo.boolTrue" : "gui.AIMInfo.boolFalse"),
+		this.fontRenderer.drawString(I18n.format(core.playerAccessible ? "gui.aiminfo.booltrue" : "gui.aiminfo.boolfalse"),
 				(int) ((BgStartX + 13) * scale), (int) ((BgStartY + 103) * scale), core.playerAccessible ? 1238807 : 15208978);
 
-		this.fontRenderer.drawString(I18n.format("gui.AIMInfo.isSecured"), (int) ((BgStartX + 10) * scale), (int) ((BgStartY + 112) * scale),
+		this.fontRenderer.drawString(I18n.format("gui.aiminfo.issecured"), (int) ((BgStartX + 10) * scale), (int) ((BgStartY + 112) * scale),
 				4210752);
-		this.fontRenderer.drawString(I18n.format(core.hasUpgrade(0) && core.playerConnectedName != null && !core.playerConnectedName.isEmpty() ? "gui.AIMInfo.boolTrue" : "gui.AIMInfo.boolFalse"),
+		this.fontRenderer.drawString(I18n.format(core.hasUpgrade(0) && core.playerConnectedName != null && !core.playerConnectedName.isEmpty() ? "gui.aiminfo.booltrue" : "gui.aiminfo.boolfalse"),
 				(int) ((BgStartX + 13) * scale), (int) ((BgStartY + 121) * scale),
 				core.hasUpgrade(0) && core.playerConnectedName != null && !core.playerConnectedName.isEmpty() ? 1238807 : 15208978);
 
-		this.fontRenderer.drawString(I18n.format("gui.AIMInfo.corePosition"), (int) ((BgStartX + 10) * scale), (int) ((BgStartY + 130) * scale),
+		this.fontRenderer.drawString(I18n.format("gui.aiminfo.coreposition"), (int) ((BgStartX + 10) * scale), (int) ((BgStartY + 130) * scale),
 				4210752);
 		this.fontRenderer.drawString(core.getPos().getX() + " | " + core.getPos().getY() + " | " + core.getPos().getZ(), (int) ((BgStartX + 13) * scale),
 				(int) ((BgStartY + 139) * scale), 4210752);
 
 		// Network Information
-		this.fontRenderer.drawString(I18n.format("gui.AIMInfo.elementsConnected"), (int) ((BgStartX + 113) * scale), (int) ((BgStartY + 22) * scale),
+		this.fontRenderer.drawString(I18n.format("gui.aiminfo.elementsconnected"), (int) ((BgStartX + 113) * scale), (int) ((BgStartY + 22) * scale),
 				4210752);
 		this.fontRenderer.drawString(String.valueOf(core.numberCablesConnected() + core.numberDevicesConnected()) + " + 1 Core",
 				(int) ((BgStartX + 115) * scale), (int) ((BgStartY + 31) * scale), 4210752);
 
-		this.fontRenderer.drawString(I18n.format("gui.AIMInfo.elementList"), (int) ((BgStartX + 113) * scale), (int) ((BgStartY + 45) * scale),
+		this.fontRenderer.drawString(I18n.format("gui.aiminfo.elementlist"), (int) ((BgStartX + 113) * scale), (int) ((BgStartY + 45) * scale),
 				4210752);
 
 		GL11.glPopMatrix();
@@ -120,7 +123,7 @@ public class GuiNetworkInfo extends GuiScreen {
 
 					this.fontRenderer.drawString(I18n.format((String) devices.keySet().toArray()[ScrollBarListPos + i]),
 							(int) ((BgStartX + 115) * scale), (int) ((BgStartY + 60 + 18*i) * scale), 16448250);
-					this.fontRenderer.drawString(I18n.format("gui.AIMInfo.Amount") + devices.get(devices.keySet().toArray()[ScrollBarListPos + i]),
+					this.fontRenderer.drawString(I18n.format("gui.aiminfo.amount") + devices.get(devices.keySet().toArray()[ScrollBarListPos + i]),
 							(int) ((BgStartX + 115) * scale), (int) ((BgStartY + 67 + 18*i) * scale), 16448250);
 				}
 			}
@@ -156,7 +159,7 @@ public class GuiNetworkInfo extends GuiScreen {
 		BgStartY = (this.height / 2) - (BGY / 2);
 
 		for (TileEntityNetworkElement te : core.registeredDevices) {
-			String key = te.getUnlocalizedBlockName();
+			String key = te.getUnlocalizedBlockName() + ".name";
 			if (!devices.containsKey(key)) {
 				devices.put(key, 1);
 				stackMap.put(key, te.getDisplayStack());
@@ -170,6 +173,7 @@ public class GuiNetworkInfo extends GuiScreen {
 	protected void keyTyped(char c, int id) throws IOException {
 		if (c == 1 || id == this.mc.gameSettings.keyBindInventory.getKeyCode()) {
 			this.mc.player.closeScreen();
+			mc.player.closeScreenAndDropStack();
 		}
 		super.keyTyped(c, id);
 	}

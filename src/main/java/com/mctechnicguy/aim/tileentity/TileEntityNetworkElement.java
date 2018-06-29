@@ -2,7 +2,6 @@ package com.mctechnicguy.aim.tileentity;
 
 import com.mctechnicguy.aim.client.render.NetworkInfoOverlayRenderer;
 import net.minecraft.block.state.IBlockState;
-import net.minecraft.client.gui.ScaledResolution;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
@@ -53,6 +52,7 @@ public abstract class TileEntityNetworkElement extends TileEntity implements IPr
 	}
 
 	@Override
+    @SideOnly(Side.CLIENT)
 	public void onDataPacket(NetworkManager net, @Nonnull SPacketUpdateTileEntity packet) {
 		this.readCoreData(packet.getNbtCompound());
 	}
@@ -156,18 +156,23 @@ public abstract class TileEntityNetworkElement extends TileEntity implements IPr
 
     @SideOnly(Side.CLIENT)
 	public String getNameForOverlay() {
-		return I18n.format(getUnlocalizedBlockName());
+		return I18n.format(getUnlocalizedBlockName() + ".name");
 	}
 
     @SideOnly(Side.CLIENT)
-	public void renderStatusInformation(ScaledResolution res) {
-		NetworkInfoOverlayRenderer.renderStatusString(res, this.isCoreActive());
+	public void renderStatusInformation(NetworkInfoOverlayRenderer renderer) {
+        renderer.renderStatusString(this.isCoreActive());
     }
 
     @Nonnull
     @SideOnly(Side.CLIENT)
     public final String getUnlocalizedBlockName() {
         return this.hasWorld() ? this.getBlockType().getUnlocalizedName() : "";
+    }
+
+    @Override
+    public void invalidateServerInfo() {
+
     }
 
     @Nullable

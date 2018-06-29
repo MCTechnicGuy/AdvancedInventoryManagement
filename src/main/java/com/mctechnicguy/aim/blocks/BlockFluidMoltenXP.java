@@ -38,19 +38,9 @@ public class BlockFluidMoltenXP extends BlockFluidClassic implements IManualEntr
         return 1;
     }
 
-    @Override
-    public boolean doesProvideOwnContent() {
-        return false;
-    }
-
     @Nonnull
     @Override
     public Object[] getParams(int page) {
         return new Object[] {AdvancedInventoryManagement.XP_PER_BUCKET};
-    }
-
-    @Override
-    public boolean needsSmallerFont() {
-        return false;
     }
 }

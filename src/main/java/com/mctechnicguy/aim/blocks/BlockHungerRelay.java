@@ -18,11 +18,6 @@ public class BlockHungerRelay extends BlockAIMModulatedDevice {
 		return new TileEntityHungerRelay();
 	}
 
-	@Override
-	public boolean needsSmallerFont() {
-		return true;
-	}
-
     @Override
     protected PropertyAIMMode getModeProperty() {
         return MODE;

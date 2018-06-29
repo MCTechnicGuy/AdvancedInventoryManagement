@@ -179,7 +179,8 @@ public class TileEntityXPRelay extends TileEntityAIMDevice implements IItemHandl
 
     @Override
     public NonNullList<ItemStack> getOwnInventoryContent() {
-        return NonNullList.withSize(1, bottleStack);
+        if (world.isRemote && !hasAccurateServerInfo) return null;
+        else return NonNullList.withSize(1, this.bottleStack);
     }
 
     @Override
@@ -191,4 +192,20 @@ public class TileEntityXPRelay extends TileEntityAIMDevice implements IItemHandl
     public int getOwnInventorySize() {
         return 1;
     }
+
+    @Override
+    public NBTTagCompound getTagForOverlayUpdate() {
+        NBTTagCompound nbt = new NBTTagCompound();
+        nbt.setInteger("bottleCount", this.bottleStack.getCount());
+        return nbt;
+    }
+
+    @Override
+    public void handleTagForOverlayUpdate(NBTTagCompound nbt) {
+        if (nbt.getInteger("bottleCount") > 0) {
+            this.bottleStack = new ItemStack(Items.GLASS_BOTTLE, nbt.getInteger("bottleCount"));
+        } else this.bottleStack = ItemStack.EMPTY;
+        this.hasAccurateServerInfo = true;
+    }
+
 }

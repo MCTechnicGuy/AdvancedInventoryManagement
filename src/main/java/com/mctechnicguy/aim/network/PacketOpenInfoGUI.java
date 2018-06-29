@@ -12,6 +12,8 @@ import net.minecraftforge.fml.common.network.internal.FMLNetworkHandler;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -49,6 +51,7 @@ public class PacketOpenInfoGUI implements IMessage {
         pf.writeBoolean(playerAccessible);
 	}
 
+	@SideOnly(Side.CLIENT)
 	public static class PacketOpenInfoGUIHandler implements IMessageHandler<PacketOpenInfoGUI, IMessage> {
 
 		@Nullable

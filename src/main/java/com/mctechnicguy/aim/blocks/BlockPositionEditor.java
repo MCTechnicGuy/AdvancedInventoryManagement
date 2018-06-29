@@ -56,8 +56,4 @@ public class BlockPositionEditor extends BlockAIMDevice {
         return new Object[] {AdvancedInventoryManagement.POWER_PER_TELEPORT};
     }
 
-    @Override
-    public boolean needsSmallerFont() {
-        return true;
-    }
 }

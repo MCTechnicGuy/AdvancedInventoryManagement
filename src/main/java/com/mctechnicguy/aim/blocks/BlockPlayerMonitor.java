@@ -22,6 +22,8 @@ import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -68,12 +70,12 @@ public class BlockPlayerMonitor extends BlockAIMDevice implements ICustomManualE
                     ((TileEntityAIMDevice)tileEntity).updateBlock();
                     return EnumRightClickResult.ACTION_DONE;
                 } else {
-                    int mode = ((TileEntityPlayerMonitor) tileEntity).getRedstone_behaviour();
+                    int mode = ((TileEntityPlayerMonitor) tileEntity).getRedstoneBehaviour();
                     if (mode < ((TileEntityPlayerMonitor) tileEntity).getMaxRSMode()) {
                         mode++;
                     } else
                         mode = 0;
-                    ((TileEntityPlayerMonitor)tileEntity).setRedstone_behaviour(mode);
+                    ((TileEntityPlayerMonitor)tileEntity).setRedstoneBehaviour(mode);
                     TextComponentTranslation modeName = new TextComponentTranslation("rsmode.monitor." + mode);
                     modeName.getStyle().setColor(TextFormatting.AQUA);
                     AIMUtils.sendChatMessageWithArgs("message.rsmodechange", player, TextFormatting.RESET, modeName);
@@ -92,16 +94,6 @@ public class BlockPlayerMonitor extends BlockAIMDevice implements ICustomManualE
     }
 
     @Override
-    public boolean doesProvideOwnContent() {
-        return true;
-    }
-
-    @Override
-    public boolean needsSmallerFont() {
-        return true;
-    }
-
-    @Override
     public boolean showCraftingRecipe(int page) {
         return page == 0;
     }
@@ -112,6 +104,7 @@ public class BlockPlayerMonitor extends BlockAIMDevice implements ICustomManualE
     }
 
     @Override
+    @SideOnly(Side.CLIENT)
     public void drawLeftSidePicture(int page, @Nonnull Minecraft mc, @Nonnull GuiAIMGuide gui, float zLevel) {
         String textToPrint = I18n.format("guide.content.playermonitor_modes").replace("\\n", "\n");
         double scale = 0.66666D;

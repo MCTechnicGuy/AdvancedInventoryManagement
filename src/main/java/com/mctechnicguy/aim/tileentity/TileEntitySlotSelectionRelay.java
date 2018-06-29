@@ -1,10 +1,15 @@
 package com.mctechnicguy.aim.tileentity;
 
+import com.mctechnicguy.aim.blocks.BlockAIMModulatedDevice;
+import com.mctechnicguy.aim.client.render.NetworkInfoOverlayRenderer;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.text.TextFormatting;
 import net.minecraftforge.common.capabilities.Capability;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
 
@@ -116,6 +121,30 @@ public class TileEntitySlotSelectionRelay extends TileEntityAIMDevice implements
 		return new Object[] { slotID, slotDesc };
 
 	}
+
+    @Override
+    public NBTTagCompound getTagForOverlayUpdate() {
+        NBTTagCompound nbt = new NBTTagCompound();
+        nbt.setInteger("slotID", this.slotID);
+        return nbt;
+    }
+
+    @Override
+    public void handleTagForOverlayUpdate(NBTTagCompound nbt) {
+        super.handleTagForOverlayUpdate(nbt);
+        this.slotID = nbt.getInteger("slotID");
+        this.hasAccurateServerInfo = true;
+    }
+
+    @Override
+    @SideOnly(Side.CLIENT)
+    public void renderStatusInformation(NetworkInfoOverlayRenderer renderer) {
+        super.renderStatusInformation(renderer);
+        if (this.blockType instanceof BlockAIMModulatedDevice && ((BlockAIMModulatedDevice)this.blockType).getModeFromID(getDeviceMode()).getName().equals("slotbyid")) {
+            renderer.renderTileValues("selectedslot", TextFormatting.GREEN, !hasAccurateServerInfo, this.slotID);
+        }
+
+    }
 
 
 

@@ -11,56 +11,99 @@ import net.minecraft.util.NonNullList;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraftforge.client.event.RenderGameOverlayEvent;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
+
+@SideOnly(Side.CLIENT)
 public class NetworkInfoOverlayRenderer {
 
     private static final int NAME_OFFSET = -15;
-    private static final int STATUS_OFFSET = 10;
-    private static final int MODE_OFFSET = 20;
-    private static final int UPDATE_INFO_STRING_OFFSET = 70;
+    private static final int TEXT_COLOR = 0x5656FF;
+
+    private int currentOffset;
+    private ScaledResolution resolution;
+    private IProvidesNetworkInfo tile;
+
+    public int getCurrentOffset() {
+        return currentOffset;
+    }
+
+    public ScaledResolution getResolution() {
+        return resolution;
+    }
 
     public static void renderNetworkInfoOverlay(RenderGameOverlayEvent.Post event, IProvidesNetworkInfo tile) {
-        renderStringAt(event.getResolution(), tile.getNameForOverlay(), 0x5656FF, NAME_OFFSET);
-        tile.renderStatusInformation(event.getResolution());
-        renderStringAt(event.getResolution(), I18n.format("aimoverlay.update"),0x5656FF , UPDATE_INFO_STRING_OFFSET);
+        NetworkInfoOverlayRenderer renderer = new NetworkInfoOverlayRenderer(event.getResolution(), tile);
+        renderer.renderNetworkInfoOverlay();
     }
 
-    private static void renderStringAt(ScaledResolution resolution, String text, int color, int yOffset) {
-        renderStringAt(resolution, text, color, yOffset, 0);
+    public NetworkInfoOverlayRenderer(ScaledResolution res, IProvidesNetworkInfo tile) {
+        this.resolution = res;
+        this.currentOffset = 10;
+        this.tile = tile;
     }
 
-    private static void renderStringAt(ScaledResolution resolution, String text, int color, int yOffset, int xOffset) {
+    private void renderNetworkInfoOverlay() {
+        this.renderString(tile.getNameForOverlay(), TEXT_COLOR, NAME_OFFSET);
+        tile.renderStatusInformation(this);
+        this.renderString(I18n.format("aimoverlay.update") );
+    }
+
+    private void renderString(String text, int color, int yOffset) {
+        renderString(text, color, yOffset, 0);
+    }
+
+    private void renderString(String text, int color) {
+        renderString(text, color, currentOffset);
+        currentOffset += 12;
+    }
+
+    private void renderString(String text) {
+        renderString(text, TEXT_COLOR, currentOffset, 0);
+        currentOffset += 12;
+    }
+
+    private void renderString(String text, int color, int yOffset, int xOffset) {
         Minecraft mc = Minecraft.getMinecraft();
         int x = resolution.getScaledWidth() / 2 - mc.fontRenderer.getStringWidth(text) / 2 + xOffset;
         int y = resolution.getScaledHeight() / 2 + yOffset;
         mc.fontRenderer.drawStringWithShadow(text, x, y, color);
     }
 
-    public static void renderStatusString(ScaledResolution resolution, boolean isActive) {
+    public void renderStatusString(boolean isActive) {
         TextComponentTranslation activeMessage = new TextComponentTranslation(isActive ? "aimoverlay.status.active" : "aimoverlay.status.inactive");
         activeMessage.getStyle().setColor(isActive ? TextFormatting.GREEN : TextFormatting.RED);
-        renderStringAt(resolution, I18n.format("aimoverlay.status", activeMessage.getFormattedText()), 0x5656FF, STATUS_OFFSET);
+        renderString(I18n.format("aimoverlay.status", activeMessage.getFormattedText()), TEXT_COLOR);
     }
 
-    public static void renderModeString(ScaledResolution resolution, String unlocalizedModeName) {
+    public void renderStatusString(String unlocalizedStatus, TextFormatting format) {
+        TextComponentTranslation activeMessage = new TextComponentTranslation(unlocalizedStatus);
+        activeMessage.getStyle().setColor(format);
+        renderString(I18n.format("aimoverlay.status", activeMessage.getFormattedText()), TEXT_COLOR);
+    }
+
+    public void renderModeString(String unlocalizedModeName) {
         TextComponentTranslation message = new TextComponentTranslation(unlocalizedModeName);
         message.getStyle().setColor(TextFormatting.AQUA);
-        renderStringAt(resolution, I18n.format("aimoverlay.mode", message.getFormattedText()), 0x5656FF, MODE_OFFSET);
+        renderString(I18n.format("aimoverlay.mode", message.getFormattedText()), TEXT_COLOR);
     }
 
-    public static void renderInventoryContent(ScaledResolution resolution, @Nullable NonNullList<ItemStack> content, int yOffset) {
+    public void renderInventoryContent(@Nullable NonNullList<ItemStack> content) {
         Minecraft mc = Minecraft.getMinecraft();
         RenderItem itemRender = Minecraft.getMinecraft().getRenderItem();
         int x = resolution.getScaledWidth() / 2;
-        int y = resolution.getScaledHeight() / 2 + yOffset;
-        mc.fontRenderer.drawStringWithShadow(I18n.format("aimoverlay.content"), x - mc.fontRenderer.getStringWidth(I18n.format("aimoverlay.content")), y,0x5656FF );
+        int y = resolution.getScaledHeight() / 2 + currentOffset;
+        currentOffset += 16;
+        mc.fontRenderer.drawStringWithShadow(I18n.format("aimoverlay.content"), x - mc.fontRenderer.getStringWidth(I18n.format("aimoverlay.content")), y + 2, TEXT_COLOR );
 
         if (content == null) {
-            mc.fontRenderer.drawStringWithShadow(I18n.format("aimoverlay.content.unknown"), x + 8, y,0x5656FF );
-        } else if (content.isEmpty()) {
-            mc.fontRenderer.drawStringWithShadow(I18n.format("aimoverlay.content.none"), x + 8, y,0x5656FF );
+            mc.fontRenderer.drawStringWithShadow(I18n.format("aimoverlay.content.unknown"), x + 8, y + 2, TEXT_COLOR );
+        } else if (content.isEmpty() || !listHasItems(content)) {
+            mc.fontRenderer.drawStringWithShadow(I18n.format("aimoverlay.content.none"), x + 8, y + 2, TEXT_COLOR );
         } else {
             for (int i = 0; i < content.size(); i++) {
                 RenderHelper.enableGUIStandardItemLighting();
@@ -69,6 +112,24 @@ public class NetworkInfoOverlayRenderer {
                 RenderHelper.disableStandardItemLighting();
             }
         }
+    }
+
+    private boolean listHasItems(@Nonnull NonNullList<ItemStack> content) {
+        for (ItemStack stack : content) {
+            if (!stack.isEmpty()) return true;
+        }
+        return false;
+    }
+
+    public void renderTileValues(String descKey, TextFormatting valueFormat, boolean valueUnknown, Object... value) {
+        TextComponentTranslation message;
+        if (!valueUnknown) {
+            message = new TextComponentTranslation("aimoverlay." + descKey + ".value", value);
+        } else {
+            message = new TextComponentTranslation("aimoverlay.content.unknown");
+        }
+        message.getStyle().setColor(valueFormat);
+        renderString(I18n.format("aimoverlay." + descKey, message.getFormattedText()));
     }
 
 }
