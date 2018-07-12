@@ -1,7 +1,7 @@
 package com.mctechnicguy.aim.network;
 
 import com.mctechnicguy.aim.AdvancedInventoryManagement;
-import com.mctechnicguy.aim.gui.GuiAdvancedNetworkInfo;
+import com.mctechnicguy.aim.gui.GuiNetworkList;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.client.Minecraft;
 import net.minecraft.nbt.NBTTagCompound;
@@ -16,16 +16,16 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-public class PacketOpenNetworkCoreList implements IMessage {
+public class PacketNetworkCoreList implements IMessage {
 
 	private NBTTagCompound cores;
 	private boolean playerAccessible;
 
-	public PacketOpenNetworkCoreList() {
+	public PacketNetworkCoreList() {
 
 	}
 
-	public PacketOpenNetworkCoreList(@Nonnull NBTTagList tagList, boolean playerAccessible) {
+	public PacketNetworkCoreList(@Nonnull NBTTagList tagList, boolean playerAccessible) {
 		this.cores = new NBTTagCompound();
 		cores.setTag("list", tagList);
 		this.playerAccessible = playerAccessible;
@@ -44,17 +44,17 @@ public class PacketOpenNetworkCoreList implements IMessage {
 	}
 
 	@SideOnly(Side.CLIENT)
-	public static class PacketOpenNetworkCoreListHandler implements IMessageHandler<PacketOpenNetworkCoreList, IMessage> {
+	public static class PacketOpenNetworkCoreListHandler implements IMessageHandler<PacketNetworkCoreList, IMessage> {
 
 		@Nullable
         @Override
-		public IMessage onMessage(@Nonnull final PacketOpenNetworkCoreList message, @Nonnull final MessageContext ctx) {
+		public IMessage onMessage(@Nonnull final PacketNetworkCoreList message, @Nonnull final MessageContext ctx) {
 			AdvancedInventoryManagement.proxy.addScheduledTask(() -> processMessage(message, ctx), ctx);
 			return null;
 		}
 		
-		void processMessage(@Nonnull PacketOpenNetworkCoreList message, MessageContext ctx) {
-            Minecraft.getMinecraft().displayGuiScreen(new GuiAdvancedNetworkInfo(message.cores.getTagList("list", 10), message.playerAccessible));
+		void processMessage(@Nonnull PacketNetworkCoreList message, MessageContext ctx) {
+            Minecraft.getMinecraft().displayGuiScreen(new GuiNetworkList(message.cores.getTagList("list", 10), message.playerAccessible));
 		}
 
 	}

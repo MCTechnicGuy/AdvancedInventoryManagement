@@ -1,18 +1,20 @@
 package com.mctechnicguy.aim.gui;
 
 import com.mctechnicguy.aim.ModInfo;
+import com.mctechnicguy.aim.network.PacketHelper;
+import com.mctechnicguy.aim.network.PacketRequestServerInfo;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiScreen;
+import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.util.ResourceLocation;
 import org.lwjgl.input.Keyboard;
-import org.lwjgl.opengl.GL11;
 
 import java.io.IOException;
 
-public class GuiAdvancedNetworkInfo extends GuiScreen {
+public class GuiNetworkList extends GuiScreen {
 
     private static final ResourceLocation GuiTexture = new ResourceLocation(ModInfo.ID.toLowerCase(), "textures/gui/guiadvancednetworkinfo.png");
 
@@ -33,20 +35,20 @@ public class GuiAdvancedNetworkInfo extends GuiScreen {
     private NBTTagList NBTCoreList;
     private boolean playerAccessible;
 
-    public GuiAdvancedNetworkInfo(NBTTagList cores, boolean playerAccessible) {
+    public GuiNetworkList(NBTTagList cores, boolean playerAccessible) {
         this.NBTCoreList = cores;
         this.playerAccessible = playerAccessible;
     }
 
     @Override
     public void drawScreen(int mouseX, int mouseY, float partialTicks) {
+        GlStateManager.color(1F, 1F, 1F, 1F);
         this.drawDefaultBackground();
         mc.getTextureManager().bindTexture(GuiTexture);
         GuiUtils.drawScaledTexturedQuad(BgStartX, BgStartY, 0, 0,200, 120, 256, BGX, BGY , zLevel);
-        GL11.glColor4f(1F, 1F, 1F, 1F);
         this.networkListSelector.drawScreen(mouseX, mouseY, partialTicks);
         this.drawCenteredString(this.fontRenderer, I18n.format("gui.advancedinfo.list.header"), this.width / 2, BgStartY + 8, 16777215);
-        GuiUtils.drawScaledMultilineString(fontRenderer, I18n.format(playerAccessible ? "message.playerAccessibility.true" : "message.playerAccessibility.false"), BgStartX + MARGIN + 5, BgStartY + BGY - BOTTOM_MARGIN + 22, BGX - 3* MARGIN - 105, 28, playerAccessible ? 0x55FF55 : 0xFF5555);
+        GuiUtils.drawScaledMultilineString(fontRenderer, I18n.format(playerAccessible ? "message.playerAccessibility.true" : "message.playerAccessibility.false"), BgStartX + MARGIN + 5, BgStartY + BGY - BOTTOM_MARGIN + 22, BGX - 2* MARGIN- 180, 28, playerAccessible ? 0x55FF55 : 0xFF5555);
         super.drawScreen(mouseX, mouseY, partialTicks);
     }
 
@@ -75,7 +77,8 @@ public class GuiAdvancedNetworkInfo extends GuiScreen {
     }
 
     void showDetailPage(WorldCoreEntry toShow) {
-        Minecraft.getMinecraft().player.sendChatMessage("Details shown for core " + toShow.toString());
+        Minecraft.getMinecraft().displayGuiScreen(new GuiLoadingScreen());
+        PacketHelper.wrapper.sendToServer(new PacketRequestServerInfo((short)6, toShow.getPos(), toShow.getDimID()));
     }
 
     @Override

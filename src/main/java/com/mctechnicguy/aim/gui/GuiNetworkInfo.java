@@ -1,209 +1,271 @@
 package com.mctechnicguy.aim.gui;
 
 import com.mctechnicguy.aim.ModInfo;
-import com.mctechnicguy.aim.tileentity.TileEntityAIMCore;
-import com.mctechnicguy.aim.tileentity.TileEntityNetworkElement;
+import com.mctechnicguy.aim.network.PacketHelper;
+import com.mctechnicguy.aim.network.PacketNetworkInfo;
+import com.mctechnicguy.aim.network.PacketRequestServerInfo;
+import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiScreen;
+import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.RenderHelper;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.text.TextComponentTranslation;
+import net.minecraft.util.text.TextFormatting;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
-import org.lwjgl.opengl.GL11;
 
 import javax.annotation.Nonnull;
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.ArrayList;
+import java.util.Arrays;
 
 @SideOnly(Side.CLIENT)
 public class GuiNetworkInfo extends GuiScreen {
 
-	private static final ResourceLocation GuiTexture = new ResourceLocation(ModInfo.ID.toLowerCase(), "textures/gui/guinetworkinfo.png");
+    private static final ResourceLocation GuiTexture = new ResourceLocation(ModInfo.ID.toLowerCase(), "textures/gui/guinetworkinfo.png");
 
-	private TileEntityAIMCore core;
-	// Width of the gui-image
-	private static final int BGX = 216;
-	// Height of the gui-image
-	private static final int BGY = 166;
-	private int BgStartX;
-	private int BgStartY;
-	private int ScrollBarPos;
+    private PacketNetworkInfo info;
 
-	private boolean ScrollBarActive;
-	private int lastMouseY;
+    // Width of the gui-image
+    private static final int BGX = 400;
+    // Height of the gui-image
+    private static final int BGY = 240;
+    private static final int SCROLLBAR_WIDTH = 24;
+    private static final int SCROLLBAR_HEIGHT = 30;
+    private static final int SCROLLBAR_OFFSET_X = 352;
+    private static final int SCROLLBAR_OFFSET_Y = 64;
+    private static final int SCROLLBAR_RANGE = 76;
 
-	@Nonnull
-	private Map<String, Integer> devices = new HashMap<>();
-	@Nonnull
-	private Map<String, ItemStack> stackMap = new HashMap<>();
+    private int BgStartX;
+    private int BgStartY;
+    private int ScrollBarPos;
 
-	public GuiNetworkInfo(TileEntityAIMCore entity) {
-		super();
-		this.core = entity;
-	}
+    private ArrayList<String> problemMessages = new ArrayList<>();
 
-	@Override
-	public void drawScreen(int mouseX, int mouseY, float partialTicks) {
-		this.drawDefaultBackground();
-		GL11.glColor4f(1F, 1F, 1F, 1F);
-		Minecraft.getMinecraft().getTextureManager().bindTexture(GuiTexture);
-		drawTexturedModalRect(BgStartX, BgStartY, 0, 0, BGX, BGY);
-		if (this.core.Power > 0) {
-			int k = this.core.getPowerRemainingScaled(50);
-			drawTexturedModalRect(BgStartX + 11, BgStartY + 71 - k, BGX, 50 - k, 16, k);
-		}
+    private boolean ScrollBarActive;
+    private int lastMouseY;
 
-		// Scrollbar
-		drawTexturedModalRect(BgStartX + 194, BgStartY + 56 + ScrollBarPos, BGX, 50, 12, 15);
+    private GuiButton buttonBack;
+    private GuiButton buttonRefresh;
 
-		this.fontRenderer.drawString(I18n.format("gui.aiminfo.coreheader"), BgStartX + 10, BgStartY + 7, 4210752);
-		this.fontRenderer.drawString(I18n.format("gui.aiminfo.networkheader"), BgStartX + 115, BgStartY + 7, 4210752);
+    public GuiNetworkInfo(PacketNetworkInfo info) {
+        super();
+        this.info = info;
+    }
 
-		GL11.glPushMatrix();
-		GL11.glScalef(0.75F, 0.75F, 0.75F);
-		double scale = 1/0.75F;
+    @Override
+    public void initGui() {
+        BgStartX = (this.width / 2) - (BGX / 2);
+        BgStartY = (this.height / 2) - (BGY / 2);
+        buttonBack = new GuiButton(0, BgStartX + 232, BgStartY + 201, 66, 20, I18n.format("gui.aiminfo.back"));
+        buttonRefresh = new GuiButton(0, BgStartX + 312, BgStartY + 201, 66, 20, I18n.format("gui.aiminfo.refresh"));
+        this.buttonList.add(buttonBack);
+        this.buttonList.add(buttonRefresh);
 
-		// Core Information
-		this.fontRenderer.drawString(I18n.format("gui.aiminfo.power"), (int) ((BgStartX + 31) * scale), (int) ((BgStartY + 22) * scale), 4210752);
-		this.fontRenderer.drawString(core.Power + " RF", (int) ((BgStartX + 31) * scale), (int) ((BgStartY + 31) * scale), 4210752);
+        if (info.problems == 0) {
+            this.problemMessages.add("gui.aimcore.problems.none");
+        } else {
+            if ((info.problems & 1) != 0) {
+                this.problemMessages.add("gui.aimcore.problems.noplayer");
+            }
+            if ((info.problems & 2) != 0) {
+                this.problemMessages.add("gui.aimcore.problems.wrongsetup");
+            }
+            if ((info.problems & 4) != 0) {
+                this.problemMessages.add("gui.aimcore.problems.nopower");
+            }
+            if ((info.problems & 8) != 0) {
+                this.problemMessages.add("gui.aimcore.problems.playerinaccessible");
+            }
+            if ((info.problems & 16) != 0) {
+                this.problemMessages.add("gui.aimcore.problems.redstonedisabled");
+            }
+        }
+    }
 
-		this.fontRenderer.drawString(I18n.format("gui.aiminfo.powerdrain"), (int) ((BgStartX + 31) * scale), (int) ((BgStartY + 40) * scale),
-				4210752);
-		this.fontRenderer.drawString((core.isActive() ? core.getNetworkPowerDrain() : 0) + " RF/t", (int) ((BgStartX + 31) * scale),
-				(int) ((BgStartY + 49) * scale), 4210752);
+    @Override
+    public void drawScreen(int mouseX, int mouseY, float partialTicks) {
+        this.drawDefaultBackground();
+        GlStateManager.color(1F, 1F, 1F, 1F);
+        Minecraft.getMinecraft().getTextureManager().bindTexture(GuiTexture);
+        GuiUtils.drawScaledTexturedQuad(BgStartX, BgStartY, 0, 0, 200, 120, 256, BGX, BGY, zLevel);
 
-		this.fontRenderer.drawString(I18n.format("gui.aiminfo.isactive"), (int) ((BgStartX + 31) * scale), (int) ((BgStartY + 58) * scale), 4210752);
-		this.fontRenderer.drawString(I18n.format(core.isActive() ? "gui.aiminfo.booltrue" : "gui.aiminfo.boolfalse"),
-				(int) ((BgStartX + 31) * scale), (int) ((BgStartY + 67) * scale), core.isActive() ? 1238807 : 15208978);
+        if (info.isLoaded) {
+            if (info.power > 0) {
+                int k = (int) Math.round(((double) info.power / (double) info.maxPower) * 100);
+                GuiUtils.drawScaledTexturedQuad(BgStartX + 26, BgStartY + 126 - k, 0, 170 - (k / 2D), 16, 170, 256, 32, k, zLevel);
+            }
+            // Scrollbar
+            GuiUtils.drawScaledTexturedQuad(scrollBarStartX(), scrollBarStartY(), 0, 170, 12, 185, 256, SCROLLBAR_WIDTH, SCROLLBAR_HEIGHT, zLevel);
+        }
 
-		this.fontRenderer.drawString(I18n.format("gui.aiminfo.connectedplayer"), (int) ((BgStartX + 10) * scale), (int) ((BgStartY + 76) * scale),
-				4210752);
-		this.fontRenderer.drawString((core.playerConnectedName != null && !core.playerConnectedName.isEmpty() ? core.playerConnectedName : I18n.format("gui.aiminfo.noplayer")),
-				(int) ((BgStartX + 13) * scale), (int) ((BgStartY + 85) * scale), 1234664);
+        fontRenderer.drawString(I18n.format("gui.aiminfo.coreheader"), (BgStartX + 122 - fontRenderer.getStringWidth(I18n.format("gui.aiminfo.coreheader")) / 2), BgStartY + 10, 0xFAFAFA);
+        fontRenderer.drawString(I18n.format("gui.aiminfo.networkheader"), (BgStartX + 305 - fontRenderer.getStringWidth(I18n.format("gui.aiminfo.networkheader")) / 2), BgStartY + 10, 0xFAFAFA);
 
-		this.fontRenderer.drawString(I18n.format("gui.aiminfo.isplayeraccessible"), (int) ((BgStartX + 10) * scale), (int) ((BgStartY + 94) * scale),
-				4210752);
-		this.fontRenderer.drawString(I18n.format(core.playerAccessible ? "gui.aiminfo.booltrue" : "gui.aiminfo.boolfalse"),
-				(int) ((BgStartX + 13) * scale), (int) ((BgStartY + 103) * scale), core.playerAccessible ? 1238807 : 15208978);
+        GuiUtils.drawScaledOnelineString(fontRenderer, I18n.format("gui.aiminfo.corepos", info.corePos.getX(), info.corePos.getY(), info.corePos.getZ(), info.coreDim), BGX - 224, BgStartX + 27, BgStartY + BGY - 37, 0xFAFAFA, 0.75);
+        TextComponentTranslation status = new TextComponentTranslation("gui.aiminfo.status." + (info.isLoaded ? info.isActive ? "active" : "inactive" : "unloaded"));
+        status.getStyle().setColor(info.isLoaded ? info.isActive ? TextFormatting.GREEN : TextFormatting.RED : TextFormatting.YELLOW);
+        GuiUtils.drawScaledOnelineString(fontRenderer, I18n.format("gui.aiminfo.status", status.getFormattedText()), BGX - 224, BgStartX + 27, BgStartY + BGY - 27, 0xFAFAFA, 0.75);
 
-		this.fontRenderer.drawString(I18n.format("gui.aiminfo.issecured"), (int) ((BgStartX + 10) * scale), (int) ((BgStartY + 112) * scale),
-				4210752);
-		this.fontRenderer.drawString(I18n.format(core.hasUpgrade(0) && core.playerConnectedName != null && !core.playerConnectedName.isEmpty() ? "gui.aiminfo.booltrue" : "gui.aiminfo.boolfalse"),
-				(int) ((BgStartX + 13) * scale), (int) ((BgStartY + 121) * scale),
-				core.hasUpgrade(0) && core.playerConnectedName != null && !core.playerConnectedName.isEmpty() ? 1238807 : 15208978);
+        if (!info.isLoaded) {
+            super.drawScreen(mouseX, mouseY, partialTicks);
+            return;
+        }
 
-		this.fontRenderer.drawString(I18n.format("gui.aiminfo.coreposition"), (int) ((BgStartX + 10) * scale), (int) ((BgStartY + 130) * scale),
-				4210752);
-		this.fontRenderer.drawString(core.getPos().getX() + " | " + core.getPos().getY() + " | " + core.getPos().getZ(), (int) ((BgStartX + 13) * scale),
-				(int) ((BgStartY + 139) * scale), 4210752);
+        GlStateManager.pushMatrix();
+        GlStateManager.scale(0.75F, 0.75F, 0.75F);
+        double scale = 1 / 0.75F;
 
-		// Network Information
-		this.fontRenderer.drawString(I18n.format("gui.aiminfo.elementsconnected"), (int) ((BgStartX + 113) * scale), (int) ((BgStartY + 22) * scale),
-				4210752);
-		this.fontRenderer.drawString(String.valueOf(core.numberCablesConnected() + core.numberDevicesConnected()) + " + 1 Core",
-				(int) ((BgStartX + 115) * scale), (int) ((BgStartY + 31) * scale), 4210752);
+        // Core Information
+        this.fontRenderer.drawString(I18n.format("gui.aiminfo.power"), (int) ((BgStartX + 64) * scale), (int) ((BgStartY + 26) * scale), 0xFAFAFA);
+        this.fontRenderer.drawString(I18n.format("gui.aiminfo.power.value", info.power, info.maxPower), (int) ((BgStartX + 64) * scale), (int) ((BgStartY + 34) * scale), 0xFAFAFA);
 
-		this.fontRenderer.drawString(I18n.format("gui.aiminfo.elementlist"), (int) ((BgStartX + 113) * scale), (int) ((BgStartY + 45) * scale),
-				4210752);
+        this.fontRenderer.drawString(I18n.format("gui.aiminfo.powerdrain"), (int) ((BgStartX + 64) * scale), (int) ((BgStartY + 46) * scale), 0xFAFAFA);
+        this.fontRenderer.drawString(I18n.format("gui.aiminfo.powerdrain.value", info.powerDrain), (int) ((BgStartX + 64) * scale), (int) ((BgStartY + 54) * scale), 0xFAFAFA);
 
-		GL11.glPopMatrix();
+        this.fontRenderer.drawString(I18n.format("gui.aiminfo.connectedplayer"), (int) ((BgStartX + 64) * scale), (int) ((BgStartY + 66) * scale), 0xFAFAFA);
+        this.fontRenderer.drawString((info.playerConnectedName != null && !info.playerConnectedName.isEmpty() ? info.playerConnectedName : I18n.format("gui.aiminfo.noplayer")), (int) ((BgStartX + 64) * scale), (int) ((BgStartY + 74) * scale), 1234664);
 
-		// Element List
-        GL11.glPushMatrix();
-        GL11.glScalef(0.45F, 0.45F, 0.45F);
-        scale = 1 / 0.45F;
-		if (!devices.isEmpty()) {
-			int ScrollBarListPos = this.getListPosFromScrollbar();
-			for (int i = 0; i < Math.min(devices.size(), 5); i++) {
-				if (devices.size() > i) {
-					this.drawItemStack(stackMap.get(devices.keySet().toArray()[ScrollBarListPos + i]), (int)((BgStartX + 170) * scale), (int)((BgStartY + 58 + 18*i) * scale));
+        this.fontRenderer.drawString(I18n.format("gui.aiminfo.issecured"), (int) ((BgStartX + 64) * scale), (int) ((BgStartY + 86) * scale), 0xFAFAFA);
+        this.fontRenderer.drawString(I18n.format(info.isSecured ? "gui.aiminfo.booltrue" : "gui.aiminfo.boolfalse"), (int) ((BgStartX + 64) * scale), (int) ((BgStartY + 94) * scale), info.isSecured ? 1238807 : 15208978);
 
-					this.fontRenderer.drawString(I18n.format((String) devices.keySet().toArray()[ScrollBarListPos + i]),
-							(int) ((BgStartX + 115) * scale), (int) ((BgStartY + 60 + 18*i) * scale), 16448250);
-					this.fontRenderer.drawString(I18n.format("gui.aiminfo.amount") + devices.get(devices.keySet().toArray()[ScrollBarListPos + i]),
-							(int) ((BgStartX + 115) * scale), (int) ((BgStartY + 67 + 18*i) * scale), 16448250);
-				}
-			}
+        // Network Information
+        this.fontRenderer.drawString(I18n.format("gui.aiminfo.elementsconnected"), (int) ((BgStartX + 242) * scale), (int) ((BgStartY + 30) * scale), 0xFAFAFA);
+        this.fontRenderer.drawString(I18n.format("gui.aiminfo.elementsconnected.value", info.numberElementsConnected), (int) ((BgStartX + 242) * scale), (int) ((BgStartY + 40) * scale), 0xFAFAFA);
+        this.fontRenderer.drawString(I18n.format("gui.aiminfo.elementlist"), (int) ((BgStartX + 242) * scale), (int) ((BgStartY + 50) * scale), 0xFAFAFA);
 
-		}
-        GL11.glPopMatrix();
-		super.drawScreen(mouseX, mouseY, partialTicks);
-	}
 
-	private void drawItemStack(@Nonnull ItemStack stack, int x, int y) {
-		if (stack.isEmpty()) return;
-		RenderHelper.enableGUIStandardItemLighting();
-		GL11.glScalef(2F, 2F, 2F);
-		itemRender.renderItemIntoGUI(stack, x/2, y/2);
-		GL11.glScalef(0.5F, 0.5F, 0.5F);
-	}
+        GlStateManager.popMatrix();
 
-	private int getListPosFromScrollbar() {
-		if (this.ScrollBarPos == 0 || devices.size() < 6)
-			return 0;
-		int i = Math.round(devices.size() * (75 / this.ScrollBarPos));
-		return i < devices.size() - 4 ? i : devices.size() - 5;
-	}
+        // Element List
+        GlStateManager.pushMatrix();
+        scale = 1 / 0.6F;
+        if (!info.connectedDevices.isEmpty()) {
+            int size = info.connectedDevices.size();
+            ArrayList<Integer> ids = new ArrayList<>(info.connectedDevices.keySet());
+            int ScrollBarListPos = this.getListPosFromScrollbar();
+            for (int i = 0; i < Math.min(size, 4); i++) {
+                if (size > i) {
+                    ItemStack blockStack = new ItemStack(Block.getBlockById(ids.get(ScrollBarListPos + i)));
+                    GlStateManager.scale(0.6F, 0.6F, 0.6F);
+                    this.drawItemStack(blockStack, (int) ((BgStartX + 320) * scale), (int) ((BgStartY + 68 + 26 * i) * scale));
+                    GlStateManager.scale(scale, scale, scale);
 
-	@Override
-	public boolean doesGuiPauseGame() {
-		return false;
-	}
+                    GuiUtils.drawScaledOnelineString(fontRenderer, blockStack.getDisplayName(), 75,
+                            BgStartX + 242, BgStartY + 70 + 26 * i, 0xFAFAFA, 0.6D);
+                    GuiUtils.drawScaledOnelineString(fontRenderer, I18n.format("gui.aiminfo.amount", info.connectedDevices.get(ids.get(ScrollBarListPos + i))), 75,
+                            BgStartX + 242, BgStartY + 80 + 26 * i, 0xFAFAFA, 0.6D);
+                }
+            }
 
-	@Override
-	public void initGui() {
-		BgStartX = (this.width / 2) - (BGX / 2);
-		BgStartY = (this.height / 2) - (BGY / 2);
+        }
+        GlStateManager.popMatrix();
 
-		for (TileEntityNetworkElement te : core.registeredDevices) {
-			String key = te.getUnlocalizedBlockName() + ".name";
-			if (!devices.containsKey(key)) {
-				devices.put(key, 1);
-				stackMap.put(key, te.getDisplayStack());
-			} else
-				devices.put(key, devices.get(key) + 1);
+        super.drawScreen(mouseX, mouseY, partialTicks);
 
-		}
+        //Status messages
+        scale = 1F/0.75F;
+        GlStateManager.scale(0.75F, 0.75F, 0.75F);
+        this.fontRenderer.drawString(I18n.format("gui.aiminfo.problems"), (int) ((BgStartX + 64) * scale), (int) ((BgStartY + 106) * scale), 0xFAFAFA);
+        GlStateManager.scale(scale, scale, scale);
 
-	}
+        for (int i = 0; i < problemMessages.size(); i++) {
+            GuiUtils.drawScaledOnelineString(fontRenderer, I18n.format(problemMessages.get(i)), 146, BgStartX + 70, BgStartY + 114 + 10*i, 15208978, 0.75F, false);
+        }
 
-	protected void keyTyped(char c, int id) throws IOException {
-		if (c == 1 || id == this.mc.gameSettings.keyBindInventory.getKeyCode()) {
-			this.mc.player.closeScreen();
-			mc.player.closeScreenAndDropStack();
-		}
-		super.keyTyped(c, id);
-	}
+        for (int i = 0; i < problemMessages.size(); i++) {
+            if (mouseX >= BgStartX + 70 && mouseX <= BgStartX + 216 && mouseY >= BgStartY + 114 + 10*i && mouseY < BgStartY + 114 + 10*(i+1)) {
+                String desc = I18n.format(problemMessages.get(i) + ".desc");
+                this.drawHoveringText(Arrays.asList(desc.split("\\\\n")), BgStartX + 70, BgStartY + 114 + 10*i);
+                break;
+            }
+        }
 
-	protected void mouseClickMove(int x, int y, int button, long t) {
-		if (this.ScrollBarActive) {
-			ScrollBarPos = y - BgStartY - 56 - lastMouseY;
-			if (ScrollBarPos < 0)
-				ScrollBarPos = 0;
-			else if (ScrollBarPos > 75)
-				ScrollBarPos = 75;
-		}
-	}
 
-	protected void mouseReleased(int mouseX, int mouseY, int state)
-    {
-		if (state == 0 && this.ScrollBarActive) {
-			this.ScrollBarActive = false;
-		}
-		super.mouseReleased(mouseX, mouseY, state);
-	}
+    }
 
-	protected void mouseClicked(int x, int y, int button) throws IOException {
-		if (button == 0) {
-			if (x >= BgStartX + 194 && x <= BgStartX + 194 + 12 && y >= BgStartY + 56 + ScrollBarPos && y <= BgStartY + 56 + ScrollBarPos + 16) {
-				this.ScrollBarActive = true;
-				this.lastMouseY = y - BgStartY - 56 - ScrollBarPos;
-			}
-		}
-		super.mouseClicked(x, y, button);
-	}
+    private void drawItemStack(@Nonnull ItemStack stack, int x, int y) {
+        if (stack.isEmpty()) return;
+        RenderHelper.enableGUIStandardItemLighting();
+        GlStateManager.scale(2F, 2F, 2F);
+        itemRender.renderItemIntoGUI(stack, x / 2, y / 2);
+        GlStateManager.scale(0.5F, 0.5F, 0.5F);
+    }
+
+    private int getListPosFromScrollbar() {
+        if (this.ScrollBarPos == 0 || info.connectedDevices.size() < 5)
+            return 0;
+        int i = (int) Math.round((double) info.connectedDevices.size() * ((double) this.ScrollBarPos / (double) SCROLLBAR_RANGE));
+        return i < info.connectedDevices.size() - 4 ? i : info.connectedDevices.size() - 4;
+    }
+
+    @Override
+    protected void actionPerformed(GuiButton button) {
+        if (button.equals(buttonBack)) {
+            Minecraft.getMinecraft().displayGuiScreen(new GuiLoadingScreen());
+            PacketHelper.wrapper.sendToServer(new PacketRequestServerInfo((short) 4));
+        } else if (button.equals(buttonRefresh)) {
+            PacketHelper.wrapper.sendToServer(new PacketRequestServerInfo((short) 6, info.corePos, info.coreDim));
+        }
+    }
+
+    @Override
+    public boolean doesGuiPauseGame() {
+        return false;
+    }
+
+    private final int scrollBarStartX() {
+        return BgStartX + SCROLLBAR_OFFSET_X;
+    }
+
+    private final int scrollBarStartY() {
+        return BgStartY + SCROLLBAR_OFFSET_Y + ScrollBarPos;
+    }
+
+    private final int scrollBarEndX() {
+        return scrollBarStartX() + SCROLLBAR_WIDTH;
+    }
+
+    private final int scrollBarEndY() {
+        return scrollBarStartY() + SCROLLBAR_HEIGHT;
+    }
+
+    protected void keyTyped(char c, int id) throws IOException {
+        if (c == 1 || id == this.mc.gameSettings.keyBindInventory.getKeyCode()) {
+            this.mc.player.closeScreen();
+        }
+        super.keyTyped(c, id);
+    }
+
+    protected void mouseClickMove(int x, int y, int button, long t) {
+        if (this.ScrollBarActive) {
+            ScrollBarPos = y - BgStartY - SCROLLBAR_OFFSET_Y - lastMouseY;
+            if (ScrollBarPos < 0)
+                ScrollBarPos = 0;
+            else if (ScrollBarPos > SCROLLBAR_RANGE)
+                ScrollBarPos = SCROLLBAR_RANGE;
+        }
+    }
+
+    protected void mouseReleased(int mouseX, int mouseY, int state) {
+        if (state == 0 && this.ScrollBarActive) {
+            this.ScrollBarActive = false;
+        }
+        super.mouseReleased(mouseX, mouseY, state);
+    }
+
+    protected void mouseClicked(int x, int y, int button) throws IOException {
+        if (button == 0) {
+            if (x >= scrollBarStartX() && x <= scrollBarEndX() && y >= scrollBarStartY() && y <= scrollBarEndY()) {
+                this.ScrollBarActive = true;
+                this.lastMouseY = y - scrollBarStartY();
+            }
+        }
+        super.mouseClicked(x, y, button);
+    }
 
 }

@@ -1,6 +1,7 @@
 package com.mctechnicguy.aim;
 
 import com.mctechnicguy.aim.container.ContainerAIMCore;
+import com.mctechnicguy.aim.gui.IManualEntry;
 import com.mctechnicguy.aim.network.*;
 import com.mctechnicguy.aim.tileentity.TileEntityAIMCore;
 import net.minecraft.entity.player.EntityPlayer;
@@ -9,8 +10,6 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.fluids.BlockFluidClassic;
 import net.minecraftforge.fml.common.network.IGuiHandler;
-import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
-import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 import net.minecraftforge.fml.relauncher.Side;
 
@@ -26,48 +25,13 @@ public class CommonProxy implements IGuiHandler {
 	public void registerKeys() {
 	}
 
-	public void registerPackets() {
-		PacketHelper.wrapper.registerMessage(new IMessageHandler<PacketOpenInfoGUI, IMessage>() {
-			@Nullable
-            @Override
-			public IMessage onMessage(PacketOpenInfoGUI message, MessageContext ctx) {
-				return null;
-			}
-		}, PacketOpenInfoGUI.class, 1, Side.CLIENT);
-		PacketHelper.wrapper.registerMessage(new IMessageHandler<PacketHotbarSlotChanged, IMessage>() {
-			@Nullable
-            @Override
-			public IMessage onMessage(PacketHotbarSlotChanged message, MessageContext ctx) {
-				return null;
-			}
-		}, PacketHotbarSlotChanged.class, 2, Side.CLIENT);
-		PacketHelper.wrapper.registerMessage(new IMessageHandler<PacketUpdateOverlayInfo, IMessage>() {
-			@Nullable
-			@Override
-			public IMessage onMessage(PacketUpdateOverlayInfo message, MessageContext ctx) {
-				return null;
-			}
-		}, PacketUpdateOverlayInfo.class, 3, Side.CLIENT);
-        PacketHelper.wrapper.registerMessage(new IMessageHandler<PacketOpenNetworkCoreList, IMessage>() {
-            @Nullable
-            @Override
-            public IMessage onMessage(PacketOpenNetworkCoreList message, MessageContext ctx) {
-                return null;
-            }
-        }, PacketOpenNetworkCoreList.class, 4, Side.CLIENT);
-		PacketHelper.wrapper.registerMessage(PacketKeyPressed.PacketKeyPressedHandler.class, PacketKeyPressed.class, 0, Side.SERVER);
-	}
 
 	public void registerFluid(BlockFluidClassic block, String name) {}
 
 	public boolean playerEqualsClient(UUID client) {
-		return true;
+		return false;
 	}
 
-	@Nullable
-    public EntityPlayer getClientPlayer() {
-		return null;
-	}
 
 	@Nullable
     @Override
@@ -94,12 +58,35 @@ public class CommonProxy implements IGuiHandler {
 		ctx.getServerHandler().player.getServer().addScheduledTask(run);
 	}
 
-	public EntityPlayer getPlayer(@Nonnull MessageContext ctx) {
+	public EntityPlayer getPlayer(@Nullable MessageContext ctx) {
+	    if (ctx == null) return null;
 		return ctx.getServerHandler().player;
 	}
 
 	public void addPreBlockPagesToGuide() {
 
+    }
+
+    public void openLoadingGui() {
+
+    }
+
+    public void openManualGui(IManualEntry forEntry) {
+
+    }
+
+    public void addPageToGuide(IManualEntry entry) {
+
+    }
+
+    public void registerPackets() {
+        PacketHelper.wrapper.registerMessage(PacketKeyPressed.PacketKeyPressedHandler.class, PacketKeyPressed.class, 0, Side.SERVER);
+        PacketHelper.wrapper.registerMessage((message, ctx) -> null, PacketOpenInfoGUI.class, 1, Side.CLIENT);
+        PacketHelper.wrapper.registerMessage((message, ctx) -> null, PacketHotbarSlotChanged.class, 2, Side.CLIENT);
+        PacketHelper.wrapper.registerMessage((message, ctx) -> null, PacketUpdateOverlayInfo.class, 3, Side.CLIENT);
+        PacketHelper.wrapper.registerMessage((message, ctx) -> null, PacketNetworkCoreList.class, 4, Side.CLIENT);
+        PacketHelper.wrapper.registerMessage(PacketRequestServerInfo.PacketRequestServerInfoHandler.class, PacketRequestServerInfo.class, 5, Side.SERVER);
+        PacketHelper.wrapper.registerMessage((message, ctx) -> null, PacketNetworkInfo.class, 6, Side.CLIENT);
     }
 
     @Nullable

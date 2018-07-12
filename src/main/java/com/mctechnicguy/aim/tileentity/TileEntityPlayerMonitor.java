@@ -185,7 +185,7 @@ public class TileEntityPlayerMonitor extends TileEntityAIMDevice implements ITic
     public EntityPlayer getPlayer() {
         if (!world.isRemote) return super.getPlayer();
         if (AdvancedInventoryManagement.proxy.playerEqualsClient(getCore().playerConnectedID)) {
-            return AdvancedInventoryManagement.proxy.getClientPlayer();
+            return AdvancedInventoryManagement.proxy.getPlayer(null);
         }
         return null;
     }

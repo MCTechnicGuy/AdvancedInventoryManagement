@@ -32,8 +32,13 @@ public class BlockSolarGenerator extends BlockAIMBase implements IAIMGenerator {
     }
 
     @Override
+    public IBlockState getStateFromMeta(int meta) {
+        return this.getDefaultState().withProperty(PRODUCING, meta > 0);
+    }
+
+    @Override
     public int getMetaFromState(IBlockState state) {
-        return 0;
+        return state.getValue(PRODUCING) ? 1 : 0;
     }
 
     @Nonnull

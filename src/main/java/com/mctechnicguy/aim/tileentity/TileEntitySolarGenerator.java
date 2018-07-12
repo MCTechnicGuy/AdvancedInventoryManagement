@@ -16,23 +16,29 @@ public class TileEntitySolarGenerator extends TileEntityAIMDevice implements ITi
 
     private boolean lastActive;
     private int currentOutput;
+    public boolean isActive;
 
     @Override
     public void update() {
-        if (hasWorld() && world.isRemote) return;
+        if (!hasWorld() || world.isRemote) return;
 
         if (shouldBeActive()) {
             outputPower();
-            if (!lastActive && hasWorld()) {
+            if (!lastActive) {
                 lastActive = true;
-                world.setBlockState(pos, world.getBlockState(pos).withProperty(BlockSolarGenerator.PRODUCING, true));
+                world.setBlockState(pos, world.getBlockState(pos).withProperty(BlockSolarGenerator.PRODUCING, true), 3);
             }
         } else {
-            if (lastActive && hasWorld()) {
+            if (lastActive) {
                 lastActive = false;
-                world.setBlockState(pos, world.getBlockState(pos).withProperty(BlockSolarGenerator.PRODUCING, false));
+                world.setBlockState(pos, world.getBlockState(pos).withProperty(BlockSolarGenerator.PRODUCING, false), 3);
             }
         }
+    }
+
+    @Override
+    public void onLoad() {
+        this.lastActive = world.getBlockState(pos).getValue(BlockSolarGenerator.PRODUCING);
     }
 
     private int getOutput() {

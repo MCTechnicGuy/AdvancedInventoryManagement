@@ -5,7 +5,7 @@ import com.mctechnicguy.aim.ClientProxy;
 import com.mctechnicguy.aim.capability.CapabilityPlayerAccess;
 import com.mctechnicguy.aim.client.render.CableBoundingBoxRenderer;
 import com.mctechnicguy.aim.client.render.NetworkInfoOverlayRenderer;
-import com.mctechnicguy.aim.items.ItemAdvancedInfoProvider;
+import com.mctechnicguy.aim.items.ItemAIMInfoProvider;
 import com.mctechnicguy.aim.network.PacketHelper;
 import com.mctechnicguy.aim.network.PacketKeyPressed;
 import com.mctechnicguy.aim.tileentity.IProvidesNetworkInfo;
@@ -45,7 +45,7 @@ public class AIMEventHandler {
         Minecraft mc = Minecraft.getMinecraft();
         Profiler profiler = mc.mcProfiler;
 
-        if (mc.player.getHeldItemMainhand().getItem() instanceof ItemAdvancedInfoProvider || mc.player.getHeldItemOffhand().getItem() instanceof ItemAdvancedInfoProvider) {
+        if (mc.player.getHeldItemMainhand().getItem() instanceof ItemAIMInfoProvider || mc.player.getHeldItemOffhand().getItem() instanceof ItemAIMInfoProvider) {
             if (event.getType() == RenderGameOverlayEvent.ElementType.ALL) {
                 profiler.startSection("aim-advanced-info-provider-overlay");
 

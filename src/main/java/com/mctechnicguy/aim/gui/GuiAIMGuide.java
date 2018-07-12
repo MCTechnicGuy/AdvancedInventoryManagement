@@ -45,6 +45,9 @@ public class GuiAIMGuide extends GuiScreen {
     private GuideTexturedButton pageForward;
     private GuideTexturedButton buttonListUp;
     private GuideTexturedButton buttonListDown;
+
+    private IManualEntry startEntry;
+
     @Nonnull
     private StringBuilder searchInput = new StringBuilder();
 
@@ -64,8 +67,9 @@ public class GuiAIMGuide extends GuiScreen {
         content.add(new GuidePagePlayerAccess());
     }
 
-    public GuiAIMGuide() {
+    public GuiAIMGuide(IManualEntry startEntry) {
         super();
+        this.startEntry = startEntry;
     }
 
     @Override
@@ -270,10 +274,15 @@ public class GuiAIMGuide extends GuiScreen {
             buttonList.add(button);
             contentButtons.add(button);
         }
+
+        if (startEntry != null) {
+            this.setPage(content.indexOf(startEntry) + 2);
+        }
+
     }
 
     @Override
-    protected void actionPerformed(@Nonnull GuiButton button) throws IOException {
+    protected void actionPerformed(@Nonnull GuiButton button) {
         if (button == pageBack) {
             if (currentPage > 1 && currentSubPage > 0) setCurrentSubPage(currentSubPage - 1);
             else if (currentPage > 1) {

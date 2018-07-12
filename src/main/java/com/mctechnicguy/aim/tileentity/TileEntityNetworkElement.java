@@ -4,7 +4,6 @@ import com.mctechnicguy.aim.client.render.NetworkInfoOverlayRenderer;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.NetworkManager;
 import net.minecraft.network.play.server.SPacketUpdateTileEntity;
@@ -147,12 +146,6 @@ public abstract class TileEntityNetworkElement extends TileEntity implements IPr
 		}
 		return false;
 	}
-
-    @Nonnull
-    @SideOnly(Side.CLIENT)
-    public final ItemStack getDisplayStack() {
-        return this.hasWorld() ? new ItemStack(this.getBlockType()) : ItemStack.EMPTY;
-    }
 
     @SideOnly(Side.CLIENT)
 	public String getNameForOverlay() {

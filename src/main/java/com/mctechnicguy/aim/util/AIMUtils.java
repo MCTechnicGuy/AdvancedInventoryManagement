@@ -101,14 +101,14 @@ public class AIMUtils {
 	public static void sendChatMessage(@Nonnull String message, @Nonnull EntityPlayer player, @Nonnull TextFormatting color) {
 		TextComponentTranslation cmp = new TextComponentTranslation(message);
 		cmp.getStyle().setColor(color);
-		player.sendMessage(cmp);
+		player.sendStatusMessage(cmp, true);
 	}
 
 	public static void sendChatMessageWithArgs(@Nonnull String message, @Nonnull EntityPlayer player, @Nonnull TextFormatting color,
                                                Object... args) {
 		TextComponentTranslation cmp = new TextComponentTranslation(message, args);
 		cmp.getStyle().setColor(color);
-		player.sendMessage(cmp);
+        player.sendStatusMessage(cmp, true);
 	}
 
 	public static EnumFacing get2PDirection(@Nonnull BlockPos examinedBlock, @Nonnull BlockPos target) {

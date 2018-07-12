@@ -3,7 +3,7 @@ package com.mctechnicguy.aim.blocks;
 import com.mctechnicguy.aim.AdvancedInventoryManagement;
 import com.mctechnicguy.aim.gui.IManualEntry;
 import com.mctechnicguy.aim.items.ItemAIMInfoProvider;
-import com.mctechnicguy.aim.items.ItemAdvancedInfoProvider;
+import com.mctechnicguy.aim.items.ItemAIMManual;
 import com.mctechnicguy.aim.tileentity.TileEntityAIMDevice;
 import com.mctechnicguy.aim.util.AIMUtils;
 import com.mctechnicguy.aim.util.IWrenchDestroyable;
@@ -47,7 +47,8 @@ public class BlockAIMBase extends Block implements ITileEntityProvider, IWrenchD
 
     protected EnumRightClickResult onBlockActivated(@Nonnull World world, BlockPos pos, IBlockState state, @Nullable EntityPlayer player, EnumHand hand, EnumFacing side, @Nullable TileEntity tileEntity, ItemStack heldItem) {
 	    if (player == null) return EnumRightClickResult.ACTION_DISABLED;
-	    if (heldItem.getItem() instanceof ItemAIMInfoProvider || heldItem.getItem() instanceof ItemAdvancedInfoProvider) return EnumRightClickResult.ACTION_DISABLED;
+	    if (heldItem.getItem() instanceof ItemAIMInfoProvider) return EnumRightClickResult.ACTION_DISABLED;
+	    if (heldItem.getItem() instanceof ItemAIMManual) return EnumRightClickResult.ACTION_DISABLED;
         if (player.isSneaking() && AIMUtils.isWrench(heldItem)) {
             if (!world.isRemote) this.destroyWithWrench(player, world, pos, heldItem);
             return EnumRightClickResult.ACTION_DONE;

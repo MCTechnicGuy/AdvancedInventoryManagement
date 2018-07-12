@@ -9,7 +9,7 @@ import javax.annotation.Nullable;
 
 public class ExtendedWorldData extends WorldSavedData {
 
-	public static final String IDENTIFIER = "AIMData";
+	private static final String IDENTIFIER = "AIMData";
 
 	public ExtendedWorldData(@Nonnull String tag) {
 		super(tag);
@@ -34,8 +34,7 @@ public class ExtendedWorldData extends WorldSavedData {
     public static ExtendedWorldData instance(@Nonnull World world) {
 		if (world.getMapStorage().getOrLoadData(ExtendedWorldData.class, IDENTIFIER) == null)
 			world.getMapStorage().setData(IDENTIFIER, new ExtendedWorldData(IDENTIFIER));
-		ExtendedWorldData storage = (ExtendedWorldData) world.getMapStorage().getOrLoadData(ExtendedWorldData.class, IDENTIFIER);
-		return storage;
+        return (ExtendedWorldData) world.getMapStorage().getOrLoadData(ExtendedWorldData.class, IDENTIFIER);
 	}
 
 }

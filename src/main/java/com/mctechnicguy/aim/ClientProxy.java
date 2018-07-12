@@ -4,7 +4,8 @@ import com.mctechnicguy.aim.client.render.TileEntityPlayerMonitorRenderer;
 import com.mctechnicguy.aim.client.render.TileEntityScannerRenderer;
 import com.mctechnicguy.aim.gui.GuiAIMCore;
 import com.mctechnicguy.aim.gui.GuiAIMGuide;
-import com.mctechnicguy.aim.gui.GuiNetworkInfo;
+import com.mctechnicguy.aim.gui.GuiLoadingScreen;
+import com.mctechnicguy.aim.gui.IManualEntry;
 import com.mctechnicguy.aim.items.ItemAIMUpgrade;
 import com.mctechnicguy.aim.items.ItemCraftingComponent;
 import com.mctechnicguy.aim.network.*;
@@ -29,6 +30,7 @@ import net.minecraft.world.World;
 import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.fluids.BlockFluidClassic;
 import net.minecraftforge.fml.client.registry.ClientRegistry;
+import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 import net.minecraftforge.fml.relauncher.Side;
 import org.lwjgl.input.Keyboard;
@@ -43,13 +45,14 @@ public class ClientProxy extends CommonProxy {
 
 	@Override
 	public boolean playerEqualsClient(@Nonnull UUID client) {
+	    if (FMLCommonHandler.instance().getSide() == Side.CLIENT) {
+	        if (!Minecraft.getMinecraft().world.isRemote) {
+	            return super.playerEqualsClient(client);
+            }
+        }
 		return Minecraft.getMinecraft().player != null && client.equals(Minecraft.getMinecraft().player.getUniqueID());
 	}
 
-	@Override
-	public EntityPlayer getClientPlayer() {
-		return Minecraft.getMinecraft().player;
-	}
 
 	@Override
 	public void registerRenderers() {
@@ -57,7 +60,6 @@ public class ClientProxy extends CommonProxy {
 		ClientRegistry.bindTileEntitySpecialRenderer(TileEntityPlayerMonitor.class, new TileEntityPlayerMonitorRenderer());
 		
 		reg(ModElementList.itemAIMInfoProvider);
-		reg(ModElementList.itemAdvancedInfoProvider);
 		reg(ModElementList.itemAIMUpgrade, 0, ItemAIMUpgrade.NAME + "_" + ItemAIMUpgrade.names[0]);
 		reg(ModElementList.itemAIMUpgrade, 1, ItemAIMUpgrade.NAME + "_" + ItemAIMUpgrade.names[1]);
 		reg(ModElementList.itemAIMUpgrade, 2, ItemAIMUpgrade.NAME + "_" + ItemAIMUpgrade.names[2]);
@@ -123,13 +125,7 @@ public class ClientProxy extends CommonProxy {
                     if (entity instanceof TileEntityAIMCore) {
                         return new GuiAIMCore(player.inventory, (TileEntityAIMCore) entity);
                     }
-                case AdvancedInventoryManagement.guiIDNetworkInfo:
-                    if (entity instanceof TileEntityAIMCore) {
-                        return new GuiNetworkInfo((TileEntityAIMCore)entity);
-                    }
             }
-        } else if (ID == AdvancedInventoryManagement.guiIDGuide) {
-            return new GuiAIMGuide();
         }
 
         return null;
@@ -154,26 +150,54 @@ public class ClientProxy extends CommonProxy {
 	    ClientRegistry.registerKeyBinding(KeyChangeAccess);
 	}
 	
-	public EntityPlayer getPlayer(@Nonnull MessageContext ctx) {
+	public EntityPlayer getPlayer(@Nullable MessageContext ctx) {
+	    if (ctx == null) return Minecraft.getMinecraft().player;
+        if (FMLCommonHandler.instance().getSide() == Side.CLIENT) {
+            if (ctx.side == Side.SERVER) {
+                return super.getPlayer(ctx);
+            }
+        }
 		return Minecraft.getMinecraft().player;
 	}
 	
 	public void addScheduledTask(@Nonnull Runnable run, @Nonnull MessageContext ctx) {
-		Minecraft.getMinecraft().addScheduledTask(run);
+        if (FMLCommonHandler.instance().getSide() == Side.CLIENT) {
+            if (ctx.side == Side.SERVER) {
+                super.addScheduledTask(run, ctx);
+                return;
+            }
+        }
+	    Minecraft.getMinecraft().addScheduledTask(run);
 	}
 
-	@Override
-	public void registerPackets() {
-		PacketHelper.wrapper.registerMessage(PacketOpenInfoGUI.PacketOpenInfoGUIHandler.class, PacketOpenInfoGUI.class, 1, Side.CLIENT);
-		PacketHelper.wrapper.registerMessage(PacketKeyPressed.PacketKeyPressedHandler.class, PacketKeyPressed.class, 0, Side.SERVER);
-		PacketHelper.wrapper.registerMessage(PacketHotbarSlotChanged.PacketHotbarSlotChangedHandler.class, PacketHotbarSlotChanged.class, 2, Side.CLIENT);
-		PacketHelper.wrapper.registerMessage(PacketUpdateOverlayInfo.PacketUpdateOverlayInfoHandler.class, PacketUpdateOverlayInfo.class, 3, Side.CLIENT);
-        PacketHelper.wrapper.registerMessage(PacketOpenNetworkCoreList.PacketOpenNetworkCoreListHandler.class, PacketOpenNetworkCoreList.class, 4, Side.CLIENT);
-	}
+    @Override
+    public void openLoadingGui() {
+        Minecraft.getMinecraft().displayGuiScreen(new GuiLoadingScreen());
+    }
 
-	@Override
+    @Override
+    public void openManualGui(IManualEntry forEntry) {
+        Minecraft.getMinecraft().displayGuiScreen(new GuiAIMGuide(forEntry));
+    }
+
+    @Override
     public void addPreBlockPagesToGuide() {
         GuiAIMGuide.addPreBlockPages();
+    }
+
+    public void addPageToGuide(IManualEntry entry) {
+        GuiAIMGuide.content.add(entry);
+    }
+
+    @Override
+    public void registerPackets() {
+        PacketHelper.wrapper.registerMessage((message, ctx) -> null, PacketKeyPressed.class, 0, Side.SERVER);
+        PacketHelper.wrapper.registerMessage(PacketOpenInfoGUI.PacketOpenInfoGUIHandler.class, PacketOpenInfoGUI.class, 1, Side.CLIENT);
+        PacketHelper.wrapper.registerMessage(PacketHotbarSlotChanged.PacketHotbarSlotChangedHandler.class, PacketHotbarSlotChanged.class, 2, Side.CLIENT);
+        PacketHelper.wrapper.registerMessage(PacketUpdateOverlayInfo.PacketUpdateOverlayInfoHandler.class, PacketUpdateOverlayInfo.class, 3, Side.CLIENT);
+        PacketHelper.wrapper.registerMessage(PacketNetworkCoreList.PacketOpenNetworkCoreListHandler.class, PacketNetworkCoreList.class, 4, Side.CLIENT);
+        PacketHelper.wrapper.registerMessage((message, ctx) -> null, PacketRequestServerInfo.class, 5, Side.SERVER);
+        PacketHelper.wrapper.registerMessage(PacketNetworkInfo.PacketNetworkInfoHandler.class, PacketNetworkInfo.class, 6, Side.CLIENT);
     }
 
     @Nullable

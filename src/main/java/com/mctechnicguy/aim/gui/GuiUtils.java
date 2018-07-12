@@ -20,7 +20,7 @@ public class GuiUtils {
      * @param maxHeight The maximal height
      * @return A double for GLScale which resizes the text to fit the given parameters
      */
-    static double getTextScaleToFitHeightAndWidth(FontRenderer renderer, String text, int wrapWidth, int maxHeight, double minScale, double maxScale) {
+    public static double getTextScaleToFitHeightAndWidth(FontRenderer renderer, String text, int wrapWidth, int maxHeight, double minScale, double maxScale) {
         double expectedHeight = renderer.getWordWrappedHeight(text, wrapWidth);
         if (expectedHeight <= maxHeight) return maxScale;
         double scaledUp = Math.floor(Math.sqrt(maxHeight / expectedHeight) * 100D);
@@ -28,11 +28,11 @@ public class GuiUtils {
         return Math.min(scaledUp / 100D, maxScale);
     }
 
-    static void drawScaledMultilineString(FontRenderer renderer, String text, int x, int y, int wrapWidth, int maxHeight, int textColor) {
+    public static void drawScaledMultilineString(FontRenderer renderer, String text, int x, int y, int wrapWidth, int maxHeight, int textColor) {
         drawScaledMultilineString(renderer, text, x, y, wrapWidth, maxHeight, textColor, 0.1, 1.0);
     }
 
-    static void drawScaledMultilineString(FontRenderer renderer, String text, int x, int y, int wrapWidth, int maxHeight, int textColor, double minScale, double maxScale) {
+    public static void drawScaledMultilineString(FontRenderer renderer, String text, int x, int y, int wrapWidth, int maxHeight, int textColor, double minScale, double maxScale) {
         double scale = getTextScaleToFitHeightAndWidth(renderer, text, wrapWidth, maxHeight, minScale, maxScale);
         double reScale = 1 / scale;
         GlStateManager.scale(scale, scale, scale);
@@ -40,18 +40,30 @@ public class GuiUtils {
         GlStateManager.scale(reScale, reScale, reScale);
     }
 
-    static void drawScaledOnelineString(FontRenderer renderer, String text, int maxWidth, int x, int y, int color) {
+    public static void drawScaledOnelineString(FontRenderer renderer, String text, int maxWidth, int x, int y, int color) {
+        drawScaledOnelineString(renderer, text, maxWidth, x, y, color, 1D, true);
+    }
+
+    public static void drawScaledOnelineString(FontRenderer renderer, String text, int maxWidth, int x, int y, int color, double defaultScale, boolean shadow) {
         double expectedWidth = renderer.getStringWidth(text);
+        expectedWidth *= defaultScale;
         if (expectedWidth > maxWidth) {
             double scale = Math.floor(maxWidth / expectedWidth * 100D);
             if (scale <= 0) scale = 0.1;
             else scale /= 100D;
+            scale *= defaultScale;
             GlStateManager.scale(scale, scale, scale);
-            renderer.drawStringWithShadow(text, (int)Math.round(x / scale), (int)Math.round(y / scale), color);
+            renderer.drawString(text, (int)Math.round(x / scale), (int)Math.round(y / scale), color, shadow);
             GlStateManager.scale(1/scale, 1/scale, 1/scale);
         } else {
-            renderer.drawStringWithShadow(text, x, y, color);
+            GlStateManager.scale(defaultScale, defaultScale, defaultScale);
+            renderer.drawString(text, (int)Math.round(x / defaultScale), (int)Math.round(y / defaultScale), color, shadow);
+            GlStateManager.scale(1/defaultScale, 1/defaultScale, 1/defaultScale);
         }
+    }
+
+    public static void drawScaledOnelineString(FontRenderer renderer, String text, int maxWidth, int x, int y, int color, double defaultScale) {
+        drawScaledOnelineString(renderer, text, maxWidth, x, y, color, defaultScale, true);
     }
 
     public static void drawTexturedQuad(double x, double y, double u, double v, double width, double height, int textureSize, double zLevel){

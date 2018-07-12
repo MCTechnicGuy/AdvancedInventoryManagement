@@ -42,7 +42,7 @@ public class ContainerAIMCore extends Container{
 	@SideOnly(Side.CLIENT)
     @Override
 	public void updateProgressBar (int par1, int par2) {
-		this.AIMCore.Power = par1 * 1000 + par2;
+		this.AIMCore.Power = ((par1 & 0x0000FFFF) << 16) | (par2 & 0x0000FFFF);
 
 	}
 
@@ -56,8 +56,8 @@ public class ContainerAIMCore extends Container{
 	    super.detectAndSendChanges();
         for (IContainerListener listener : this.listeners) {
             if (this.LastPower != this.AIMCore.Power) {
-                short firstShort = (short) Math.floor(this.AIMCore.Power / 1000);
-                short secondShort = (short) (this.AIMCore.Power - firstShort * 1000);
+                short firstShort = (short) ((this.AIMCore.Power >> 16) & 0x0000FFFF);
+                short secondShort = (short) (this.AIMCore.Power & 0x0000FFFF);
                 listener.sendWindowProperty(this, firstShort, secondShort);
             }
         }

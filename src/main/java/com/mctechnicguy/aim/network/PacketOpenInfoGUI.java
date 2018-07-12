@@ -8,7 +8,6 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
-import net.minecraftforge.fml.common.network.internal.FMLNetworkHandler;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
@@ -51,7 +50,7 @@ public class PacketOpenInfoGUI implements IMessage {
         pf.writeBoolean(playerAccessible);
 	}
 
-	@SideOnly(Side.CLIENT)
+    @SideOnly(Side.CLIENT)
 	public static class PacketOpenInfoGUIHandler implements IMessageHandler<PacketOpenInfoGUI, IMessage> {
 
 		@Nullable
@@ -67,8 +66,6 @@ public class PacketOpenInfoGUI implements IMessage {
 			((TileEntityAIMCore)te).searchForDevicesInNetwork();
 			((TileEntityAIMCore)te).Power = message.Power;
 			((TileEntityAIMCore)te).playerAccessible = message.playerAccessible;
-			FMLNetworkHandler.openGui(Minecraft.getMinecraft().player, AdvancedInventoryManagement.instance, AdvancedInventoryManagement.guiIDNetworkInfo,
-					Minecraft.getMinecraft().world, message.pos.getX(), message.pos.getY(), message.pos.getZ());
 		}
 
 	}

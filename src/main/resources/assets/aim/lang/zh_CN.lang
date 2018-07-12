@@ -82,35 +82,6 @@ message.teleportnopower=传送取消。你的网络没有足够的能量。
 
 message.cardsaved=位置卡数据：目标设定%1$d, %2$d, %3$d (维度 %4$d).
 
-#Gui-Elements
-gui.AIMInfo.coreHeader=核心数据
-gui.AIMInfo.networkHeader=网络统计信息
-gui.AIMInfo.Power=核心能量:
-gui.AIMInfo.PowerDrain=用电:
-gui.AIMInfo.isActive=启动:
-gui.AIMInfo.boolTrue=是
-gui.AIMInfo.boolFalse=否
-gui.AIMInfo.connectedPlayer=连接玩家:
-gui.AIMInfo.noPlayer=没有
-gui.AIMInfo.isPlayerAccessible=玩家可访问:
-gui.AIMInfo.isSecured=保护：
-gui.AIMInfo.corePosition=核心位置:
-gui.AIMInfo.elementsConnected=元件连接：
-gui.AIMInfo.elementList=连接元件：
-gui.AIMInfo.Amount=数量:
-gui.AIMCore.Upgrades=升级:
-gui.AIMCore.Problems=问题:
-gui.AIMCore.Problems.none=没有问题。
-gui.AIMCore.Problems.noPlayer=消失的玩家
-gui.AIMCore.Problems.noPower=没有足够的能量
-gui.AIMCore.Problems.wrongSetup=无效的设置
-gui.AIMCore.Problems.noPlayer.desc=没有连接到这个网络的玩家。
-gui.AIMCore.Problems.noPower.desc=这个核心没有足够的能量提供
-gui.AIMCore.Problems.noPower.desc.2=这个网络所需的能量。
-gui.AIMCore.Problems.wrongSetup.desc=网络的物理设置是错误的。
-gui.AIMCore.Problems.wrongSetup.desc.2=也许是网络太大
-gui.AIMCore.Problems.wrongSetup.desc.3=有两个核心。
-
 fluid.fluid_moltenxp=液体XP
 
 #Container-Names
@@ -127,7 +98,7 @@ mode.hungerrelay.hunger=如果玩家饿了 便喂食
 mode.hungerrelay.efficiency=最快效率
 
 #Modes for the Potion Relay
-mode.potionrelay..inlet=药水- 输入, 瓶子 - 输出
+mode.potionrelay.inlet=药水- 输入, 瓶子 - 输出
 mode.potionrelay.outlet=药水 - 输出, 瓶子 - 输入
 
 #Modes for the Experience Bottle Relay
@@ -325,3 +296,102 @@ guide.content.hotbarselectioneditor=在快捷栏管理器可以迫使玩家选�
 guide.content.positioneditor=编辑的位置可以改变玩家在世界的位置，从而传送他。如果要设置目标，需要右键单击位置编辑器，并使用所描述的位置卡。这样做后，向设备发射红石脉冲。一个隐形传送过程将从网络中消耗 %1$d 的RF。
 
 guide.content.aimpositioncard=位置卡片用于存储世界上的特定位置。当使用位置卡右键单击一个方块时，该卡将保存被单击方块的坐标和维度。当前位置卡只能用于设置位置编辑器的目的地。右键单击一个位置编辑器，将保存在卡片上的数据传递给编辑器。
+
+tile.shulkerboxrelay.name=Shulker Box Relay
+tile.solargenerator.name=Solar Generator
+tile.networksignalbridge.name=Network Signal Bridge
+message.shulkerboxrelay.filtercleared=Shulker box name filter cleared.
+message.shulkerboxrelay.filterset=Shulker box name filter set to name "%1$s". Right-click with an empty name tag to remove the filter.
+message.destinationsaved=Card data transferred. Bridge linked to destination at %1$d, %2$d, %3$d (Dimension %4$d).
+message.destinationoccupied=Card destination is already linked to another network bridge. A network signal bridge can only be linked to one destination at the time!
+message.carderror=Card data could not be saved because the destination's dimension does not match the dimension of the network. Network Signal Bridges do not work across dimensions! Use two different networks instead!
+message.carddestinationnotfound=Card destination could not be identified as a network signal bridge. Please build both end points first before connecting the bridges.
+message.destinationcleared=Destination unset.
+message.destinationredundant=A network signal bridge cannot be linked to itself!
+message.nodestinationset=No destination was set for this Network Signal Bridge!
+message.destinationat=This Bridge is linked to a Network Signal Bridge at %1$s, %2$s, %3$s
+# Gui-Elements
+gui.aiminfo.coreheader=Core Stats
+gui.aiminfo.networkheader=Network Stats
+gui.aiminfo.power=Core Power:
+gui.aiminfo.powerdrain=Power-Usage:
+gui.aiminfo.isactive=Is Active:
+gui.aiminfo.booltrue=true
+gui.aiminfo.boolfalse=false
+gui.aiminfo.connectedplayer=Connected Player:
+gui.aiminfo.noplayer=None
+gui.aiminfo.isplayeraccessible=Player Accessible:
+gui.aiminfo.issecured=Secured:
+gui.aiminfo.coreposition=Core Position:
+gui.aiminfo.elementsconnected=Elements Connected:
+gui.aiminfo.elementlist=Connected Elements:
+gui.aiminfo.amount=Amount:
+gui.aimcore.upgrades=Upgrades:
+gui.aimcore.problems=Problems:
+gui.aimcore.problems.none=No Problems.
+gui.aimcore.problems.noplayer=Missing Player
+gui.aimcore.problems.nopower=Not enough power
+gui.aimcore.problems.wrongsetup=Invalid setup
+gui.aimcore.problems.noplayer.desc=There is no player connected to this network.
+gui.aimcore.problems.nopower.desc=This core has not enough power to provide the
+gui.aimcore.problems.nopower.desc.2=energy needed by this network.
+gui.aimcore.problems.wrongsetup.desc=The physical setup of the network is wrong.
+gui.aimcore.problems.wrongsetup.desc.2=Maybe the network is too large or there
+gui.aimcore.problems.wrongsetup.desc.3=are two cores built in.
+gui.advancedinfo.list.header=Available Networks
+gui.advancedinfo.list.select=Show Details
+gui.advancedinfo.list.coreheader=Network Core at %1$d | %2$d | %3$d (Dim %4$d / %5$s)
+# Overlay-Text
+aimoverlay.status=Status: %1$s
+aimoverlay.status.active=Active
+aimoverlay.status.inactive=Inactive
+aimoverlay.scannerstatus.ready=Ready
+aimoverlay.scannerstatus.offline=Offline
+aimoverlay.scannerstatus.active=Active
+aimoverlay.generatorstatus.offline=Offline
+aimoverlay.generatorstatus.idle=Idle
+aimoverlay.generatorstatus.active=Active
+aimoverlay.mode=Current mode: %1$s
+aimoverlay.content=Content:
+aimoverlay.content.unknown=Unknown
+aimoverlay.content.none=None
+aimoverlay.update=Right-click to update.
+aimoverlay.burntime=Remaining burn time: %1$s
+aimoverlay.burntime.value=%1$d s.
+aimoverlay.powerinput=Current power input: %1$s
+aimoverlay.powerinput.value=%1$d RF/t
+aimoverlay.poweroutput=Current power output: %1$s
+aimoverlay.poweroutput.value=%1$d RF/t
+aimoverlay.power=Power: %1$s
+aimoverlay.power.value=%1$d RF / %2$d RF
+aimoverlay.powerchange=Power change: %1$s
+aimoverlay.powerchange.value=+%1$d RF/t | -%2$d RF/t
+aimoverlay.playerconnected=Player connected: %1$s
+aimoverlay.playerconnected.value=%1$s
+aimoverlay.destinationblock=Destination: %1$s
+aimoverlay.destinationblock.value=[%1$s]
+aimoverlay.destinationblock.coordvalue=%1$d | %2$d | %3$d
+aimoverlay.destinationblock.coorddimvalue=%1$d | %2$d | %3$d (Dim %4$d)
+aimoverlay.destinationblock.none=None
+aimoverlay.redstonemode=Redstone mode: %1$s
+aimoverlay.redstonemode.value=%1$s
+aimoverlay.scannerticks=Scan time remaining: %1$s
+aimoverlay.scannerticks.value=%1$d s
+aimoverlay.selectedslot=Selected Slot: %1$s
+aimoverlay.selectedslot.value=Slot %1$d
+aimoverlay.selectedshulkerboxes=Applicable shulker boxes: %1$s
+aimoverlay.selectedshulkerboxes.value=%1$d
+aimoverlay.shulkerboxfilter=Name filter: %1$s
+aimoverlay.shulkerboxfilter.value="%1$s"
+
+# Modes for the Shulker Box Relay
+mode.shulkerboxrelay.all=Use all slots
+mode.shulkerboxrelay.mainhand=Use current selected Hotbar-Slot
+mode.shulkerboxrelay.offhand=Use Offhand-Slot
+mode.shulkerboxrelay.slotbyid=Select Slot by its ID (Right-Click with an empty hand to change ID)
+guide.header.shulkerboxrelay=Shulker Box Relay
+guide.header.solargenerator=Solar Generator
+guide.header.networksignalbridge=Network Signal Bridge
+guide.content.solargenerator=The Solar Generator, like the Solid Fuel Generator, can be used to supply a network with power. When exposed to the sun, this generator can provide %1$d RF/t to your network. This value increases in warm biomes like mesas or deserts. To provide power, this generator has to be connected to an Inventory Management Core.
+guide.content.shulkerboxrelay=The Shulker Box Relay can be used to access the content of shulker boxes in the player's inventory. Through the use of different modes, much like the Slot Selection Relay, specific shulker boxes in the player's inventory might be selected, depending on their inventory slot. This selection may be specified further by right-clicking the Shulker Box Relay with a name tag. This will only allow access to shulker boxes which name matches the one set with the name tag. To remove the name filter, right-click the relay with an empty name tag. All items pumped into the Shulker Box Relay will be saved in one of the shulker boxes in the player's inventory. Similarly, all the items contained in the selected shulker boxes can be pumped out of the relay.
+guide.content.networksignalbridge=The Network Signal Bridge can be used to connect different network devices over large distances without having to link them with network cables. For a Network Signal Bridge to connect two parts of a network, one Bridge block has to be connected to the network core via cables while the other can be placed in a remote location. The two Bridge blocks may be connected by saving the position of one of the two blocks on a Position Card and right-clicking the other block with the set card. Network Signal Bridges will consume %1$d RF/t from your network per Bridge Block. They do not work over multiple dimensions, but the distance between them can be arbitrarily large, as long as the chunks on both sides are loaded.

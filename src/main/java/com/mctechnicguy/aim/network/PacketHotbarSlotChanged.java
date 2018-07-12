@@ -6,6 +6,8 @@ import net.minecraft.client.Minecraft;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -33,6 +35,7 @@ public class PacketHotbarSlotChanged implements IMessage {
 		buf.writeShort(newSlot);
 	}
 
+    @SideOnly(Side.CLIENT)
 	public static class PacketHotbarSlotChangedHandler implements IMessageHandler<PacketHotbarSlotChanged, IMessage> {
 
 		@Nullable

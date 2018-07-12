@@ -45,7 +45,7 @@ import java.util.UUID;
 })
 public class TileEntityAIMCore extends TileEntity implements IInventory, ITickable, IEnergyStorage, IProvidesNetworkInfo, net.darkhax.tesla.api.ITeslaConsumer, ic2.api.energy.tile.IEnergySink {
 
-	private static final float BASE_MAX_POWER = 1000000F;
+	private static final float BASE_MAX_POWER = 2000000F;
 	private static final float BASE_MAX_POWER_DRAIN = 50000F;
 
 	public int Power;
@@ -65,7 +65,8 @@ public class TileEntityAIMCore extends TileEntity implements IInventory, ITickab
 	private int NumberGeneratorsConnected;
 
 	private boolean active;
-	private boolean lastCheckSuccess;
+	private boolean lastPlayerCheckSuccess;
+	private boolean lastStructureCheckSuccess;
 	private int TickCounter = Math.round(AdvancedInventoryManagement.CORE_UPDATE_TIME * 0.9F);
 	private boolean firstUpdate;
 
@@ -296,7 +297,7 @@ public class TileEntityAIMCore extends TileEntity implements IInventory, ITickab
 		if (!this.hasUpgrade(2))
 			return (int) BASE_MAX_POWER;
 		else
-			return (int) (BASE_MAX_POWER + BASE_MAX_POWER * (Math.min(this.getUpgradeCount(2), 16) / 4F));
+			return (int) (BASE_MAX_POWER + (BASE_MAX_POWER*0.5625)* Math.min(this.getUpgradeCount(2), 16));
 	}
 
 	private float getUpgradeCount(int i) {
@@ -334,14 +335,15 @@ public class TileEntityAIMCore extends TileEntity implements IInventory, ITickab
 					firstUpdate = false;
 				}
 
-				lastCheckSuccess = this.searchForDevicesInNetwork() && this.getConnectedPlayer() != null;
-				setIsActive(lastCheckSuccess && hasEnoughPower()
+				lastStructureCheckSuccess = this.searchForDevicesInNetwork();
+				lastPlayerCheckSuccess = this.getConnectedPlayer() != null;
+				setIsActive(lastStructureCheckSuccess && lastPlayerCheckSuccess && hasEnoughPower()
 						&& !(this.hasUpgrade(1) && world.isBlockIndirectlyGettingPowered(pos) > 0));
 				
 				TickCounter = 0;
 			} else {
 				this.TickCounter++;
-				this.setIsActive(lastCheckSuccess && hasEnoughPower()
+				this.setIsActive(lastStructureCheckSuccess && lastPlayerCheckSuccess && hasEnoughPower()
 						&& !(this.hasUpgrade(1) && world.isBlockIndirectlyGettingPowered(pos) > 0) && !isPlayerDead());
 			}
 		}
@@ -645,7 +647,7 @@ public class TileEntityAIMCore extends TileEntity implements IInventory, ITickab
 
 	@SideOnly(Side.CLIENT)
 	public int getPowerRemainingScaled(int scale) {
-		return this.Power * scale / this.MaxPower();
+		return (int)Math.round(((double)this.Power / (double)this.MaxPower()) * scale);
 	}
 
 	@Nonnull
@@ -706,7 +708,7 @@ public class TileEntityAIMCore extends TileEntity implements IInventory, ITickab
 
 	@Override
 	public int getFieldCount() {
-		return 3;
+		return 5;
 	}
 
 	@Override
@@ -777,6 +779,20 @@ public class TileEntityAIMCore extends TileEntity implements IInventory, ITickab
 	public String getNameForOverlay() {
 		return I18n.format("tile.aimcore.name");
 	}
+
+    /**
+     * Returns a flag containing all the reasons the network is currently not active
+     * @return A bitwise flag containing these error values: 0: No errors, 1: No player connected, 2: Invalid network structure, 4: Not enough power, 8: Player inaccessible, 16: Redstone disabled
+     */
+	public short getProblemFlag() {
+	    short flag = 0;
+	    if (this.playerConnectedID == null) flag |= 1;
+        if (!this.lastStructureCheckSuccess) flag |= 2;
+        if (!hasEnoughPower()) flag |= 4;
+        if (getConnectedPlayer() == null) flag |= 8;
+        if (this.hasUpgrade(1) && world.isBlockIndirectlyGettingPowered(pos) > 0) flag |= 16;
+	    return flag;
+    }
 
 	@Override
     @SideOnly(Side.CLIENT)

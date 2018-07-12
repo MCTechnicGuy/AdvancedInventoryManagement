@@ -19,6 +19,8 @@ import net.minecraftforge.fluids.FluidRegistry;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.registry.GameRegistry;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 import net.minecraftforge.oredict.OreDictionary;
 import net.minecraftforge.registries.IForgeRegistry;
 
@@ -31,7 +33,6 @@ public class ModElementList {
 	public static ItemAIMUpgrade itemAIMUpgrade;
 	public static ItemAIMWrench itemAIMWrench;
 	public static ItemAIMInfoProvider itemAIMInfoProvider;
-	public static ItemAdvancedInfoProvider itemAdvancedInfoProvider;
 	public static ItemAIMManual itemAIMManual;
 	public static ItemCraftingComponent itemCraftingComponent;
 	public static ItemPositionCard itemPositionCard;
@@ -102,7 +103,6 @@ public class ModElementList {
 		itemAIMUpgrade = new ItemAIMUpgrade();
 		itemAIMWrench = new ItemAIMWrench();
 		itemAIMInfoProvider = new ItemAIMInfoProvider();
-		itemAdvancedInfoProvider = new ItemAdvancedInfoProvider();
 		itemAIMManual = new ItemAIMManual();
 		itemCraftingComponent = new ItemCraftingComponent();
 		itemPositionCard = new ItemPositionCard();
@@ -119,25 +119,25 @@ public class ModElementList {
         };
 
         static final Item[] items = {
-                itemAIMWrench, itemAIMUpgrade, itemAIMInfoProvider, itemAdvancedInfoProvider, itemAIMManual, itemCraftingComponent, itemPositionCard
+                itemAIMWrench, itemAIMUpgrade, itemAIMInfoProvider, itemAIMManual, itemCraftingComponent, itemPositionCard
         };
 
 
         @SubscribeEvent
+        @SideOnly(Side.CLIENT)
         public static void registerRecipes(final RegistryEvent.Register<IRecipe> event) {
         	IForgeRegistry<IRecipe> reg = event.getRegistry();
-        	if (AdvancedInventoryManagement.isClient) {
-		        for (Block block : blocks) {
-                    if (block instanceof IManualEntry)
-                        registerRecipesForGuide((IManualEntry)block, reg, block.getRegistryName());
-		        }
-                for (Item item : items) {
-                    if (item instanceof IManualEntry)
-                        registerRecipesForGuide((IManualEntry)item, reg, item.getRegistryName());
-                }
-	        }
+            for (Block block : blocks) {
+                if (block instanceof IManualEntry)
+                    registerRecipesForGuide((IManualEntry)block, reg, block.getRegistryName());
+            }
+            for (Item item : items) {
+                if (item instanceof IManualEntry)
+                    registerRecipesForGuide((IManualEntry)item, reg, item.getRegistryName());
+            }
         }
 
+        @SideOnly(Side.CLIENT)
         private static void registerRecipesForGuide(IManualEntry entry, IForgeRegistry<IRecipe> reg, ResourceLocation name) {
             ArrayList<IRecipe> recipes = new ArrayList<>();
             if (entry instanceof ICustomManualEntry) {
@@ -159,8 +159,8 @@ public class ModElementList {
 			IForgeRegistry<Block> reg = event.getRegistry();
 			reg.registerAll(blocks);
 			for (Block b : blocks) {
-                if (AdvancedInventoryManagement.isClient && b instanceof IManualEntry) {
-                    GuiAIMGuide.content.add((IManualEntry)b);
+                if (b instanceof IManualEntry) {
+                    AdvancedInventoryManagement.proxy.addPageToGuide((IManualEntry)b);
                 }
             }
 		}
@@ -181,8 +181,8 @@ public class ModElementList {
             IForgeRegistry<Item> reg = event.getRegistry();
             reg.registerAll(items);
             for (Item i : items) {
-                if (AdvancedInventoryManagement.isClient && i instanceof IManualEntry) {
-                    GuiAIMGuide.content.add((IManualEntry)i);
+                if (i instanceof IManualEntry) {
+                    AdvancedInventoryManagement.proxy.addPageToGuide((IManualEntry)i);
                 }
             }
 	        OreDictionary.registerOre("oreWrench", itemAIMWrench);

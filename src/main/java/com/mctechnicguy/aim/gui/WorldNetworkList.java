@@ -17,11 +17,11 @@ import java.util.List;
 
 public class WorldNetworkList extends GuiListExtended {
 
-    private final GuiAdvancedNetworkInfo owner;
+    private final GuiNetworkList owner;
     private final List<WorldCoreEntry> coreList = Lists.newArrayList();
     private int selectedSlotIndex = -1;
 
-    WorldNetworkList(GuiAdvancedNetworkInfo ownerIn, Minecraft mcIn, int widthIn, int heightIn, int topIn, int bottomIn, int slotHeightIn) {
+    WorldNetworkList(GuiNetworkList ownerIn, Minecraft mcIn, int widthIn, int heightIn, int topIn, int bottomIn, int slotHeightIn) {
         super(mcIn, widthIn, heightIn, topIn, bottomIn, slotHeightIn);
         this.owner = ownerIn;
     }
@@ -48,7 +48,7 @@ public class WorldNetworkList extends GuiListExtended {
         this.owner.selectEntry(selectedSlotIndexIn);
     }
 
-    GuiAdvancedNetworkInfo getOwner() {
+    GuiNetworkList getOwner() {
         return owner;
     }
 
