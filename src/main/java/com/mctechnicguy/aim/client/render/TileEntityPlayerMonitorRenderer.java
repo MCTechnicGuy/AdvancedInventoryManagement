@@ -2,22 +2,23 @@ package com.mctechnicguy.aim.client.render;
 
 
 import com.mctechnicguy.aim.tileentity.TileEntityPlayerMonitor;
+import net.minecraft.client.renderer.GlStateManager;
+import net.minecraft.client.renderer.OpenGlHelper;
 import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
+import net.minecraft.client.resources.I18n;
+import net.minecraft.util.EnumFacing;
 
 public class TileEntityPlayerMonitorRenderer extends TileEntitySpecialRenderer<TileEntityPlayerMonitor> {
 
     @Override
     public void render(TileEntityPlayerMonitor te, double x, double y, double z, float partialTicks, int destroyStage, float alpha) {
-        //TODO!!!
-        /*if (!te.hasWorld() || !te.getCoreActive()) return;
-
-
+        if (!te.hasWorld() || !te.getCoreActive()) return;
 
         GlStateManager.pushMatrix();
         GlStateManager.translate(x + 0.5, y + 0.5, z + 0.5);
 
         String value = te.getFormattedValue();
-        String percentage = te.getPercentageValue();
+        String percentage = te.getPercentageFormatted();
 
         for (EnumFacing face : EnumFacing.HORIZONTALS) {
 
@@ -27,8 +28,9 @@ public class TileEntityPlayerMonitorRenderer extends TileEntitySpecialRenderer<T
 
                 OpenGlHelper.setLightmapTextureCoords(OpenGlHelper.lightmapTexUnit, 61680.0F, 0.0F);
 
-                getFontRenderer().drawString(te.getCore().playerConnectedName, -getFontRenderer().getStringWidth(te.getCore().playerConnectedName) / 2, -30, 0xFFFFFF);
-                getFontRenderer().drawString(te.getModeFormatted(), -getFontRenderer().getStringWidth(te.getModeFormatted()) / 2, -18, 0xFFFFFF);
+                getFontRenderer().drawString(te.getPlayerConnectedName(), -getFontRenderer().getStringWidth(te.getPlayerConnectedName()) / 2, -30, 0xFFFFFF);
+                String modeFormatted = I18n.format("mode.monitordisplay." + te.mode.getName());
+                getFontRenderer().drawString(modeFormatted, -getFontRenderer().getStringWidth(modeFormatted) / 2, -18, 0xFFFFFF);
 
                 if (value != null) {
                     getFontRenderer().drawString(value, -getFontRenderer().getStringWidth(value) / 2, -6, 0xFFFFFF);
@@ -45,6 +47,6 @@ public class TileEntityPlayerMonitorRenderer extends TileEntitySpecialRenderer<T
         }
 
         GlStateManager.translate(-x, -y, -z);
-        GlStateManager.popMatrix();*/
+        GlStateManager.popMatrix();
     }
 }

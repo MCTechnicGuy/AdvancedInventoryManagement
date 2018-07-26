@@ -1,37 +1,42 @@
 package com.mctechnicguy.aim.tileentity;
 
-import com.mctechnicguy.aim.AdvancedInventoryManagement;
-import com.mctechnicguy.aim.blocks.BlockPlayerMonitor;
 import com.mctechnicguy.aim.client.render.NetworkInfoOverlayRenderer;
 import net.minecraft.client.resources.I18n;
-import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.NetworkManager;
 import net.minecraft.network.play.server.SPacketUpdateTileEntity;
+import net.minecraft.util.IStringSerializable;
 import net.minecraft.util.ITickable;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import java.text.DecimalFormat;
 
 public class TileEntityPlayerMonitor extends TileEntityAIMDevice implements ITickable{
 
-    private int mode;
+    public EnumMode mode = EnumMode.HEALTH;
     private int redstoneBehaviour;
-    private String modeFormatted;
-
-    private String preSentFormattedValue;
-    private String preSentPercentageValue;
-
     private int powerLevel;
     private double prevValue;
     private int pulseTicks;
     private boolean needsUpdate;
     private boolean lastCoreActive;
+
+    private double prevPlayerPosX;
+    private double prevPlayerPosY;
+    private double prevPlayerPosZ;
+
+    private double clientValue;
+    private double clientMaxValue;
+    private double clientPercentageValue;
+
+    private String playerConnectedName;
+
+    private int ticksToNextUpdate = 20;
+    private boolean updateQueued;
 
     @Nonnull
     private DecimalFormat doubleRound = new DecimalFormat("#.##");
@@ -39,13 +44,12 @@ public class TileEntityPlayerMonitor extends TileEntityAIMDevice implements ITic
     @Override
     public void readFromNBT(NBTTagCompound nbt) {
         super.readFromNBT(nbt);
-        mode = nbt.getInteger("MonitorMode");
+        mode = EnumMode.fromID(nbt.getInteger("MonitorMode"));
         redstoneBehaviour = nbt.getInteger("RedstoneBehaviour");
         needsUpdate = true;
     }
 
     public SPacketUpdateTileEntity getUpdatePacket() {
-        if (world.isRemote) return null;
         NBTTagCompound nbtTag = getUpdateTag();
         this.writePacketCoreData(nbtTag);
         return new SPacketUpdateTileEntity(this.getPos(), 0, nbtTag);
@@ -56,9 +60,17 @@ public class TileEntityPlayerMonitor extends TileEntityAIMDevice implements ITic
     public NBTTagCompound getUpdateTag() {
         NBTTagCompound nbtTag =  super.getUpdateTag();
         nbtTag.setInteger("RedstoneBehaviour", redstoneBehaviour);
-        nbtTag.setInteger("MonitorMode", mode);
-        if (getFormattedValue() != null) nbtTag.setString("FormattedValue", getFormattedValue());
-        if (getPercentageValue() != null) nbtTag.setString("PercentageValue", getPercentageValue());
+        nbtTag.setInteger("MonitorMode", mode.getID());
+        if (isCoreActive()) {
+            nbtTag.setString("playerConnectedName", this.getCore().playerConnectedName);
+            nbtTag.setDouble("MonitorValue", this.getCurrentValue());
+            if (mode.hasMaxValue()) {
+                nbtTag.setDouble("MonitorMaxValue", this.getMaxValue());
+            }
+            if (!Double.isNaN(getPercentageAsNumber())) {
+                nbtTag.setDouble("MonitorPercentage", this.getPercentageAsNumber());
+            }
+        }
         return nbtTag;
     }
 
@@ -66,12 +78,29 @@ public class TileEntityPlayerMonitor extends TileEntityAIMDevice implements ITic
     @SideOnly(Side.CLIENT)
     public void onDataPacket(NetworkManager net, @Nonnull SPacketUpdateTileEntity packet) {
         super.onDataPacket(net, packet);
-        mode = packet.getNbtCompound().getInteger("MonitorMode");
-        redstoneBehaviour = packet.getNbtCompound().getInteger("RedstoneBehaviour");
-        modeFormatted = I18n.format("mode.monitordisplay." + BlockPlayerMonitor.EnumMode.fromID(mode).getName());
-        preSentFormattedValue = packet.getNbtCompound().getString("FormattedValue");
-        if (preSentFormattedValue.equals("true") || preSentFormattedValue.equals("false")) preSentFormattedValue = I18n.format("message." + preSentFormattedValue);
-        preSentPercentageValue = packet.getNbtCompound().getString("PercentageValue");
+        this.handleUpdateTag(packet.getNbtCompound());
+    }
+
+
+    private void handleServerUpdateTag(NBTTagCompound tag) {
+        mode = EnumMode.fromID(tag.getInteger("MonitorMode"));
+        redstoneBehaviour = tag.getInteger("RedstoneBehaviour");
+        playerConnectedName = tag.getString("playerConnectedName");
+        if (tag.hasKey("MonitorValue")) {
+            this.clientValue = tag.getDouble("MonitorValue");
+            if (tag.hasKey("MonitorMaxValue")) {
+                this.clientMaxValue = tag.getDouble("MonitorMaxValue");
+            }
+            if (tag.hasKey("MonitorPercentage")) {
+                this.clientPercentageValue = tag.getDouble("MonitorPercentage");
+            }
+        }
+    }
+
+    @Override
+    public void handleUpdateTag(NBTTagCompound tag) {
+        super.handleUpdateTag(tag);
+        this.handleServerUpdateTag(tag);
     }
 
     @Nonnull
@@ -79,7 +108,9 @@ public class TileEntityPlayerMonitor extends TileEntityAIMDevice implements ITic
     public NBTTagCompound writeToNBT(NBTTagCompound nbt) {
         nbt = super.writeToNBT(nbt);
         nbt.setInteger("RedstoneBehaviour", redstoneBehaviour);
-        nbt.setInteger("MonitorMode", mode);
+        if (mode != null) {
+            nbt.setInteger("MonitorMode", mode.getID());
+        }
         return nbt;
     }
 
@@ -87,12 +118,12 @@ public class TileEntityPlayerMonitor extends TileEntityAIMDevice implements ITic
     private double getMaxValue() {
         if (!isCoreActive() || getPlayer() == null) return 0D;
         switch (mode) {
-            case 0: return (double)getPlayer().getMaxHealth();
-            case 2: return 20D; //Maximum food level
-            case 3: return 20D; //Maximum saturation level
-            case 4: return 300D; //Maximum air value (in Ticks)
-            case 8: return 20D; //Maximum armor value (should be...)
-            case 20: return (double)InventoryPlayer.getHotbarSize();
+            case HEALTH: return (double)getPlayer().getMaxHealth();
+            case HUNGER: return 20D; //Maximum food level
+            case SATURATION: return 20D; //Maximum saturation level
+            case AIR: return 300D; //Maximum air value (in Ticks)
+            case ARMOR: return 20D; //Maximum armor value (should be...)
+            case SELECTEDSLOT: return (double)InventoryPlayer.getHotbarSize();
             default: return Double.NaN;
         }
     }
@@ -101,101 +132,42 @@ public class TileEntityPlayerMonitor extends TileEntityAIMDevice implements ITic
     private double getCurrentValue() {
         if (!isCoreActive() || getPlayer() == null) return 0D;
         switch (mode) {
-            case 0: return (double)getPlayer().getHealth();
-            case 1: return (double)getPlayer().experienceLevel;
-            case 2: return (double)getPlayer().getFoodStats().getFoodLevel();
-            case 3: return (double)getPlayer().getFoodStats().getSaturationLevel();
-            case 4: return (double)getPlayer().getAir();
-            case 5: return getPlayer().chasingPosX - getPlayer().prevChasingPosX;
-            case 6: return getPlayer().chasingPosY - getPlayer().prevChasingPosY;
-            case 7: return getPlayer().chasingPosZ - getPlayer().prevChasingPosZ;
-            case 8: return (double)getPlayer().getTotalArmorValue();
-            case 9: return getPlayer().posX;
-            case 10: return getPlayer().posY;
-            case 11: return getPlayer().posZ;
-            case 12: return getPlayer().isBurning() ? 1D : 0D;
-            case 13: return getPlayer().isInWater() ? 1D : 0D;
-            case 14: return getPlayer().isInLava() ? 1D : 0D;
-            case 15: return !getPlayer().onGround ? 1D : 0D;
-            case 16: return getPlayer().isSneaking() ? 1D : 0D;
-            case 17: return getPlayer().isSprinting() ? 1D : 0D;
-            case 18: return getPlayer().fallDistance > 0D ? 1D : 0D;
-            case 19: return (double)getPlayer().inventory.currentItem;
-            case 20: return (double)getPlayer().dimension;
+            case HEALTH: return getPlayer().getHealth();
+            case XP: return getPlayer().experienceLevel;
+            case HUNGER: return getPlayer().getFoodStats().getFoodLevel();
+            case SATURATION: return getPlayer().getFoodStats().getSaturationLevel();
+            case AIR: return Math.max(0, getPlayer().getAir());
+            case MOTIONX: return (getPlayer().posX - this.prevPlayerPosX) * 20;
+            case MOTIONY: return (getPlayer().posY - this.prevPlayerPosY) * 20;
+            case MOTIONZ: return (getPlayer().posZ - this.prevPlayerPosZ) * 20;
+            case ARMOR: return getPlayer().getTotalArmorValue();
+            case POSX: return getPlayer().posX;
+            case POSY: return getPlayer().posY;
+            case POSZ: return getPlayer().posZ;
+            case ISBURNING: return getPlayer().isBurning() ? 1D : 0D;
+            case ISINWATER: return getPlayer().isInWater() ? 1D : 0D;
+            case ISINLAVA: return getPlayer().isInLava() ? 1D : 0D;
+            case ISAIRBORNE: return !getPlayer().onGround ? 1D : 0D;
+            case ISSNEAKING: return getPlayer().isSneaking() ? 1D : 0D;
+            case ISSPRINTING: return getPlayer().isSprinting() ? 1D : 0D;
+            case ISFALLING: return getPlayer().fallDistance > 0D ? 1D : 0D;
+            case SELECTEDSLOT: return getPlayer().inventory.currentItem + 1;
+            case DIMENSION: return getPlayer().dimension;
             default: return Double.NaN;
         }
     }
 
-
-    private String getCurrentFormattedValue() {
-        if (!isCoreActive() || getPlayer() == null) return null;
-        switch (mode) {
-            case 0: return doubleRound.format(getPlayer().getHealth()) + " / " + getPlayer().getMaxHealth() + " HP";
-            case 1: return getPlayer().experienceLevel + " XP";
-            case 2: return getPlayer().getFoodStats().getFoodLevel() + " / " + getMaxValue();
-            case 3: return getPlayer().getFoodStats().getSaturationLevel() + " / " + getMaxValue();
-            case 4: return Math.round(getPlayer().getAir() / 30) + " / " + getMaxValue();
-            case 5: return doubleRound.format((getPlayer().chasingPosX - getPlayer().prevChasingPosX) * 20) + " m/s";
-            case 6: return doubleRound.format((getPlayer().chasingPosY - getPlayer().prevChasingPosY) * 20) + " m/s";
-            case 7: return doubleRound.format((getPlayer().chasingPosZ - getPlayer().prevChasingPosZ) * 20) + " m/s";
-            case 8: return getPlayer().getTotalArmorValue() + " / " + getMaxValue();
-            case 9: return doubleRound.format(getPlayer().posX);
-            case 10: return doubleRound.format(getPlayer().posY);
-            case 11: return doubleRound.format(getPlayer().posZ);
-            case 19: return String.valueOf(getPlayer().inventory.currentItem + 1);
-            case 20: return "DIM-" + getPlayer().dimension;
-            default: return null;
-        }
-    }
-
-    private boolean isBooleanMode() {
-        return mode > 11 && mode < 19;
-    }
-
-    @Nullable
-    public String getFormattedValue() {
-        if (!getCoreActive()) return null;
-        if (AdvancedInventoryManagement.proxy.playerEqualsClient(getCore().playerConnectedID)) {
-            if (isBooleanMode() && !Double.isNaN(getCurrentValue())) {
-                if (world.isRemote) return AdvancedInventoryManagement.proxy.tryToLocalizeString(getCurrentValue() == 1D ? "message.true" : "message.false");
-                else return String.valueOf(getCurrentValue() == 1D);
-            }
-            else return getCurrentFormattedValue();
-        }
-        else return preSentFormattedValue;
-    }
-
-    @Nullable
-    public String getPercentageValue() {
-        if (world.isRemote && !getCoreActive() || !world.isRemote && !isCoreActive()) return null;
-        if (AdvancedInventoryManagement.proxy.playerEqualsClient(getCore().playerConnectedID)) {
-            if (Double.isNaN(getMaxValue()) || getMaxValue() <= 0 || mode > 11) return null;
-            else return doubleRound.format((getCurrentValue() / getMaxValue()) * 100) + "%";
-        } else return preSentPercentageValue;
-    }
-
     private double getPercentageAsNumber() {
-        if (!isCoreActive()) return Double.NaN;
-        if (Double.isNaN(getMaxValue()) || getMaxValue() <= 0 || mode > 11) return Double.NaN;
+        if (!isCoreActive() || !mode.hasPercentage() || getMaxValue() <= 0) return Double.NaN;
         else return getCurrentValue() / getMaxValue();
     }
 
-    @Nullable
-    @Override
-    public EntityPlayer getPlayer() {
-        if (!world.isRemote) return super.getPlayer();
-        if (AdvancedInventoryManagement.proxy.playerEqualsClient(getCore().playerConnectedID)) {
-            return AdvancedInventoryManagement.proxy.getPlayer(null);
-        }
-        return null;
-    }
-
     public int getDeviceMode() {
-        return mode;
+        return mode.getID();
     }
 
     public void setDeviceMode(int m) {
-        mode = m;
+        mode = EnumMode.fromID(m);
         needsUpdate = true;
     }
 
@@ -208,21 +180,22 @@ public class TileEntityPlayerMonitor extends TileEntityAIMDevice implements ITic
         needsUpdate = true;
     }
 
-    public String getModeFormatted() {
-        return modeFormatted;
-    }
-
     private void resetToDefaults() {
         prevValue = getCurrentValue();
+        if (isCoreActive()) {
+            prevPlayerPosX = getPlayer().posX;
+            prevPlayerPosY = getPlayer().posY;
+            prevPlayerPosZ = getPlayer().posZ;
+        }
         pulseTicks = 0;
         powerLevel = 0;
         setStaticRedstoneOutput();
-        updateBlock();
+        queueUpdate();
         needsUpdate = false;
     }
 
     private int getCurrentRedstoneValue() {
-        if (isBooleanMode()) {
+        if (mode.isBooleanValue()) {
             return getCurrentValue() == 1 ? 15 : 0;
         } else
             return Double.isNaN(getPercentageAsNumber()) ? (int)Math.ceil(Math.min(getCurrentValue(), 15)) : (int)Math.ceil(getPercentageAsNumber() * 15);
@@ -246,7 +219,7 @@ public class TileEntityPlayerMonitor extends TileEntityAIMDevice implements ITic
             powerLevel = 0;
             pulseTicks = 5;
         } else if (getRedstoneBehaviour() == 5) {
-            if (isBooleanMode()) {
+            if (mode.isBooleanValue()) {
                 powerLevel = 15;
             } else {
                 powerLevel = Double.isNaN(getPercentageAsNumber()) ? (int)Math.round(Math.min(15, Math.abs(getCurrentValue() - prevValue))) : (int)Math.round(Math.min(15, Math.abs(getPercentageAsNumber() - (prevValue / getMaxValue())) * 15));
@@ -284,8 +257,23 @@ public class TileEntityPlayerMonitor extends TileEntityAIMDevice implements ITic
             setStaticRedstoneOutput();
             setDynamicRedstoneOutput();
             prevValue = getCurrentValue();
-            updateBlock();
+            queueUpdate();
         }
+
+        ticksToNextUpdate--;
+        if (ticksToNextUpdate <= 0) {
+            ticksToNextUpdate = 20;
+            if (updateQueued) this.updateBlock();
+        }
+
+        prevPlayerPosX = getPlayer().posX;
+        prevPlayerPosY = getPlayer().posY;
+        prevPlayerPosZ = getPlayer().posZ;
+
+    }
+
+    private void queueUpdate() {
+        this.updateQueued = true;
     }
 
     @Override
@@ -300,38 +288,115 @@ public class TileEntityPlayerMonitor extends TileEntityAIMDevice implements ITic
         return powerLevel;
     }
 
-    public int getMaxRSMode() { //0 = Deactivated, 1 = Emit pulse on change, 2= Emit pulse on Change (Inverted), 3 = Show Status, 4 = Show status (inverted), 5 = Emit last percentage change as pulse
-        switch (mode) {
-            case 0: return 5;
-            case 1: return 5;
-            case 2: return 5;
-            case 3: return 5;
-            case 4: return 5;
-            case 5: return 5;
-            case 6: return 5;
-            case 7: return 5;
-            case 8: return 5;
-            case 9: return 2;
-            case 10: return 2;
-            case 11: return 2;
-            case 12: return 4;
-            case 13: return 4;
-            case 14: return 4;
-            case 15: return 4;
-            case 16: return 4;
-            case 17: return 4;
-            case 18: return 4;
-            case 19: return 5;
-            case 20: return 2;
-            default: return 0;
-        }
-    }
-
     @Override
     @SideOnly(Side.CLIENT)
     public void renderStatusInformation(NetworkInfoOverlayRenderer renderer) {
         super.renderStatusInformation(renderer);
-        renderer.renderModeString("mode.monitor." + BlockPlayerMonitor.EnumMode.fromID(mode).getName());
+        renderer.renderModeString("mode.monitor." + mode.getName());
         renderer.renderTileValues("redstonemode", TextFormatting.AQUA, false, I18n.format("rsmode.monitor." + this.redstoneBehaviour));
     }
+
+    @SideOnly(Side.CLIENT)
+    public String getFormattedValue() {
+        Object[] params;
+        if (mode.hasMaxValue()) {
+            if (mode.isBooleanValue()) {
+                params = new Object[]{I18n.format(clientValue == 1D ? "mode.monitordisplay.boolean.true" : "mode.monitordisplay.boolean.false"), doubleRound.format(clientMaxValue)};
+            } else {
+                params = new Object[]{doubleRound.format(clientValue), doubleRound.format(clientMaxValue)};
+            }
+        } else {
+            if (mode.isBooleanValue()) {
+                params = new Object[]{I18n.format(clientValue == 1D ? "mode.monitordisplay.boolean.true" : "mode.monitordisplay.boolean.false")};
+            } else {
+                params = new Object[]{doubleRound.format(clientValue)};
+            }
+        }
+        return I18n.format("mode.monitordisplay." + mode.getName() + ".format", params);
+    }
+
+    @SideOnly(Side.CLIENT)
+    public String getPercentageFormatted() {
+        if (!mode.hasPercentage()) return null;
+        return I18n.format("mode.monitordisplay.percent", doubleRound.format(clientPercentageValue * 100)) + "%";
+    }
+
+    @SideOnly(Side.CLIENT)
+    public String getPlayerConnectedName() {
+        return playerConnectedName;
+    }
+
+    public enum EnumMode implements IStringSerializable {
+
+        HEALTH(0, "health", true, false, true, 5),
+        XP(1, "xp", false, false, false, 5),
+        HUNGER(2, "hunger", true, false, true, 5),
+        SATURATION(3, "saturation", true, false, true, 5),
+        AIR(4, "air", true, false, true, 5),
+        MOTIONX(5, "motionx", false, false, false, 5),
+        MOTIONY(6, "motiony", false, false, false, 5),
+        MOTIONZ(7, "motionz", false, false, false, 5),
+        ARMOR(8, "armor", true, false, true, 5),
+        POSX(9, "posx", false, false, false, 2),
+        POSY(10, "posy", false, false, false, 2),
+        POSZ(11, "posz", false, false, false, 2),
+        ISBURNING(12, "isburning", false, true, false, 4),
+        ISINWATER(13, "isinwater", false, true, false, 4),
+        ISINLAVA(14, "isinlava", false, true, false, 4),
+        ISAIRBORNE(15, "isairborne", false, true, false, 4),
+        ISSNEAKING(16, "issneaking", false, true, false, 4),
+        ISSPRINTING(17, "issprinting", false, true, false, 4),
+        ISFALLING(18, "isfalling", false, true, false, 4),
+        SELECTEDSLOT(19, "selectedslot", true, false, false, 5),
+        DIMENSION(20, "dimension", false, false, false, 2);
+
+        private int id;
+        private String name;
+        private boolean hasMaxValue;
+        private boolean isBooleanValue;
+        private boolean hasPercentage;
+
+        //0 = Deactivated, 1 = Emit pulse on change, 2= Emit pulse on Change (Inverted), 3 = Show Status, 4 = Show status (inverted), 5 = Emit last percentage change as pulse
+        private int maxRSMode;
+
+        EnumMode(int id, String name, boolean hasMaxValue, boolean isBooleanValue, boolean hasPercentage, int maxRSMode) {
+            this.id = id;
+            this.name = name;
+            this.hasMaxValue = hasMaxValue;
+            this.isBooleanValue = isBooleanValue;
+            this.maxRSMode = maxRSMode;
+            this.hasPercentage = hasPercentage;
+        }
+
+        public boolean hasPercentage() {
+            return hasPercentage;
+        }
+
+        public int getMaxRSMode() {
+            return maxRSMode;
+        }
+
+        @Override
+        public String getName() {
+            return name;
+        }
+
+        public int getID() {
+            return id;
+        }
+
+        public boolean hasMaxValue() {
+            return hasMaxValue;
+        }
+
+        public boolean isBooleanValue() {
+            return isBooleanValue;
+        }
+
+
+        public static TileEntityPlayerMonitor.EnumMode fromID(int id) {
+            return values()[id];
+        }
+    }
+
 }

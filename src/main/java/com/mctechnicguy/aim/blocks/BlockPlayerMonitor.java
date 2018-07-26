@@ -15,7 +15,6 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
-import net.minecraft.util.IStringSerializable;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextComponentTranslation;
@@ -59,19 +58,19 @@ public class BlockPlayerMonitor extends BlockAIMDevice implements ICustomManualE
                 if (world.isRemote) return EnumRightClickResult.ACTION_DONE;
                 if (!side.equals(EnumFacing.UP)) {
                     int mode = ((TileEntityPlayerMonitor)tileEntity).getDeviceMode();
-                    if (mode < BlockPlayerMonitor.EnumMode.values().length - 1) {
+                    if (mode < TileEntityPlayerMonitor.EnumMode.values().length - 1) {
                         mode++;
                     } else
                         mode = 0;
                     ((TileEntityPlayerMonitor)tileEntity).setDeviceMode(mode);
-                    TextComponentTranslation modeName = new TextComponentTranslation("mode.monitor." + BlockPlayerMonitor.EnumMode.fromID(mode).getName());
+                    TextComponentTranslation modeName = new TextComponentTranslation("mode.monitor." + TileEntityPlayerMonitor.EnumMode.fromID(mode).getName());
                     modeName.getStyle().setColor(TextFormatting.AQUA);
                     AIMUtils.sendChatMessageWithArgs("message.modechange", player, TextFormatting.RESET, modeName);
                     ((TileEntityAIMDevice)tileEntity).updateBlock();
                     return EnumRightClickResult.ACTION_DONE;
                 } else {
                     int mode = ((TileEntityPlayerMonitor) tileEntity).getRedstoneBehaviour();
-                    if (mode < ((TileEntityPlayerMonitor) tileEntity).getMaxRSMode()) {
+                    if (mode < ((TileEntityPlayerMonitor) tileEntity).mode.getMaxRSMode()) {
                         mode++;
                     } else
                         mode = 0;
@@ -123,53 +122,5 @@ public class BlockPlayerMonitor extends BlockAIMDevice implements ICustomManualE
     public boolean showHeaderOnPage(int page) {
         return page == 0;
     }
-
-    public enum EnumMode implements IStringSerializable {
-
-        HEALTH(0, "health"),
-        XP(1, "xp"),
-        HUNGER(2, "hunger"),
-        SATURATION(3, "saturation"),
-        AIR(4, "air"),
-        MOTIONX(5, "motionx"),
-        MOTIONY(6, "motiony"),
-        MOTIONZ(7, "motionz"),
-        ARMOR(8, "armor"),
-        POSX(9, "posx"),
-        POSY(10, "posy"),
-        POSZ(11, "posz"),
-        ISBURNING(12, "isburning"),
-        ISINWATER(13, "isinwater"),
-        ISINLAVA(14, "isinlava"),
-        ISAIRBORNE(15, "isairborne"),
-        ISSNEAKING(16, "issneaking"),
-        ISSPRINTING(17, "issprinting"),
-        ISFALLING(18, "isfalling"),
-        SELECTEDSLOT(19, "selectedslot"),
-        DIMENSION(20, "dimension");
-
-        private int id;
-        private String name;
-
-        EnumMode(int id, String name) {
-            this.id = id;
-            this.name = name;
-        }
-
-        @Override
-        public String getName() {
-            return name;
-        }
-
-        public int getID() {
-            return id;
-        }
-
-        public static BlockPlayerMonitor.EnumMode fromID(int id) {
-            return values()[id];
-        }
-    }
-
-
 
 }

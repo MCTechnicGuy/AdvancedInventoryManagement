@@ -15,7 +15,6 @@ import net.minecraftforge.fml.relauncher.Side;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.util.UUID;
 
 public class CommonProxy implements IGuiHandler {
 
@@ -28,9 +27,6 @@ public class CommonProxy implements IGuiHandler {
 
 	public void registerFluid(BlockFluidClassic block, String name) {}
 
-	public boolean playerEqualsClient(UUID client) {
-		return false;
-	}
 
 
 	@Nullable

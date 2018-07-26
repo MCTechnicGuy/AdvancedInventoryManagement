@@ -37,22 +37,10 @@ import org.lwjgl.input.Keyboard;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.util.UUID;
 
 public class ClientProxy extends CommonProxy {
 	
 	public static KeyBinding KeyChangeAccess;
-
-	@Override
-	public boolean playerEqualsClient(@Nonnull UUID client) {
-	    if (FMLCommonHandler.instance().getSide() == Side.CLIENT) {
-	        if (!Minecraft.getMinecraft().world.isRemote) {
-	            return super.playerEqualsClient(client);
-            }
-        }
-		return Minecraft.getMinecraft().player != null && client.equals(Minecraft.getMinecraft().player.getUniqueID());
-	}
-
 
 	@Override
 	public void registerRenderers() {
