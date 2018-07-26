@@ -69,7 +69,7 @@ public class TileEntityNetworkCable extends TileEntityNetworkElement {
 		if (!world.isRemote) {
 			NBTTagCompound nbtTag = new NBTTagCompound();
 			this.writeSyncNBT(nbtTag);
-			this.writeCoreData(nbtTag);
+			this.writePacketCoreData(nbtTag);
 			return new SPacketUpdateTileEntity(this.pos, 0, nbtTag);
 		} else
 			return null;
@@ -77,7 +77,7 @@ public class TileEntityNetworkCable extends TileEntityNetworkElement {
 
 	public void onDataPacket(NetworkManager net, @Nonnull SPacketUpdateTileEntity packet) {
 		readSyncNBT(packet.getNbtCompound());
-		this.readCoreData(packet.getNbtCompound());
+		this.readPacketCoreData(packet.getNbtCompound());
 	}
 
 	@Nonnull

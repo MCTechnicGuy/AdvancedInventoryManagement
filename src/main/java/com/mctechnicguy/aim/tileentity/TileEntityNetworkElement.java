@@ -21,12 +21,13 @@ public abstract class TileEntityNetworkElement extends TileEntity implements IPr
 	@Nullable
     private TileEntityAIMCore coreTile;
 	private BlockPos corePos;
-	//Single-use-variable to store the core state when the block is rendered for the first time. After that, the core will send updates
-	private boolean coreActive;
+
+	private boolean hasCore;
+	private boolean isCoreActive;
 
 	public void readFromNBT(NBTTagCompound nbt) {
 		super.readFromNBT(nbt);
-		this.readCoreData(nbt);
+		this.readServerCoreData(nbt);
 	}
 	
 	@Override
@@ -39,67 +40,93 @@ public abstract class TileEntityNetworkElement extends TileEntity implements IPr
     @Override
 	public NBTTagCompound writeToNBT(NBTTagCompound nbt) {
 		nbt = super.writeToNBT(nbt);
-		this.writeCoreData(nbt);
+		this.writeServerCoreData(nbt);
 		return nbt;
 	}
 	
 	@Nullable
     public SPacketUpdateTileEntity getUpdatePacket() {
 		NBTTagCompound nbtTag = new NBTTagCompound();
-		this.writeCoreData(nbtTag);
+		this.writePacketCoreData(nbtTag);
 		return new SPacketUpdateTileEntity(this.getPos(), 0, nbtTag);
 	}
 
 	@Override
     @SideOnly(Side.CLIENT)
 	public void onDataPacket(NetworkManager net, @Nonnull SPacketUpdateTileEntity packet) {
-		this.readCoreData(packet.getNbtCompound());
+		this.readPacketCoreData(packet.getNbtCompound());
 	}
 
-	void writeCoreData(@Nonnull NBTTagCompound nbt) {
-		if (this.hasCore()) {
+	private void writeServerCoreData(@Nonnull NBTTagCompound nbt) {
+		if (this.hasServerCore()) {
 			nbt.setInteger("coreX", this.getCore().getPos().getX());
 			nbt.setInteger("coreY", this.getCore().getPos().getY());
 			nbt.setInteger("coreZ", this.getCore().getPos().getZ());
 		}
-		nbt.setBoolean("hasCore", this.hasCore());
+		nbt.setBoolean("hasCore", this.hasServerCore());
 	}
 
-	void readCoreData(@Nonnull NBTTagCompound nbt) {
+	private void readServerCoreData(@Nonnull NBTTagCompound nbt) {
 		if (nbt.getBoolean("hasCore")) {
 			this.setCorePos(new BlockPos(nbt.getInteger("coreX"), nbt.getInteger("coreY"), nbt.getInteger("coreZ")));
 		} else
 			this.setCore(null);
 	}
 
+	void writePacketCoreData(@Nonnull NBTTagCompound nbt) {
+	    if (this.hasServerCore()) {
+	        nbt.setBoolean("hasCore", true);
+	        nbt.setBoolean("isCoreActive", this.isCoreActive());
+        } else {
+	        nbt.setBoolean("hasCore", false);
+        }
+    }
+
+    void readPacketCoreData(@Nonnull NBTTagCompound nbt) {
+	    if (nbt.getBoolean("hasCore")) {
+	        this.hasCore = true;
+	        this.isCoreActive = nbt.getBoolean("isCoreActive");
+        } else {
+	        this.hasCore = false;
+	        this.isCoreActive = false;
+        }
+    }
+
 	@Override
 	public NBTTagCompound getUpdateTag() {
 		NBTTagCompound nbtTag = super.getUpdateTag();
-		this.writeCoreData(nbtTag);
-		nbtTag.setBoolean("coreActive", isCoreActive());
+		this.writePacketCoreData(nbtTag);
 		return nbtTag;
 	}
 
 	@Override
 	public void handleUpdateTag(NBTTagCompound tag) {
 		super.handleUpdateTag(tag);
-		this.readCoreData(tag);
-		coreActive = tag.getBoolean("coreActive");
+		this.readPacketCoreData(tag);
 	}
 
 	public boolean isCoreActive() {
-		if (!this.hasCore()) return false;
+        if (world.isRemote) {
+            System.err.println("isCoreActive may not be called from Client-Side!!!");
+        }
+		if (!this.hasServerCore()) return false;
 		if (this.hasWorld() && this.world.isRemote) return this.coreTile.isActive();
 		else return this.coreTile.isActive() && this.coreTile.getConnectedPlayer() != null;
 	}
 
 	@Nullable
     public TileEntityAIMCore getCore() {
+	    if (world.isRemote) {
+	        System.err.println("getCore may not be called from Client-Side!!!");
+        }
 		if (coreTile != null && coreTile.isInvalid()) this.setCore(null);
 		return coreTile;
 	}
 
-	public boolean hasCore() {
+	public boolean hasServerCore() {
+        if (world.isRemote) {
+            System.err.println("hasServerCore may not be called from Client-Side!!!");
+        }
 		if (corePos == null) return false;
 		if (coreTile == null || coreTile.isInvalid()) {
 			TileEntity te = world.getTileEntity(corePos);
@@ -113,8 +140,13 @@ public abstract class TileEntityNetworkElement extends TileEntity implements IPr
 	}
 	
 	public boolean isPlayerAccessAllowed(@Nonnull EntityPlayer player) {
-		return !this.hasCore() || this.getCore().isPlayerAccessAllowed(player);
+	    if (world.isRemote) return true; //TODO Maybe do client-compare?
+		return !this.hasServerCore() || this.getCore().isPlayerAccessAllowed(player);
 	}
+
+	public boolean hasClientCore() {
+	    return hasCore;
+    }
 	
 	public void setCore(@Nullable TileEntityAIMCore newCore) {
 		if (coreTile != newCore) {
@@ -132,7 +164,6 @@ public abstract class TileEntityNetworkElement extends TileEntity implements IPr
 	}
 	
 	public void updateBlock() {
-		coreActive = false;
 		if (this.hasWorld()) {
 			world.notifyBlockUpdate(pos, world.getBlockState(pos), world.getBlockState(pos), 3);
 			this.markDirty();
@@ -140,11 +171,7 @@ public abstract class TileEntityNetworkElement extends TileEntity implements IPr
 	}
 
 	public boolean getCoreActive() {
-		if (coreActive) {
-			coreActive = false;
-			return true;
-		}
-		return false;
+		return isCoreActive;
 	}
 
     @SideOnly(Side.CLIENT)
@@ -154,12 +181,12 @@ public abstract class TileEntityNetworkElement extends TileEntity implements IPr
 
     @SideOnly(Side.CLIENT)
 	public void renderStatusInformation(NetworkInfoOverlayRenderer renderer) {
-        renderer.renderStatusString(this.isCoreActive());
+        renderer.renderStatusString(this.getCoreActive());
     }
 
     @Nonnull
     @SideOnly(Side.CLIENT)
-    public final String getUnlocalizedBlockName() {
+    private String getUnlocalizedBlockName() {
         return this.hasWorld() ? this.getBlockType().getUnlocalizedName() : "";
     }
 

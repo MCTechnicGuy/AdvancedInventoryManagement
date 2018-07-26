@@ -5,6 +5,7 @@ import com.mctechnicguy.aim.ModElementList;
 import com.mctechnicguy.aim.blocks.BlockScannerBase;
 import com.mctechnicguy.aim.client.render.NetworkInfoOverlayRenderer;
 import com.mctechnicguy.aim.util.AIMUtils;
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.NetworkManager;
@@ -37,7 +38,7 @@ public class TileEntityScanner extends TileEntityAIMDevice implements ITickable 
 	
 	public SPacketUpdateTileEntity getUpdatePacket() {
 		NBTTagCompound nbtTag = new NBTTagCompound();
-		this.writeCoreData(nbtTag);
+		this.writePacketCoreData(nbtTag);
 		nbtTag.setByte("status", (byte)status.id);
 		nbtTag.setInteger("ticksLeft", this.ActionTicksLeft);
 		return new SPacketUpdateTileEntity(this.getPos(), 0, nbtTag);
@@ -45,7 +46,7 @@ public class TileEntityScanner extends TileEntityAIMDevice implements ITickable 
 
     @SideOnly(Side.CLIENT)
 	public void onDataPacket(NetworkManager net, @Nonnull SPacketUpdateTileEntity packet) {
-		this.readCoreData(packet.getNbtCompound());
+		this.readPacketCoreData(packet.getNbtCompound());
 		this.status = EnumScanStatus.fromID(packet.getNbtCompound().getByte("status"));
 		this.ActionTicksLeft = packet.getNbtCompound().getInteger("ticksLeft");
 	}
@@ -75,7 +76,7 @@ public class TileEntityScanner extends TileEntityAIMDevice implements ITickable 
 		}
 		//There are enough ScannerBases
 		
-		if (!this.hasCore()) {
+		if (!this.hasServerCore()) {
 			if(ChatCooldown <= 0) {
 				AIMUtils.sendChatMessage("message.noCore", player, TextFormatting.RED);
 				ChatCooldown = 200;
@@ -159,10 +160,11 @@ public class TileEntityScanner extends TileEntityAIMDevice implements ITickable 
 	
 	private final void onScanFinished() {
 		if (getScannedPlayer() == null) return;
-		if (!this.hasCore()) {
+		if (!this.hasServerCore()) {
 			AIMUtils.sendChatMessage("message.scannererr.dataSendingFailed", scannedPlayer, TextFormatting.RED);
 		} else if (scanFailure) {
 			AIMUtils.sendChatMessage("message.scannererr.playerNotIdentified", scannedPlayer, TextFormatting.RED);
+			scanFailure = false;
 		} else if (this.getCore().playerConnectedID != null && getScannedPlayer().getUniqueID().compareTo(this.getCore().playerConnectedID) == 0) {
 			AIMUtils.sendChatMessage("message.scannererr.playerEqual", scannedPlayer, TextFormatting.RED);
 		} else if (!this.isPlayerAccessAllowed(scannedPlayer)) {
@@ -249,8 +251,8 @@ public class TileEntityScanner extends TileEntityAIMDevice implements ITickable 
 				}
 			}
 			
-			if (this.hasCore() && AdvancedInventoryManagement.DOES_USE_POWER) this.getCore().Power-= 10;
-			if (this.hasCore() && this.getCore().Power <= 0) {
+			if (this.hasServerCore() && AdvancedInventoryManagement.DOES_USE_POWER) this.getCore().Power-= 10;
+			if (this.hasServerCore() && this.getCore().Power <= 0) {
 				this.getCore().Power = 0;
 				this.onScanCancelled("noPower");
 				return;
@@ -263,14 +265,15 @@ public class TileEntityScanner extends TileEntityAIMDevice implements ITickable 
 			if (status == EnumScanStatus.DOORS_CLOSE && !world.isRemote) this.onScanFinished();
 			if (world.isRemote) {
 				if (isSetupBroken()) {
-					world.setBlockState(pos.north(), ModElementList.blockScannerBase.getDefaultState().withProperty(BlockScannerBase.POS, BlockScannerBase.EnumPos.STRAIGHT_TOP), 2);
-					world.setBlockState(pos.south(), ModElementList.blockScannerBase.getDefaultState().withProperty(BlockScannerBase.POS, BlockScannerBase.EnumPos.STRAIGHT_BOTTOM), 2);
-					world.setBlockState(pos.east(), ModElementList.blockScannerBase.getDefaultState().withProperty(BlockScannerBase.POS, BlockScannerBase.EnumPos.STRAIGHT_RIGHT), 2);
-					world.setBlockState(pos.west(), ModElementList.blockScannerBase.getDefaultState().withProperty(BlockScannerBase.POS, BlockScannerBase.EnumPos.STRAIGHT_LEFT), 2);
-					world.setBlockState(pos.north().east(), ModElementList.blockScannerBase.getDefaultState().withProperty(BlockScannerBase.POS, BlockScannerBase.EnumPos.CURVE_3), 2);
-					world.setBlockState(pos.north().west(), ModElementList.blockScannerBase.getDefaultState().withProperty(BlockScannerBase.POS, BlockScannerBase.EnumPos.CURVE_2), 2);
-					world.setBlockState(pos.south().west(), ModElementList.blockScannerBase.getDefaultState().withProperty(BlockScannerBase.POS, BlockScannerBase.EnumPos.CURVE_1), 2);
-					world.setBlockState(pos.south().east(), ModElementList.blockScannerBase.getDefaultState().withProperty(BlockScannerBase.POS, BlockScannerBase.EnumPos.CURVE_4), 2);
+                    IBlockState defaultState = ModElementList.blockScannerBase.getDefaultState();
+					world.setBlockState(pos.north(), defaultState.withProperty(BlockScannerBase.POS, BlockScannerBase.EnumPos.STRAIGHT_TOP), 2);
+					world.setBlockState(pos.south(), defaultState.withProperty(BlockScannerBase.POS, BlockScannerBase.EnumPos.STRAIGHT_BOTTOM), 2);
+					world.setBlockState(pos.east(), defaultState.withProperty(BlockScannerBase.POS, BlockScannerBase.EnumPos.STRAIGHT_RIGHT), 2);
+					world.setBlockState(pos.west(), defaultState.withProperty(BlockScannerBase.POS, BlockScannerBase.EnumPos.STRAIGHT_LEFT), 2);
+					world.setBlockState(pos.north().east(), defaultState.withProperty(BlockScannerBase.POS, BlockScannerBase.EnumPos.CURVE_3), 2);
+					world.setBlockState(pos.north().west(), defaultState.withProperty(BlockScannerBase.POS, BlockScannerBase.EnumPos.CURVE_2), 2);
+					world.setBlockState(pos.south().west(), defaultState.withProperty(BlockScannerBase.POS, BlockScannerBase.EnumPos.CURVE_1), 2);
+					world.setBlockState(pos.south().east(), defaultState.withProperty(BlockScannerBase.POS, BlockScannerBase.EnumPos.CURVE_4), 2);
 				}
 			}
 			this.changeToNextStatus();
@@ -279,14 +282,15 @@ public class TileEntityScanner extends TileEntityAIMDevice implements ITickable 
 	}
 
 	private final boolean isSetupBroken() {
-		if (world.getBlockState(pos.east()) != ModElementList.blockScannerBase.getDefaultState().withProperty(BlockScannerBase.POS, BlockScannerBase.EnumPos.STRAIGHT_RIGHT)) return true;
-		if (world.getBlockState(pos.south()) != ModElementList.blockScannerBase.getDefaultState().withProperty(BlockScannerBase.POS, BlockScannerBase.EnumPos.STRAIGHT_BOTTOM)) return true;
-		if (world.getBlockState(pos.west()) != ModElementList.blockScannerBase.getDefaultState().withProperty(BlockScannerBase.POS, BlockScannerBase.EnumPos.STRAIGHT_LEFT)) return true;
-		if (world.getBlockState(pos.north()) != ModElementList.blockScannerBase.getDefaultState().withProperty(BlockScannerBase.POS, BlockScannerBase.EnumPos.STRAIGHT_TOP)) return true;
-		if (world.getBlockState(pos.east().north()) != ModElementList.blockScannerBase.getDefaultState().withProperty(BlockScannerBase.POS, BlockScannerBase.EnumPos.CURVE_3)) return true;
-		if (world.getBlockState(pos.east().south()) != ModElementList.blockScannerBase.getDefaultState().withProperty(BlockScannerBase.POS, BlockScannerBase.EnumPos.CURVE_4)) return true;
-		if (world.getBlockState(pos.west().north()) != ModElementList.blockScannerBase.getDefaultState().withProperty(BlockScannerBase.POS, BlockScannerBase.EnumPos.CURVE_2)) return true;
-        return world.getBlockState(pos.west().south()) != ModElementList.blockScannerBase.getDefaultState().withProperty(BlockScannerBase.POS, BlockScannerBase.EnumPos.CURVE_1);
+        IBlockState defaultState = ModElementList.blockScannerBase.getDefaultState();
+		if (world.getBlockState(pos.east()) != defaultState.withProperty(BlockScannerBase.POS, BlockScannerBase.EnumPos.STRAIGHT_RIGHT)) return true;
+		if (world.getBlockState(pos.south()) != defaultState.withProperty(BlockScannerBase.POS, BlockScannerBase.EnumPos.STRAIGHT_BOTTOM)) return true;
+		if (world.getBlockState(pos.west()) != defaultState.withProperty(BlockScannerBase.POS, BlockScannerBase.EnumPos.STRAIGHT_LEFT)) return true;
+		if (world.getBlockState(pos.north()) != defaultState.withProperty(BlockScannerBase.POS, BlockScannerBase.EnumPos.STRAIGHT_TOP)) return true;
+		if (world.getBlockState(pos.east().north()) != defaultState.withProperty(BlockScannerBase.POS, BlockScannerBase.EnumPos.CURVE_3)) return true;
+		if (world.getBlockState(pos.east().south()) != defaultState.withProperty(BlockScannerBase.POS, BlockScannerBase.EnumPos.CURVE_4)) return true;
+		if (world.getBlockState(pos.west().north()) != defaultState.withProperty(BlockScannerBase.POS, BlockScannerBase.EnumPos.CURVE_2)) return true;
+        return world.getBlockState(pos.west().south()) != defaultState.withProperty(BlockScannerBase.POS, BlockScannerBase.EnumPos.CURVE_1);
     }
 
 	public boolean isActive() {
@@ -297,8 +301,8 @@ public class TileEntityScanner extends TileEntityAIMDevice implements ITickable 
     @Override
     @SideOnly(Side.CLIENT)
     public void renderStatusInformation(NetworkInfoOverlayRenderer renderer) {
-        renderer.renderStatusString(this.hasCore() ? this.isActive() ? "aimoverlay.scannerstatus.active" : "aimoverlay.scannerstatus.ready" : "aimoverlay.scannerstatus.offline",
-                this.hasCore() ? this.isActive() ? TextFormatting.GREEN : TextFormatting.YELLOW : TextFormatting.RED);
+        renderer.renderStatusString(this.hasClientCore() ? this.isActive() ? "aimoverlay.scannerstatus.active" : "aimoverlay.scannerstatus.ready" : "aimoverlay.scannerstatus.offline",
+                this.hasClientCore() ? this.isActive() ? TextFormatting.GREEN : TextFormatting.YELLOW : TextFormatting.RED);
         if (this.isActive()) {
             renderer.renderTileValues("scannerticks", TextFormatting.GREEN, false, (int)(this.getTicksLeftUntilCompletion() / 20));
         }

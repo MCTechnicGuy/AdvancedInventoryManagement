@@ -46,7 +46,7 @@ key.categories.aim=Advanced Inventory Management
 #Chat messages
 message.changedAccessibility.true=Your inventory can now be accessed by any AIM-Machines bound to you.
 message.changedAccessibility.false=Your inventory can no longer be accessed by any AIM-Machines.
-message.coreaccess.false=This Network belongs to %1$s You are not permitted to modify the network!
+message.coreaccess.false=This Network belongs to %1$s! You are not permitted to modify the network!
 message.modechange=Device mode changed to %1$s.
 message.rsmodechange=Redstone behaviour changed to %1$s.
 message.noCore=This device is not connected to a core.

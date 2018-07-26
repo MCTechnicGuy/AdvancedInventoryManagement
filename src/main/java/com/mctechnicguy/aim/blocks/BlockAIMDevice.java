@@ -31,7 +31,7 @@ public abstract class BlockAIMDevice extends BlockAIMBase {
 	public IBlockState getActualState(IBlockState state, IBlockAccess worldIn, BlockPos pos) {
 		TileEntity te = worldIn.getTileEntity(pos);
 		if (!(te instanceof TileEntityNetworkElement)) return state.withProperty(ISACTIVE, false);
-		else return state.withProperty(ISACTIVE,((TileEntityNetworkElement)te).getCoreActive() || ((TileEntityNetworkElement)te).isCoreActive());
+		else return state.withProperty(ISACTIVE,((TileEntityNetworkElement)te).getCoreActive());
 	}
 
     @Nonnull

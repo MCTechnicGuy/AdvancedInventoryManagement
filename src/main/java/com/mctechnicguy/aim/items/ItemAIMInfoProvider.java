@@ -5,6 +5,7 @@ import com.mctechnicguy.aim.gui.IManualEntry;
 import com.mctechnicguy.aim.network.PacketHelper;
 import com.mctechnicguy.aim.network.PacketNetworkCoreList;
 import com.mctechnicguy.aim.network.PacketNetworkInfo;
+import com.mctechnicguy.aim.tileentity.IProvidesNetworkInfo;
 import com.mctechnicguy.aim.tileentity.TileEntityAIMCore;
 import com.mctechnicguy.aim.tileentity.TileEntityNetworkElement;
 import com.mctechnicguy.aim.util.AIMUtils;
@@ -41,18 +42,23 @@ public class ItemAIMInfoProvider extends Item implements IManualEntry{
     @Override
     public EnumActionResult onItemUse(@Nonnull EntityPlayer player, @Nonnull World world, @Nonnull BlockPos pos, EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ)
     {
-        if (world.isRemote) return EnumActionResult.SUCCESS;
+        TileEntity te = world.getTileEntity(pos);
         if (player.isSneaking()) {
-            TileEntity te = world.getTileEntity(pos);
             if (te instanceof TileEntityNetworkElement) {
-                if (((TileEntityNetworkElement)te).hasCore()) {
+                if (world.isRemote) return EnumActionResult.SUCCESS;
+                if (((TileEntityNetworkElement)te).hasServerCore()) {
                     PacketHelper.sendPacketToClient(new PacketNetworkInfo(((TileEntityNetworkElement)te).getCore(), ((TileEntityNetworkElement)te).getCore().getPos(), ((TileEntityNetworkElement)te).getCore().getWorld().provider.getDimension()), (EntityPlayerMP)player);
                 } else {
                     AIMUtils.sendChatMessage("message.noCore", player, TextFormatting.AQUA);
                 }
             } else if (te instanceof TileEntityAIMCore) {
+                if (world.isRemote) return EnumActionResult.SUCCESS;
                 PacketHelper.sendPacketToClient(new PacketNetworkInfo((TileEntityAIMCore)te, te.getPos(), te.getWorld().provider.getDimension()), (EntityPlayerMP)player);
+            } else if (world.isRemote) {
+                return EnumActionResult.PASS;
             }
+        } else if (world.isRemote) {
+            return te instanceof IProvidesNetworkInfo ? EnumActionResult.SUCCESS : EnumActionResult.PASS;
         }
         return NetworkUtils.updateOverlayData(player, world, pos);
     }

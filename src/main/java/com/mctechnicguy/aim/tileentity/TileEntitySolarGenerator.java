@@ -54,7 +54,7 @@ public class TileEntitySolarGenerator extends TileEntityAIMDevice implements ITi
     }
 
     private void outputPower() {
-        if (this.hasCore()) {
+        if (this.hasServerCore()) {
             this.getCore().changePower(getOutput());
         }
     }
@@ -77,8 +77,8 @@ public class TileEntitySolarGenerator extends TileEntityAIMDevice implements ITi
     @Override
     @SideOnly(Side.CLIENT)
     public void renderStatusInformation(NetworkInfoOverlayRenderer renderer) {
-        renderer.renderStatusString(hasCore() ? shouldBeActive() ? "aimoverlay.generatorstatus.active" : "aimoverlay.generatorstatus.idle" : "aimoverlay.generatorstatus.offline",
-                hasCore() ? shouldBeActive() ? TextFormatting.GREEN : TextFormatting.YELLOW : TextFormatting.RED);
-        renderer.renderTileValues("poweroutput", TextFormatting.GREEN, !hasAccurateServerInfo, hasCore() && shouldBeActive() ? currentOutput : 0);
+        renderer.renderStatusString(hasClientCore() ? shouldBeActive() ? "aimoverlay.generatorstatus.active" : "aimoverlay.generatorstatus.idle" : "aimoverlay.generatorstatus.offline",
+                hasClientCore() ? shouldBeActive() ? TextFormatting.GREEN : TextFormatting.YELLOW : TextFormatting.RED);
+        renderer.renderTileValues("poweroutput", TextFormatting.GREEN, !hasAccurateServerInfo, hasClientCore() && shouldBeActive() ? currentOutput : 0);
     }
 }

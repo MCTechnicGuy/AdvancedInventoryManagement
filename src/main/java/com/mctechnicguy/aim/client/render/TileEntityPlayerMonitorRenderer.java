@@ -2,16 +2,14 @@ package com.mctechnicguy.aim.client.render;
 
 
 import com.mctechnicguy.aim.tileentity.TileEntityPlayerMonitor;
-import net.minecraft.client.renderer.GlStateManager;
-import net.minecraft.client.renderer.OpenGlHelper;
 import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
-import net.minecraft.util.EnumFacing;
 
 public class TileEntityPlayerMonitorRenderer extends TileEntitySpecialRenderer<TileEntityPlayerMonitor> {
 
     @Override
     public void render(TileEntityPlayerMonitor te, double x, double y, double z, float partialTicks, int destroyStage, float alpha) {
-        if (!te.hasWorld() || !te.isCoreActive()) return;
+        //TODO!!!
+        /*if (!te.hasWorld() || !te.getCoreActive()) return;
 
 
 
@@ -47,6 +45,6 @@ public class TileEntityPlayerMonitorRenderer extends TileEntitySpecialRenderer<T
         }
 
         GlStateManager.translate(-x, -y, -z);
-        GlStateManager.popMatrix();
+        GlStateManager.popMatrix();*/
     }
 }

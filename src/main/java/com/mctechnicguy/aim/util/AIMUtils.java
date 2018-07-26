@@ -4,7 +4,6 @@ import com.mctechnicguy.aim.AdvancedInventoryManagement;
 import com.mctechnicguy.aim.blocks.BlockAIMBase;
 import com.mctechnicguy.aim.blocks.BlockNetworkCable;
 import com.mctechnicguy.aim.tileentity.TileEntityNetworkCable;
-import net.minecraft.block.Block;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.ItemStack;
@@ -89,9 +88,6 @@ public class AIMUtils {
 			return false;
 	}
 
-	public static Block getBlockAtSide(@Nonnull EnumFacing dir, @Nonnull World world, @Nonnull BlockPos pos) {
-		return world.getBlockState(pos.offset(dir)).getBlock();
-	}
 
 	@Nullable
     public static TileEntity getTEAtSide(@Nonnull EnumFacing dir, @Nonnull World world, @Nonnull BlockPos pos) {
@@ -109,22 +105,6 @@ public class AIMUtils {
 		TextComponentTranslation cmp = new TextComponentTranslation(message, args);
 		cmp.getStyle().setColor(color);
         player.sendStatusMessage(cmp, true);
-	}
-
-	public static EnumFacing get2PDirection(@Nonnull BlockPos examinedBlock, @Nonnull BlockPos target) {
-		if (target.getY() > examinedBlock.getY())
-			return EnumFacing.UP;
-		else if (target.getY() < examinedBlock.getY())
-			return EnumFacing.DOWN;
-		else if (target.getX() > examinedBlock.getX())
-			return EnumFacing.EAST;
-		else if (target.getX() < examinedBlock.getX())
-			return EnumFacing.WEST;
-		else if (target.getZ() > examinedBlock.getZ())
-			return EnumFacing.SOUTH;
-		else if (target.getZ() < examinedBlock.getZ())
-			return EnumFacing.NORTH;
-		return null;
 	}
 
 	public static boolean isWrench(@Nonnull ItemStack item) {

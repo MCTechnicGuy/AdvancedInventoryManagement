@@ -191,12 +191,12 @@ public class ClientProxy extends CommonProxy {
 
     @Override
     public void registerPackets() {
-        PacketHelper.wrapper.registerMessage((message, ctx) -> null, PacketKeyPressed.class, 0, Side.SERVER);
+        PacketHelper.wrapper.registerMessage(PacketKeyPressed.PacketKeyPressedHandler.class, PacketKeyPressed.class, 0, Side.SERVER);
         PacketHelper.wrapper.registerMessage(PacketOpenInfoGUI.PacketOpenInfoGUIHandler.class, PacketOpenInfoGUI.class, 1, Side.CLIENT);
         PacketHelper.wrapper.registerMessage(PacketHotbarSlotChanged.PacketHotbarSlotChangedHandler.class, PacketHotbarSlotChanged.class, 2, Side.CLIENT);
         PacketHelper.wrapper.registerMessage(PacketUpdateOverlayInfo.PacketUpdateOverlayInfoHandler.class, PacketUpdateOverlayInfo.class, 3, Side.CLIENT);
         PacketHelper.wrapper.registerMessage(PacketNetworkCoreList.PacketOpenNetworkCoreListHandler.class, PacketNetworkCoreList.class, 4, Side.CLIENT);
-        PacketHelper.wrapper.registerMessage((message, ctx) -> null, PacketRequestServerInfo.class, 5, Side.SERVER);
+        PacketHelper.wrapper.registerMessage(PacketRequestServerInfo.PacketRequestServerInfoHandler.class, PacketRequestServerInfo.class, 5, Side.SERVER);
         PacketHelper.wrapper.registerMessage(PacketNetworkInfo.PacketNetworkInfoHandler.class, PacketNetworkInfo.class, 6, Side.CLIENT);
     }
 

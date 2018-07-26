@@ -20,6 +20,7 @@ import net.minecraft.util.ITickable;
 import net.minecraft.util.NonNullList;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.TextComponentString;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
@@ -188,6 +189,7 @@ public class TileEntityAIMCore extends TileEntity implements IInventory, ITickab
 	@Override
 	public void invalidate() {
 		super.invalidate();
+		this.setIsActive(false);
 		if (ModCompatHelper.isIC2Loaded) deregister();
 	}
 
@@ -609,12 +611,14 @@ public class TileEntityAIMCore extends TileEntity implements IInventory, ITickab
 	}
 
 	public boolean isPlayerAccessAllowed(@Nonnull EntityPlayer entityplayer) {
-		if (!this.hasUpgrade(0) || this.playerConnectedID == null)
+	    if (!this.hasUpgrade(0) || this.playerConnectedID == null)
 			return true;
 		else if (!this.world.isRemote && this.hasUpgrade(0)
 				&& this.playerConnectedID.compareTo(entityplayer.getUniqueID()) != 0) {
+            TextComponentString formatName = new TextComponentString(this.playerConnectedName);
+            formatName.getStyle().setColor(TextFormatting.BLUE);
 			AIMUtils.sendChatMessageWithArgs("message.coreaccess.false", entityplayer, TextFormatting.RED,
-					TextFormatting.BLUE + this.playerConnectedName + "!");
+					formatName.getFormattedText());
 			return false;
 		}
 		return entityplayer.getUniqueID().compareTo(playerConnectedID) == 0;

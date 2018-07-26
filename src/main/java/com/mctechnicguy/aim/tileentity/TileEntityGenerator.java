@@ -89,7 +89,7 @@ public class TileEntityGenerator extends TileEntityAIMDevice implements ITickabl
     }
 
     private void outputPower() {
-        if (this.hasCore()) {
+        if (this.hasServerCore()) {
             this.getCore().changePower(Math.round(AdvancedInventoryManagement.MAX_GENERATOR_POWER_OUTPUT / 5) * getBurningStage());
         }
     }
@@ -150,9 +150,9 @@ public class TileEntityGenerator extends TileEntityAIMDevice implements ITickabl
     @Override
     @SideOnly(Side.CLIENT)
     public void renderStatusInformation(NetworkInfoOverlayRenderer renderer) {
-        renderer.renderStatusString(hasCore() ? getBurningStage() > 0 ? "aimoverlay.generatorstatus.active" : "aimoverlay.generatorstatus.idle" : "aimoverlay.generatorstatus.offline",
-                hasCore() ? getBurningStage() > 0 ? TextFormatting.GREEN : TextFormatting.YELLOW : TextFormatting.RED);
+        renderer.renderStatusString(hasClientCore() ? getBurningStage() > 0 ? "aimoverlay.generatorstatus.active" : "aimoverlay.generatorstatus.idle" : "aimoverlay.generatorstatus.offline",
+                hasClientCore() ? getBurningStage() > 0 ? TextFormatting.GREEN : TextFormatting.YELLOW : TextFormatting.RED);
         renderer.renderTileValues("burntime", TextFormatting.GREEN, !hasAccurateServerInfo, (int)(burnTimeRemaining / 20));
-        renderer.renderTileValues("poweroutput", TextFormatting.GREEN, !hasAccurateServerInfo, hasCore() ? Math.round(AdvancedInventoryManagement.MAX_GENERATOR_POWER_OUTPUT / 5) * getBurningStage() : 0);
+        renderer.renderTileValues("poweroutput", TextFormatting.GREEN, !hasAccurateServerInfo, hasClientCore() ? Math.round(AdvancedInventoryManagement.MAX_GENERATOR_POWER_OUTPUT / 5) * getBurningStage() : 0);
     }
 }

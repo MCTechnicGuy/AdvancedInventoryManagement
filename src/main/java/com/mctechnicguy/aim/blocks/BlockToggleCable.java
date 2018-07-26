@@ -49,7 +49,7 @@ public class BlockToggleCable extends BlockNetworkCable {
 
     @Override
     public void neighborChanged(IBlockState state, @Nonnull World worldIn, @Nonnull BlockPos pos, Block blockIn, BlockPos neighbor) {
-        if (worldIn.getTileEntity(pos) instanceof TileEntityToggleCable && (((TileEntityToggleCable) worldIn.getTileEntity(pos)).hasCore())) {
+        if (worldIn.getTileEntity(pos) instanceof TileEntityToggleCable && (((TileEntityToggleCable) worldIn.getTileEntity(pos)).hasServerCore())) {
             (((TileEntityToggleCable) worldIn.getTileEntity(pos))).getCore().forceNetworkUpdate(2);
         }
     }
@@ -68,7 +68,7 @@ public class BlockToggleCable extends BlockNetworkCable {
                 .withProperty(SOUTH, cable.hasRealConnection(EnumFacing.SOUTH))
                 .withProperty(EAST, cable.hasRealConnection(EnumFacing.EAST))
                 .withProperty(WEST, cable.hasRealConnection(EnumFacing.WEST))
-                .withProperty(ISCOREACTIVE, cable.hasCore() && cable.getCore().isActive())
+                .withProperty(ISCOREACTIVE, cable.hasClientCore() && cable.getCoreActive())
                 .withProperty(ISREDSTONEBLOCKED, cable.isRSBlocked());
     }
 

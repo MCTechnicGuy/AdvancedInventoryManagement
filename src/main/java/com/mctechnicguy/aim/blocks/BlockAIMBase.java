@@ -109,7 +109,7 @@ public class BlockAIMBase extends Block implements ITileEntityProvider, IWrenchD
 	@Override
 	 public void breakBlock(World world, BlockPos pos, IBlockState state)
 	{
-		if (!world.isRemote && world.getTileEntity(pos) instanceof TileEntityAIMDevice && ((TileEntityAIMDevice)world.getTileEntity(pos)).hasCore())
+		if (!world.isRemote && world.getTileEntity(pos) instanceof TileEntityAIMDevice && ((TileEntityAIMDevice)world.getTileEntity(pos)).hasServerCore())
 			((TileEntityAIMDevice)world.getTileEntity(pos)).getCore().forceNetworkUpdate(5);
 		super.breakBlock(world, pos, state);
 	}

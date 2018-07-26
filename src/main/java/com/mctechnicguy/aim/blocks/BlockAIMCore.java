@@ -5,11 +5,9 @@ import com.mctechnicguy.aim.gui.IManualEntry;
 import com.mctechnicguy.aim.tileentity.TileEntityAIMCore;
 import com.mctechnicguy.aim.tileentity.TileEntityNetworkElement;
 import com.mctechnicguy.aim.util.NBTUtils;
-import com.mctechnicguy.aim.util.NetworkUtils;
 import net.minecraft.block.properties.PropertyBool;
 import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.IBlockState;
-import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
@@ -73,17 +71,6 @@ public class BlockAIMCore extends BlockAIMBase implements IManualEntry{
         } else return superResult;
     }
 
-    @Override
-	 public void onBlockPlacedBy(@Nonnull World world, @Nonnull BlockPos pos, @Nonnull IBlockState state, EntityLivingBase placer, @Nonnull ItemStack stack)
-    {
-		if (!NetworkUtils.canPlaceAIMBlock(placer, world, pos)) {
-			this.breakBlock(world, pos, state);
-			if (placer instanceof EntityPlayer) {
-				this.harvestBlock(world, (EntityPlayer) placer, pos, state, world.getTileEntity(pos), stack);
-				this.removedByPlayer(state, world, pos, (EntityPlayer) placer, true);
-			}
-		}
-	}
 
 	@Override
 	public void breakBlock(World worldIn, BlockPos pos, IBlockState state)

@@ -47,7 +47,7 @@ public class TileEntityPlayerMonitor extends TileEntityAIMDevice implements ITic
     public SPacketUpdateTileEntity getUpdatePacket() {
         if (world.isRemote) return null;
         NBTTagCompound nbtTag = getUpdateTag();
-        this.writeCoreData(nbtTag);
+        this.writePacketCoreData(nbtTag);
         return new SPacketUpdateTileEntity(this.getPos(), 0, nbtTag);
     }
 
@@ -154,7 +154,7 @@ public class TileEntityPlayerMonitor extends TileEntityAIMDevice implements ITic
 
     @Nullable
     public String getFormattedValue() {
-        if (!isCoreActive()) return null;
+        if (!getCoreActive()) return null;
         if (AdvancedInventoryManagement.proxy.playerEqualsClient(getCore().playerConnectedID)) {
             if (isBooleanMode() && !Double.isNaN(getCurrentValue())) {
                 if (world.isRemote) return AdvancedInventoryManagement.proxy.tryToLocalizeString(getCurrentValue() == 1D ? "message.true" : "message.false");
@@ -167,7 +167,7 @@ public class TileEntityPlayerMonitor extends TileEntityAIMDevice implements ITic
 
     @Nullable
     public String getPercentageValue() {
-        if (!isCoreActive()) return null;
+        if (world.isRemote && !getCoreActive() || !world.isRemote && !isCoreActive()) return null;
         if (AdvancedInventoryManagement.proxy.playerEqualsClient(getCore().playerConnectedID)) {
             if (Double.isNaN(getMaxValue()) || getMaxValue() <= 0 || mode > 11) return null;
             else return doubleRound.format((getCurrentValue() / getMaxValue()) * 100) + "%";

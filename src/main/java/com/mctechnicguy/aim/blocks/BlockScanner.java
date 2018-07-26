@@ -29,7 +29,7 @@ import javax.annotation.Nullable;
 public class BlockScanner extends BlockAIMBase implements ICustomManualEntry{
 
 	public static final String NAME = "scanner";
-	public static final PropertyEnum ISACTIVE = PropertyEnum.create("isactive", EnumActivity.class);
+	public static final PropertyEnum<EnumActivity> ISACTIVE = PropertyEnum.create("isactive", EnumActivity.class);
 
 	public BlockScanner() {
 		super(NAME);
@@ -47,7 +47,7 @@ public class BlockScanner extends BlockAIMBase implements ICustomManualEntry{
 	public IBlockState getActualState(IBlockState state, @Nonnull IBlockAccess worldIn, @Nonnull BlockPos pos) {
 		if (worldIn.getTileEntity(pos) instanceof TileEntityScanner) {
 			return state.withProperty(ISACTIVE,
-					((TileEntityScanner) worldIn.getTileEntity(pos)).hasCore()
+					((TileEntityScanner) worldIn.getTileEntity(pos)).hasClientCore()
 							? ((TileEntityScanner) worldIn.getTileEntity(pos)).isActive() ? EnumActivity.ONLINE
 									: EnumActivity.IDLE : EnumActivity.OFFLINE);
 		} else

@@ -388,7 +388,7 @@ public class BlockNetworkCable extends Block implements ITileEntityProvider, IWr
 	    			.withProperty(SOUTH, cable.hasRealConnection(EnumFacing.SOUTH))
 	    			.withProperty(EAST, cable.hasRealConnection(EnumFacing.EAST))
 	    			.withProperty(WEST, cable.hasRealConnection(EnumFacing.WEST))
-	    			.withProperty(ISCOREACTIVE, cable.hasCore() && cable.getCore().isActive());
+	    			.withProperty(ISCOREACTIVE, cable.hasClientCore() && cable.getCoreActive());
 	}
 	    
 	
@@ -422,7 +422,7 @@ public class BlockNetworkCable extends Block implements ITileEntityProvider, IWr
 	@Override
 	 public void breakBlock(World world, BlockPos pos, IBlockState state)
     {
-		if (!world.isRemote && world.getTileEntity(pos) instanceof TileEntityNetworkCable && ((TileEntityNetworkCable)world.getTileEntity(pos)).hasCore())
+		if (!world.isRemote && world.getTileEntity(pos) instanceof TileEntityNetworkCable && ((TileEntityNetworkCable)world.getTileEntity(pos)).hasServerCore())
 			((TileEntityNetworkCable)world.getTileEntity(pos)).getCore().forceNetworkUpdate(5);
 		super.breakBlock(world, pos, state);
     }
