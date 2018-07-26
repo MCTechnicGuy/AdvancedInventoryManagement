@@ -106,9 +106,6 @@ public abstract class TileEntityNetworkElement extends TileEntity implements IPr
 	}
 
 	public boolean isCoreActive() {
-        if (world.isRemote) {
-            System.err.println("isCoreActive may not be called from Client-Side!!!");
-        }
 		if (!this.hasServerCore()) return false;
 		if (this.hasWorld() && this.world.isRemote) return this.coreTile.isActive();
 		else return this.coreTile.isActive() && this.coreTile.getConnectedPlayer() != null;
@@ -116,17 +113,11 @@ public abstract class TileEntityNetworkElement extends TileEntity implements IPr
 
 	@Nullable
     public TileEntityAIMCore getCore() {
-	    if (world.isRemote) {
-	        System.err.println("getCore may not be called from Client-Side!!!");
-        }
 		if (coreTile != null && coreTile.isInvalid()) this.setCore(null);
 		return coreTile;
 	}
 
 	public boolean hasServerCore() {
-        if (world.isRemote) {
-            System.err.println("hasServerCore may not be called from Client-Side!!!");
-        }
 		if (corePos == null) return false;
 		if (coreTile == null || coreTile.isInvalid()) {
 			TileEntity te = world.getTileEntity(corePos);
@@ -140,7 +131,7 @@ public abstract class TileEntityNetworkElement extends TileEntity implements IPr
 	}
 	
 	public boolean isPlayerAccessAllowed(@Nonnull EntityPlayer player) {
-	    if (world.isRemote) return true; //TODO Maybe do client-compare?
+	    if (world.isRemote) return true;
 		return !this.hasServerCore() || this.getCore().isPlayerAccessAllowed(player);
 	}
 
