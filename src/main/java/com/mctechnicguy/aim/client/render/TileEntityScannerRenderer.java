@@ -10,10 +10,13 @@ import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.util.ResourceLocation;
 import org.lwjgl.opengl.GL11;
+import org.lwjgl.util.vector.Matrix3f;
+import org.lwjgl.util.vector.Vector3f;
 
 import javax.annotation.Nonnull;
+import java.nio.FloatBuffer;
 
-public class TileEntityScannerRenderer extends TileEntitySpecialRenderer<TileEntityScanner> {
+public class TileEntityScannerRenderer extends TileEntitySpecialRenderer<TileEntityScanner>  {
 
 	private static final ResourceLocation texture = new ResourceLocation(
 			ModInfo.ID + ":textures/blocks/scanner_effects.png");
@@ -68,26 +71,62 @@ public class TileEntityScannerRenderer extends TileEntitySpecialRenderer<TileEnt
 		renderLaserAt(0.5, 0.125, -0.75, VB);
 		renderLaserAt(0.5, 0.125, 1.75, VB);
 		Tessellator.getInstance().draw();
-		
+
+        GlStateManager.translate(0.5, 0, 0.5);
+        GlStateManager.rotate(-duration * 1.8F, 0, 1, 0);
+        GlStateManager.translate(-0.5, 0, -0.5);
+
+
+        Vector3f startPoint1 = new Vector3f(0, 0.125F + (float)Pixel * 4F, -1.25F);
+
+        double angle = Math.toRadians(duration * 1.8D);
+        float cosA = (float)Math.cos(-angle);
+        float sinA = (float)Math.sin(-angle);
+
+        Matrix3f rotation = new Matrix3f();
+        rotation.load(FloatBuffer.wrap(new float[] {cosA, 0, sinA, 0, 1, 0, -sinA, 0, cosA}));
+        startPoint1 = Matrix3f.transform(rotation, startPoint1, null);
+
+
+        float angleRatio = (float) (angle / (2 * Math.PI));
+        float x;
+        float z;
+
+        //-x, +z, +x, -z
+
+        if (angleRatio <= 0.125) {
+            x = -angleRatio / 0.25F;
+            z = -0.495F;
+        } else if (angleRatio <= 0.375) {
+            x = -0.495F;
+            z = -0.495F + (angleRatio - 0.125F) / 0.25F;
+        } else if (angleRatio <= 0.625) {
+            x = -0.495F + (angleRatio - 0.375F) / 0.25F;
+            z = 0.495F;
+        } else if (angleRatio <= 0.875) {
+            x = 0.495F;
+            z = 0.495F - ((angleRatio - 0.625F) / 0.25F);
+        } else {
+            x = 0.495F - ((angleRatio - 0.875F)) / 0.25F;
+            z = -0.495F;
+        }
+
 		GlStateManager.disableTexture2D();
 		VB.begin(GL11.GL_LINES, DefaultVertexFormats.POSITION);
 		GlStateManager.glLineWidth(5.0F);
-		GlStateManager.color(1F, 0F, 0F);
-		
-		VB.pos(0.5, 0.125 + Pixel * 4, -0.75).endVertex();
-		VB.pos(0.5, playerHeight - duration * 0.01, 0).endVertex();
-		VB.pos(0.5, 0.125 + Pixel * 4, 1.75).endVertex();
-		VB.pos(0.5, playerHeight - duration * 0.01, 1).endVertex();
-		
+		GlStateManager.color(0x4c / 256F, 0xb7 / 256F, 0x51 / 256F, 0.7F);
+		VB.pos(startPoint1.x + 0.5, startPoint1.y, startPoint1.z + 0.5).endVertex();
+		VB.pos(x + 0.5, playerHeight - duration * 0.01, z + 0.5).endVertex();
+		VB.pos(-startPoint1.x + 0.5, 0.125 + Pixel * 4, -startPoint1.z + 0.5).endVertex();
+		VB.pos(-x + 0.5, playerHeight - duration * 0.01, -z + 0.5).endVertex();
+
 		Tessellator.getInstance().draw();
 		
 		GlStateManager.enableTexture2D();
-		GlStateManager.color(1F, 1F, 1F, 0.5F);
+		GlStateManager.color(1F, 1F, 1F, 0.7F);
 		GlStateManager.glLineWidth(1F);
-		GlStateManager.translate(0.5, 0, 0.5);
-		GlStateManager.rotate(-duration * 1.8F, 0, 1, 0);
-		GlStateManager.translate(-0.5, 0, -0.5);
-	
+
+
 		VB.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_TEX); //Scanning-Quad
 		VB.pos(0, playerHeight - duration * 0.01, 0).tex(0, 16 * TexPixel).endVertex();
 		VB.pos(0, playerHeight - duration * 0.01, 1).tex(0, 32 * TexPixel).endVertex();

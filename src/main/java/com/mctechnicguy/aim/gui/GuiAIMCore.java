@@ -9,10 +9,10 @@ import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.util.ResourceLocation;
-import scala.actors.threadpool.Arrays;
 
 import javax.annotation.Nonnull;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class GuiAIMCore extends GuiContainer {
